@@ -10,16 +10,17 @@ import swervelib.math.Matter;
 
 public final class Constants {
 
-  public static final double ROBOT_MASS = 45 * 0.453592; // mass in kg
-  public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms sprk max velocity lag
+  public static class SwerveConstants {
+    public static final double ROBOT_MASS = 45 * 0.453592; // mass in kg
+    public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
+    public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
+  }
   
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double LEFT_X_DEADBAND = 0.01;
-    public static final double LEFT_Y_DEADBAND = 0.01;
-    public static final double RIGHT_X_DEADBAND = 0.01;
-    public static final double RIGHT_Y_DEADBAND = 0.01;
-    public static final double TURN_CONSTANT    = 6;
+    public static final double LEFT_X_DEADBAND = 0.02;
+    public static final double LEFT_Y_DEADBAND = 0.02;
+    public static final double RIGHT_X_DEADBAND = 0.02;
+    public static final double RIGHT_Y_DEADBAND = 0.02;
   }
 }
