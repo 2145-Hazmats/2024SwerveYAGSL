@@ -5,19 +5,23 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AutoPathPlanner;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
 public class RobotContainer {
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
+
+  private SendableChooser<Command> m_autonChooser = AutoBuilder.buildAutoChooser();
 
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -29,6 +33,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    SmartDashboard.putData("Auton Picker", m_autonChooser);
 
     Command driveFieldOrientedAnglularVelocity = m_swerve.driveCommand(
         () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -44,12 +50,10 @@ public class RobotContainer {
         m_swerve.run(()->{
             m_swerve.lock();})
     );
-
   }
 
 
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return new AutoPathPlanner(m_swerve, "auto1"); // Pass different file names for different paths
+    return m_autonChooser.getSelected();
   }
 }

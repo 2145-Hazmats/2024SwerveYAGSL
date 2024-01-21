@@ -12,9 +12,8 @@ import swervelib.math.Matter;
 public final class Constants {
   
   public static class SwerveConstants {
-    public static final double MAX_SPEED = 1;            // m/s for the entire robot
+    public static final double MAX_SPEED = 3.70;         // maximum m/s for the robot
     /* PathPlanner constants */
-    public static final double MAX_MODULE_SPEED     = 1; // m/s for an individual module
     public static final double PATHPLANNER_TRANS_KP = 1; // Translational P for the pathplanner PID (default 5?)
     /* Unused constants */
     public static final double ROBOT_MASS = 45 * 0.453592; // mass in kg

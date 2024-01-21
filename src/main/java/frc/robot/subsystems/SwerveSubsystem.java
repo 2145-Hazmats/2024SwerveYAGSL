@@ -71,7 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 swerveDrive.swerveController.config.headingPIDF.i,
                 swerveDrive.swerveController.config.headingPIDF.d),
             // Max module speed, in m/s
-            SwerveConstants.MAX_MODULE_SPEED,
+            SwerveConstants.MAX_SPEED,
             // Drive base radius in meters. Distance from robot center to furthest module.
             swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
             // Default path replanning config. See the API for the options here

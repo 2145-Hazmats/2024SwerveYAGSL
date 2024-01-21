@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
-public class AutoPathPlanner extends Command {
+public class AutonCommand extends Command {
   private final SwerveSubsystem m_swerve;
   private String pathName;
 
 
   // Constructor
-  public AutoPathPlanner(SwerveSubsystem subsystem, String pathName) {
+  public AutonCommand(SwerveSubsystem subsystem, String pathName) {
     m_swerve = subsystem;
     
     addRequirements(m_swerve);
@@ -24,7 +24,6 @@ public class AutoPathPlanner extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // TODO: Get max speeds and basic swerve properties and load into the pathplanner program
     m_swerve.getAutonomousCommand(pathName, true);
   }
 
