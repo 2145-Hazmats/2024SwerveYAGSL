@@ -12,6 +12,7 @@ import java.io.File;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,9 +40,28 @@ public class RobotContainer {
     Command driveFieldOrientedAnglularVelocity = m_swerve.driveCommand(
         () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> m_driverController.getRawAxis(4));
+        () -> -m_driverController.getRawAxis(4));
+    
+    // Idea that counts but not very good
+    Command drive2 = m_swerve.driveCommand(
+        () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(-m_driverController.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(-m_driverController.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND));
+
+    //m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+
+    /*
+    Command driveFieldOrientedDirectAngleSim = m_swerve.simDriveCommand(
+        () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> -m_driverController.getRawAxis(4));
+    */
 
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+
+    //m_swerve.setDefaultCommand(
+    //    !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim);
   }
 
 
@@ -50,6 +70,11 @@ public class RobotContainer {
         m_swerve.run(()->{
             m_swerve.lock();})
     );
+  }
+
+  
+  public void SetMotorBrake(boolean brake) {
+    m_swerve.setMotorBrake(brake);
   }
 
 

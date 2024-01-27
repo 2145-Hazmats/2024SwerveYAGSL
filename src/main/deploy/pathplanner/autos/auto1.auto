@@ -26,7 +26,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "rotating_path"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "drive_straight"
           }
         }
       ]

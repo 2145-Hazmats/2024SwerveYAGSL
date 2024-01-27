@@ -16,9 +16,9 @@ public final class Constants {
     /* PathPlanner constants */
     public static final double PATHPLANNER_TRANS_KP = 1; // Translational P for the pathplanner PID (default 5?)
     /* Unused constants */
-    public static final double ROBOT_MASS = 45 * 0.453592; // mass in kg
-    public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
-    public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
+    //public static final double ROBOT_MASS = 45 * 0.453592; // mass in kg
+    //public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
+    //public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
   }
   
 
