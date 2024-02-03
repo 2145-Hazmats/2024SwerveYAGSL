@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start To Play"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Other Play To Start"
+            "pathName": "drive_straight"
           }
         }
       ]

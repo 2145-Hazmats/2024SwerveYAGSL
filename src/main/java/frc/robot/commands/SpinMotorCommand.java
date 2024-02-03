@@ -5,15 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.TestMotor;
+import frc.robot.subsystems.TestMotorSubsystem;
 
-public class SpinMotor extends Command {
+public class SpinMotorCommand extends Command {
 
-  TestMotor _motor;
+  TestMotorSubsystem _motor;
   double _speed;
 
   /** Creates a new SpinMotor. */
-  public SpinMotor(TestMotor motor, double speed) {
+  public SpinMotorCommand(TestMotorSubsystem motor, double speed) {
     _motor = motor;
     _speed = speed;
     addRequirements(motor);

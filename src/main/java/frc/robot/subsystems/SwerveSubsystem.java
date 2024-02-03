@@ -11,6 +11,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -135,6 +136,10 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.lockPose();
   }
 
+  public void resetGyro(){
+    swerveDrive.setGyro(new Rotation3d(0, 0, 0));
+  }
+
 
 
   /**
@@ -195,8 +200,8 @@ public class SwerveSubsystem extends SubsystemBase {
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
-          new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+          new Translation2d(Math.pow(translationX.getAsDouble(), 1) * swerveDrive.getMaximumVelocity(),
+          Math.pow(translationY.getAsDouble(), 1) * swerveDrive.getMaximumVelocity()),
           Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
           true, false);
     });
