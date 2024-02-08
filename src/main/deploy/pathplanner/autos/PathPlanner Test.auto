@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start To Play"
+            "pathName": "drive_straight"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {

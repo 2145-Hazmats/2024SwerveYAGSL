@@ -24,13 +24,11 @@ public class TestMotorSubsystem extends SubsystemBase {
     
   }
 
-  public void setMotor(double speed)
-  {
+  public void setMotor(double speed) {
     neo550.set(speed);
   }
 
-  public Command PlaySpeakerCommand(double speed) 
-  {
+  public Command TestStartEndCommand(double speed) {
     return new StartEndCommand(() -> this.setMotor(speed), () -> this.setMotor(0), this);
   }
 }
