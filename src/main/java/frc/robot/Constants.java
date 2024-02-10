@@ -31,4 +31,20 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.01;
     public static final double RIGHT_Y_DEADBAND = 0.01;
   }
+
+  public static class ArmConstants{
+    public static final int kElbowMotorLeftID = 30;
+    public static final int kElbowMotorRightID = 31;
+    public static final int[] kElbowEncoderIDs = {1,2};
+    public static final int kWristMotorID = 32;
+    public static final int[] kWristEncoderIDs = {1,2};
+  }
+
+  public static class BoxConstants{
+    public static final int kShooterMotorID = 60;
+    public static final int kIntakeMotorID = 61;
+    public static final int kForwardLimitSwitchID = 0;
+    public static final double kIntakeMotorNominalVoltage = 11.5;
+    public static final double kShooterMotorNominalVoltage = 11.5;
+  }
 }

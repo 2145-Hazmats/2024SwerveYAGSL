@@ -4,9 +4,9 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TestMotorSubsystem;
+import frc.robot.subsystems.*;
 
 import java.io.File;
 import java.util.List;
@@ -32,13 +32,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
+  private final BoxSubsystem m_box = new BoxSubsystem();
+  private final ArmSubsystem m_arm = new ArmSubsystem();
   private final TestMotorSubsystem m_testMotor = new TestMotorSubsystem();
 
   private SendableChooser<Command> m_autonChooser;
 
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  private final CommandXboxController m_OperatorController =
+  private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -62,6 +64,8 @@ public class RobotContainer {
         () -> -m_driverController.getRawAxis(4));
     
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+
+    m_arm.setDefaultCommand(m_arm.setArmPIDCommand(ArmConstants.IdleAngleSP[0], ArmConstants.IdleAngleSP[1]));
   }
 
 
@@ -95,6 +99,45 @@ public class RobotContainer {
         m_swerve.pathFindingCommand();
       })
     );
+
+    // Winds up shoot motors then starts intake/feed motor, afterwards stops both motors.
+    m_operatorController.rightTrigger().whileTrue(
+      m_box.prepareShootCommand()
+      .withTimeout(1)
+      .andThen(m_box.shootCommand())
+      .handleInterrupt(() -> m_box.stopCommand())
+    );
+
+    // Intakes note into robot and keeps it there
+    m_operatorController.leftTrigger().whileTrue(
+      m_box.intakeCommand(false)
+      .until(m_box::isForwardLimitSwitchPressed)
+    );
+
+    // Reverse intake ( rare use case scenario )
+    m_operatorController.back().whileTrue(m_box.intakeCommand(true));
+
+    // Arm set point for picking off the floor
+    m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.FloorAngleSP[0], ArmConstants.FloorAngleSP[1]));
+
+    // Arm set point for picking out of source :)
+    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.SourceAngleSP[0], ArmConstants.SourceAngleSP[1]));
+
+    // Arm set point for playing amp
+    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.AmpAngleSP[0], ArmConstants.AmpAngleSP[1]));
+
+    // Arm set point for playing trap
+    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.TrapAngleSP[0], ArmConstants.TrapAngleSP[1]));
+
+    // Arm set point for shooting speaker from the subwoofer
+    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.SpeakerSubwooferAngleSP[0], ArmConstants.SpeakerSubwooferAngleSP[1]));
+
+    // Arm set point for shooting speaker from the podium
+    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.SpeakerPodiumAngleSP[0], ArmConstants.SpeakerPodiumAngleSP[1]));
+    
+    // Arm set point for shooting horizontally
+    m_operatorController.start().whileTrue(m_arm.setArmPIDCommand(ArmConstants.HorizontalAngleSP[0], ArmConstants.HorizontalAngleSP[1]));
+    
   }
 
   
