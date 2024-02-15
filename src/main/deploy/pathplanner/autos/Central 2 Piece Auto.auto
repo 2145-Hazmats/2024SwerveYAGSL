@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Arm Angle Speaker at Sub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoote Noote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Sub to Center Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Note to Center Sub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoote Noote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Riley's OP Autos",
+  "choreoAuto": false
+}

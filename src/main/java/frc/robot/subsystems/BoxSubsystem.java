@@ -68,7 +68,7 @@ public class BoxSubsystem extends SubsystemBase {
     );
   }
 
-  public boolean isForwardLimitSwitchPressed () {
+  public boolean isForwardLimitSwitchPressed() {
     return intakeMotor.getForwardLimitSwitch(Type.kNormallyOpen).isPressed();
   }
 }

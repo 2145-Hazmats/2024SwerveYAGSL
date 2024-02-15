@@ -2,8 +2,12 @@
   "robotWidth": 0.78,
   "robotLength": 0.78,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "Riley's OP Lines"
+  ],
+  "autoFolders": [
+    "Riley's OP Autos"
+  ],
   "defaultMaxVel": 3.7,
   "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 360.0,

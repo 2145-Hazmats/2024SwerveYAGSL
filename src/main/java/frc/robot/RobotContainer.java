@@ -58,10 +58,12 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auton Picker", m_autonChooser);
 
-    Command driveFieldOrientedAnglularVelocity = m_swerve.driveCommand(
+    Command driveFieldOrientedAnglularVelocity = m_swerve.driveCommandAngularVelocity(
         () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> -m_driverController.getRawAxis(4));
+        () -> -m_driverController.getRawAxis(4),
+        () -> m_driverController.x().getAsBoolean() ? OperatorConstants.kSlowModeSpeed : OperatorConstants.kFastModeSpeed);
+        
     
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
@@ -70,12 +72,15 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    m_driverController.x().toggleOnTrue(
+    /* Driver Controls */
+
+    // Locks the wheels
+    m_driverController.a().toggleOnTrue(
       m_swerve.run(()->{
         m_swerve.lock();
       })
     );
-
+/* 
     m_driverController.a().whileTrue(
       m_testMotor.startEnd(
         ()->{
@@ -86,19 +91,27 @@ public class RobotContainer {
         }
       )
     );
-
+*/
+    // Resets the gyro
     m_driverController.y().onTrue(
       m_swerve.runOnce(()->{
         m_swerve.resetGyro();
       })
     );
 
-    // Use path I created
+    // Use custom path I created
     m_driverController.b().onTrue(
       m_swerve.runOnce(() -> {
         m_swerve.pathFindingCommand();
       })
     );
+
+    // Test the elbow motor
+    m_driverController.a().whileTrue(Commands.run(
+      () -> { m_arm.setElbowSpeed(0.1); }
+    ));
+
+    /* Operator Controls */
 
     // Winds up shoot motors then starts intake/feed motor, afterwards stops both motors.
     m_operatorController.rightTrigger().whileTrue(
@@ -137,7 +150,6 @@ public class RobotContainer {
     
     // Arm set point for shooting horizontally
     m_operatorController.start().whileTrue(m_arm.setArmPIDCommand(ArmConstants.HorizontalAngleSP[0], ArmConstants.HorizontalAngleSP[1]));
-    
   }
 
   
