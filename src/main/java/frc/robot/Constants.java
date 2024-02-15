@@ -31,25 +31,23 @@ public final class Constants {
   }
 
   public static class ArmConstants{
-    public static final int kElbowMotorLeaderID = 30;
-    public static final int kElbowMotorFollowerID = 31;
-    public static final int[] kElbowEncoderIDs = {1,2};
-    public static final int kWristMotorID = 32;
-    public static final int[] kWristEncoderIDs = {1,2};
+    public static final int kElbowMotorLeaderID = 20;
+    public static final int kElbowMotorFollowerID = 21;
+    public static final int kWristMotorID = 22;
 
-    public static final double kElbowP = 0;
-    public static final double kElbowI = 0;
-    public static final double kElbowD = 0;
+    public static final double kElbowP = 0.05; //0.1
+    public static final double kElbowI = 0.000001; //0.0001
+    public static final double kElbowD = 0.1; //1
     public static final double kElbowFF = 0;
-    public static final double kElbowMaxAcceleration = 0;
-    public static final double kElbowMaxVelocity = 0;
+    public static final double kElbowMinSpeed = -0.5;
+    public static final double kElbowMaxSpeed = 0.5;
 
-    public static final double kWristP = 0;
-    public static final double kWristI = 0;
-    public static final double kWristD = 0;
+    public static final double kWristP = 0.1;
+    public static final double kWristI = 0.0001;
+    public static final double kWristD = 1;
     public static final double kWristFF = 0;
-    public static final double kWristMaxAcceleration = 0;
-    public static final double kWristMaxVelocity = 0;
+    public static final double kWristMinSpeed = -0.1;
+    public static final double kWristMaxSpeed = 0.1;
 
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
     public static final double[] FloorAngleSP = {0,0};
@@ -60,7 +58,6 @@ public final class Constants {
     public static final double[] TrapAngleSP = {0,0};
     public static final double[] AmpAngleSP = {0,0};
     public static final double[] HorizontalAngleSP = {0,0};
-    
   }
 
   public static class BoxConstants{

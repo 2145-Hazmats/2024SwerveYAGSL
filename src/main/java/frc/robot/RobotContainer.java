@@ -34,7 +34,7 @@ public class RobotContainer {
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
-  private final TestMotorSubsystem m_testMotor = new TestMotorSubsystem();
+  //private final TestMotorSubsystem m_testMotor = new TestMotorSubsystem();
 
   private SendableChooser<Command> m_autonChooser;
 
@@ -46,9 +46,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    // It works bc it's a command that runs and runs and then it has a timeout so it can stop eventually.
-    // PathPlanner doesn't stop the command or make it keep running, so you might want a run command. This one isn't a run command bc it doesn't need to be one.
-    NamedCommands.registerCommand("SpinTheMotor", m_testMotor.TestStartEndCommand(0.8).withTimeout(1));
+    //NamedCommands.registerCommand("SpinTheMotor", m_testMotor.TestStartEndCommand(0.8).withTimeout(1));
 
     m_swerve.setupPathPlanner();
     m_autonChooser = AutoBuilder.buildAutoChooser();
@@ -66,8 +64,6 @@ public class RobotContainer {
         
     
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-
-    m_arm.setDefaultCommand(m_arm.setArmPIDCommand(ArmConstants.IdleAngleSP[0], ArmConstants.IdleAngleSP[1]));
   }
 
 
@@ -80,18 +76,7 @@ public class RobotContainer {
         m_swerve.lock();
       })
     );
-/* 
-    m_driverController.a().whileTrue(
-      m_testMotor.startEnd(
-        ()->{
-          m_testMotor.setMotor(0.3);
-        }, 
-        ()->{
-          m_testMotor.setMotor(0);
-        }
-      )
-    );
-*/
+
     // Resets the gyro
     m_driverController.y().onTrue(
       m_swerve.runOnce(()->{
@@ -106,10 +91,10 @@ public class RobotContainer {
       })
     );
 
-    // Test the elbow motor
-    m_driverController.a().whileTrue(Commands.run(
-      () -> { m_arm.setElbowSpeed(0.1); }
-    ));
+    // Elbow PID Test
+    m_driverController.povUp().onTrue(m_arm.setArmPIDCommand(45, 0));
+    m_driverController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.IdleAngleSP[0], ArmConstants.IdleAngleSP[1]));
+    m_driverController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
 
     /* Operator Controls */
 
