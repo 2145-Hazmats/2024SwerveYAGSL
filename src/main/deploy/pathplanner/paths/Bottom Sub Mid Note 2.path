@@ -1,0 +1,111 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.6795490514047873,
+        "y": 4.45422134636644
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.8104536608502588,
+        "y": 2.2719022898816124
+      },
+      "isLocked": false,
+      "linkedName": "Bottom Sub"
+    },
+    {
+      "anchor": {
+        "x": 4.651608047866594,
+        "y": 0.8197585582047061
+      },
+      "prevControl": {
+        "x": 4.029990650785646,
+        "y": 0.7309560729074275
+      },
+      "nextControl": {
+        "x": 5.273225444947539,
+        "y": 0.9085610435019846
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.293678213604645,
+        "y": 2.4475648380683346
+      },
+      "prevControl": {
+        "x": 8.893016284881377,
+        "y": 1.9516062441760447
+      },
+      "nextControl": {
+        "x": 7.694340142327913,
+        "y": 2.9435234319606205
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.810980865898964,
+        "y": 0.38645760601079004
+      },
+      "prevControl": {
+        "x": 4.233787943049475,
+        "y": 1.45624719064637
+      },
+      "nextControl": {
+        "x": 7.388173788748453,
+        "y": -0.6833319786247917
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.6795490514047873,
+        "y": 4.45422134636644
+      },
+      "prevControl": {
+        "x": 1.0992541616374143,
+        "y": 5.435879886727356
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Bottom Sub"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 75.17352002964478,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.7,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -60.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Riley's OP Lines",
+  "previewStartingState": {
+    "rotation": -60.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
