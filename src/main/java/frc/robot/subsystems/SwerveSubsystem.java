@@ -205,8 +205,8 @@ public class SwerveSubsystem extends SubsystemBase {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
-            translationX.getAsDouble() * speedMod.getAsDouble(),
-            translationY.getAsDouble() * speedMod.getAsDouble()),
+            translationX.getAsDouble() * swerveDrive.getMaximumVelocity() * speedMod.getAsDouble(),
+            translationY.getAsDouble() * swerveDrive.getMaximumVelocity() * speedMod.getAsDouble()),
           Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity() * speedMod.getAsDouble(),
           true, 
           false);
