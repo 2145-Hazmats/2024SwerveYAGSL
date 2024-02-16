@@ -25,7 +25,7 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.01;
     public static final double RIGHT_Y_DEADBAND = 0.01;
 
-    public static final double kSlowModeSpeed = 0.5;
+    public static final double kSlowModeSpeed = 0.1;
     public static final double kFastModeSpeed = 1;
   }
 
