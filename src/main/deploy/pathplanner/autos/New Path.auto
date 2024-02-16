@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.28,
-      "y": 5.528365618134744
+      "x": 1.3959954881393342,
+      "y": 5.574358195791997
     },
     "rotation": 0
   },
@@ -14,18 +14,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Sub to Center Note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Center Note to Center Sub"
+            "pathName": "cool new path i guess"
           }
         }
       ]
     }
   },
-  "folder": "Riley's OP Autos",
+  "folder": null,
   "choreoAuto": false
 }
