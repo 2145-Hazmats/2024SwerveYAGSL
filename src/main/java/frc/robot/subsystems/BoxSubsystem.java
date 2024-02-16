@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BoxSubsystem extends SubsystemBase {
-
   private CANSparkMax shooterMotor = new CANSparkMax(BoxConstants.kShooterMotorID, MotorType.kBrushless);
   private CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
 
@@ -71,4 +70,5 @@ public class BoxSubsystem extends SubsystemBase {
   public boolean isForwardLimitSwitchPressed() {
     return intakeMotor.getForwardLimitSwitch(Type.kNormallyOpen).isPressed();
   }
+
 }

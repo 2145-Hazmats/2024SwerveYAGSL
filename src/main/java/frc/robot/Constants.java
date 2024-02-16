@@ -4,8 +4,8 @@
 
 package frc.robot;
 
+
 public final class Constants {
-  
   public static class SwerveConstants {
     public static final double MAX_SPEED = 3.70;         // maximum m/s for the robot
     /* PathPlanner constants */
@@ -15,7 +15,6 @@ public final class Constants {
     //public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
     //public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
   }
-  
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort   = 0;
@@ -34,13 +33,15 @@ public final class Constants {
     public static final int kElbowMotorLeaderID = 20;
     public static final int kElbowMotorFollowerID = 21;
     public static final int kWristMotorID = 22;
+    public static final double kElbowMotorNominalVoltage = 11.5;
+    public static final double kWristMotorNominalVoltage = 11.5;
 
     public static final double kElbowP = 0.05; //0.1
     public static final double kElbowI = 0.000001; //0.0001
     public static final double kElbowD = 0.1; //1
     public static final double kElbowFF = 0;
-    public static final double kElbowMinSpeed = -0.5;
-    public static final double kElbowMaxSpeed = 0.5;
+    public static final double kElbowMinSpeed = -1.0;
+    public static final double kElbowMaxSpeed = 1.0;
 
     public static final double kWristP = 0.1;
     public static final double kWristI = 0.0001;
@@ -71,4 +72,5 @@ public final class Constants {
     public static final double kShooterSpeed = 0.5;
     public static final double kFeedSpeed = 0.5;
   }
+
 }

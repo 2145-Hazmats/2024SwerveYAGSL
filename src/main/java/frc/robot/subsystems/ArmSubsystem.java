@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +25,9 @@ public class ArmSubsystem extends SubsystemBase {
   private RelativeEncoder wristEncoder = wristMotor.getAlternateEncoder(8192);
   private SparkPIDController wristPIDController = wristMotor.getPIDController();
 
+  private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
+  private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
+
   /** Creates a new Arm. */
   public ArmSubsystem() {
     elbowMotorLeader.restoreFactoryDefaults();
@@ -33,6 +36,11 @@ public class ArmSubsystem extends SubsystemBase {
     elbowMotorFollower.follow(elbowMotorLeader, true);
 
     wristMotor.restoreFactoryDefaults();
+
+    elbowMotorLeader.enableVoltageCompensation(ArmConstants.kElbowMotorNominalVoltage);
+    elbowMotorFollower.enableVoltageCompensation(ArmConstants.kElbowMotorNominalVoltage);
+    wristMotor.enableVoltageCompensation(ArmConstants.kWristMotorNominalVoltage);
+
 
     elbowEncoder.setPositionConversionFactor(180);
     wristEncoder.setPositionConversionFactor(180);
@@ -67,8 +75,10 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist FF", ArmConstants.kWristFF);
     SmartDashboard.putNumber("Wrist Set Point", 0);
   }
+  
 
   public Command setArmPIDCommand(double elbowAngle, double wristAngle ) {
+    // This is where we should put a start end command. Start is what we have right now, and End is the default idle position
     return runOnce(() -> {
       elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
       wristPIDController.setReference(wristAngle, ControlType.kPosition);
@@ -77,6 +87,7 @@ public class ArmSubsystem extends SubsystemBase {
     });
   }
 
+
   public Command stopArmCommand() {
     return runOnce(() -> {
       elbowPIDController.setReference(0, ControlType.kVelocity);
@@ -84,28 +95,61 @@ public class ArmSubsystem extends SubsystemBase {
     });
   }
 
+
   public void setElbowSpeed(double speed) {
     elbowMotorLeader.set(speed);
   }
+
 
   public void setWristSpeed(double speed) {
     wristMotor.set(speed);
   }
 
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //elbowPIDController.setP(SmartDashboard.getNumber("Elbow P", 0));
-    //elbowPIDController.setI(SmartDashboard.getNumber("Elbow I", 0));
-    //elbowPIDController.setD(SmartDashboard.getNumber("Elbow D", 0));
-    //elbowPIDController.setFF(SmartDashboard.getNumber("Elbow FF", 0));
-    //elbowPIDController.setReference(SmartDashboard.getNumber("Elbow Set Point", 0), ControlType.kPosition);
+    if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
+      elbowP = SmartDashboard.getNumber("Elbow P", 0);
+      elbowPIDController.setP(elbowP);
+    }
+    if (elbowI != SmartDashboard.getNumber("Elbow I", 0)) {
+      elbowI = SmartDashboard.getNumber("Elbow I", 0);
+      elbowPIDController.setI(elbowI);
+    }
+    if (elbowD != SmartDashboard.getNumber("Elbow D", 0)) {
+      elbowD = SmartDashboard.getNumber("Elbow D", 0);
+      elbowPIDController.setD(elbowD);
+    }
+    if (elbowFF != SmartDashboard.getNumber("Elbow FF", 0)) {
+      elbowFF = SmartDashboard.getNumber("Elbow FF", 0);
+      elbowPIDController.setFF(elbowFF);
+    }
+    if (elbowSetPoint != SmartDashboard.getNumber("Elbow Set Point", 0)) {
+      elbowSetPoint = SmartDashboard.getNumber("Elbow Set Point", 0);
+      elbowPIDController.setReference(elbowSetPoint, ControlType.kPosition);
+    }
 
-    //wristPIDController.setP(SmartDashboard.getNumber("Wrist P", 0));
-    //wristPIDController.setI(SmartDashboard.getNumber("Wrist I", 0));
-    //wristPIDController.setD(SmartDashboard.getNumber("Wrist D", 0));
-    //wristPIDController.setFF(SmartDashboard.getNumber("Wrist FF", 0));
-    //wristPIDController.setReference(SmartDashboard.getNumber("Wrist Set Point", 0), ControlType.kPosition);
+    if (wristP != SmartDashboard.getNumber("Wrist P", 0)) {
+      wristP = SmartDashboard.getNumber("Wrist P", 0);
+      wristPIDController.setP(wristP);
+    }
+    if (wristI != SmartDashboard.getNumber("Wrist I", 0)) {
+      wristI = SmartDashboard.getNumber("Wrist I", 0);
+      wristPIDController.setI(wristI);
+    }
+    if (wristD != SmartDashboard.getNumber("Wrist D", 0)) {
+      wristD = SmartDashboard.getNumber("Wrist D", 0);
+      wristPIDController.setD(wristD);
+    }
+    if (wristFF != SmartDashboard.getNumber("Wrist FF", 0)) {
+      wristFF = SmartDashboard.getNumber("Wrist FF", 0);
+      wristPIDController.setFF(wristFF);
+    }
+    if (wristSetPoint != SmartDashboard.getNumber("Wrist Set Point", 0)) {
+      wristSetPoint = SmartDashboard.getNumber("Wrist Set Point", 0);
+      wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
+    }
 
     SmartDashboard.putNumber("Elbow Angular Velocity", elbowEncoder.getVelocity());
     SmartDashboard.putNumber("Elbow Angle", elbowEncoder.getPosition());

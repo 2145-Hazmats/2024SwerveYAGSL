@@ -5,9 +5,6 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathHolonomic;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -26,7 +23,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
-import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -409,24 +405,7 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
-  /*
-  // I'm creating a path on-the-fly right here
-  final List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-      new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
-      new Pose2d(1.0, 0.0, Rotation2d.fromDegrees(0))
-  );
-
-  final PathPlannerPath path = new PathPlannerPath(
-      bezierPoints, 
-      new PathConstraints(1.0, 1.0, 180, 180),
-      new GoalEndState(0, Rotation2d.fromDegrees(0.0)));
-  
-  // Now I'm going to use the path on-the-fly
-  public Command onTheFlyPathCommand() {
-    return AutoBuilder.followPath(path);
-  }
-  */
-
+  // On-the-fly path testing
   public Command pathFindingCommand() {
     Pose2d targetPose = new Pose2d(10, 5, Rotation2d.fromDegrees(180));
 
@@ -439,14 +418,16 @@ public class SwerveSubsystem extends SubsystemBase {
     return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
   }
 
+
+
   /**
    * SubsystemBase WPI Methods
    **/
 
   @Override
   public void periodic() {}
-  
 
   @Override
   public void simulationPeriodic() {}
+
 }

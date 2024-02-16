@@ -9,24 +9,15 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.*;
 
 import java.io.File;
-import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -34,7 +25,6 @@ public class RobotContainer {
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
-  //private final TestMotorSubsystem m_testMotor = new TestMotorSubsystem();
 
   private SendableChooser<Command> m_autonChooser;
 
@@ -46,7 +36,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    //NamedCommands.registerCommand("SpinTheMotor", m_testMotor.TestStartEndCommand(0.8).withTimeout(1));
+    NamedCommands.registerCommand("MoveArm", m_arm.setArmPIDCommand(10, 0).withTimeout(1));
 
     m_swerve.setupPathPlanner();
     m_autonChooser = AutoBuilder.buildAutoChooser();
@@ -60,16 +50,14 @@ public class RobotContainer {
         () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> -m_driverController.getRawAxis(4),
-        () -> m_driverController.x().getAsBoolean() ? OperatorConstants.kSlowModeSpeed : OperatorConstants.kFastModeSpeed);
+        () -> m_driverController.rightBumper().getAsBoolean() ? OperatorConstants.kSlowModeSpeed : OperatorConstants.kFastModeSpeed);
         
-    
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
   }
 
 
   private void configureBindings() {
     /* Driver Controls */
-
     // Locks the wheels
     m_driverController.a().toggleOnTrue(
       m_swerve.run(()->{
@@ -84,20 +72,12 @@ public class RobotContainer {
       })
     );
 
-    // Use custom path I created
-    m_driverController.b().onTrue(
-      m_swerve.runOnce(() -> {
-        m_swerve.pathFindingCommand();
-      })
-    );
-
     // Elbow PID Test
-    m_driverController.povUp().onTrue(m_arm.setArmPIDCommand(45, 0));
-    m_driverController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.IdleAngleSP[0], ArmConstants.IdleAngleSP[1]));
-    m_driverController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
+    m_driverController.povUp().whileTrue(m_arm.setArmPIDCommand(45, 0));
+    m_driverController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.IdleAngleSP[0], ArmConstants.IdleAngleSP[1]));
+    m_driverController.povDown().whileTrue(m_arm.setArmPIDCommand(-45, 0));
 
     /* Operator Controls */
-
     // Winds up shoot motors then starts intake/feed motor, afterwards stops both motors.
     m_operatorController.rightTrigger().whileTrue(
       m_box.prepareShootCommand()
@@ -137,13 +117,8 @@ public class RobotContainer {
     m_operatorController.start().whileTrue(m_arm.setArmPIDCommand(ArmConstants.HorizontalAngleSP[0], ArmConstants.HorizontalAngleSP[1]));
   }
 
-  
-  public void SetMotorBrake(boolean brake) {
-    m_swerve.setMotorBrake(brake);
-  }
-
-
   public Command getAutonomousCommand() {
     return m_autonChooser.getSelected();
   }
+
 }
