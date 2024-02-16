@@ -51,7 +51,7 @@ public class RobotContainer {
         () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> -m_driverController.getRawAxis(4),
         () -> m_driverController.rightBumper().getAsBoolean() ? OperatorConstants.kSlowModeSpeed : OperatorConstants.kFastModeSpeed);
-        
+    
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
   }
 

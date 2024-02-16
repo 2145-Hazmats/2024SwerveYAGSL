@@ -9,11 +9,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import frc.robot.Constants.BoxConstants;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 public class BoxSubsystem extends SubsystemBase {
   private CANSparkMax shooterMotor = new CANSparkMax(BoxConstants.kShooterMotorID, MotorType.kBrushless);
@@ -66,6 +65,7 @@ public class BoxSubsystem extends SubsystemBase {
       }
     );
   }
+
 
   public boolean isForwardLimitSwitchPressed() {
     return intakeMotor.getForwardLimitSwitch(Type.kNormallyOpen).isPressed();

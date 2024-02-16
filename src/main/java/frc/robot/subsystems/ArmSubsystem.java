@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
+
 public class ArmSubsystem extends SubsystemBase {
   private final CANSparkMax elbowMotorLeader = new CANSparkMax(ArmConstants.kElbowMotorLeaderID, MotorType.kBrushless);
   private final CANSparkMax elbowMotorFollower = new CANSparkMax(ArmConstants.kElbowMotorFollowerID, MotorType.kBrushless);
@@ -63,6 +64,7 @@ public class ArmSubsystem extends SubsystemBase {
     wristPIDController.setFF(ArmConstants.kWristFF);
     wristPIDController.setOutputRange(ArmConstants.kWristMinSpeed, ArmConstants.kWristMaxSpeed);
 
+    
     SmartDashboard.putNumber("Elbow P", ArmConstants.kElbowP);
     SmartDashboard.putNumber("Elbow I", ArmConstants.kElbowI);
     SmartDashboard.putNumber("Elbow D", ArmConstants.kElbowD);
@@ -75,7 +77,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist FF", ArmConstants.kWristFF);
     SmartDashboard.putNumber("Wrist Set Point", 0);
   }
-  
+
 
   public Command setArmPIDCommand(double elbowAngle, double wristAngle ) {
     // This is where we should put a start end command. Start is what we have right now, and End is the default idle position
