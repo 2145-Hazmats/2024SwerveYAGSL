@@ -12,6 +12,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
@@ -81,12 +82,18 @@ public class ArmSubsystem extends SubsystemBase {
 
   public Command setArmPIDCommand(double elbowAngle, double wristAngle ) {
     // This is where we should put a start end command. Start is what we have right now, and End is the default idle position
-    return runOnce(() -> {
-      elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
-      wristPIDController.setReference(wristAngle, ControlType.kPosition);
-      SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
-      SmartDashboard.putNumber("Wrist Set Point", wristAngle);
-    });
+    return startEnd(
+      () -> {
+        elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
+        wristPIDController.setReference(wristAngle, ControlType.kPosition);
+        SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
+        SmartDashboard.putNumber("Wrist Set Point", wristAngle);
+      },
+      () -> {
+        elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
+        wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
+      }
+    );
   }
 
 
@@ -103,8 +110,28 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
 
+  public Command manualElbowCommand(Double speed) {
+    //double standStill = wristEncoder.getPosition();
+    //wristPIDController.setReference(standStill, ControlType.kPosition);
+    return run(() -> {
+      //elbowMotorLeader.set(speed);
+      elbowPIDController.setReference(speed, ControlType.kDutyCycle);
+    }).handleInterrupt(() -> elbowPIDController.setReference(elbowEncoder.getPosition(), ControlType.kPosition));
+  }
+
+
   public void setWristSpeed(double speed) {
     wristMotor.set(speed);
+  }
+
+
+  public Command manualWristCommand(Double speed) {
+    //double standStill = elbowEncoder.getPosition();
+    //elbowPIDController.setReference(standStill, ControlType.kPosition);
+    return run(() -> {
+      //wristMotorLeader.set(speed)
+      wristPIDController.setReference(speed, ControlType.kDutyCycle);
+    }).handleInterrupt(() -> wristPIDController.setReference(wristEncoder.getPosition(), ControlType.kPosition));
   }
 
 

@@ -52,25 +52,30 @@ public final class Constants {
     public static final double kWristMaxSpeed = 0.1;
 
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
-    public static final double[] FloorAngleSP = {0,0};
-    public static final double[] SourceAngleSP = {0,0};
-    public static final double[] IdleAngleSP = {0,0};
-    public static final double[] SpeakerSubwooferAngleSP = {0,0};
-    public static final double[] SpeakerPodiumAngleSP = {0,0};
-    public static final double[] TrapAngleSP = {0,0};
-    public static final double[] AmpAngleSP = {0,0};
-    public static final double[] HorizontalAngleSP = {0,0};
+    public static final double[] kFloorAngleSP = {0, 0};
+    public static final double[] kSourceAngleSP = {15, 30};
+    public static final double[] kIdleAngleSP = {30, 15};
+    public static final double[] kSpeakerSubwooferAngleSP = {45, 60};
+    public static final double[] kSpeakerPodiumAngleSP = {-20, 30};
+    public static final double[] kTrapAngleSP = {25, 25};
+    public static final double[] kAmpAngleSP = {-15, 20};
+    public static final double[] kHorizontalAngleSP = {30, 30};
+
+    public static final double[][] kMasterAngleArray = {
+        kFloorAngleSP, kSourceAngleSP, kIdleAngleSP, kSpeakerSubwooferAngleSP,
+        kSpeakerPodiumAngleSP, kTrapAngleSP, kAmpAngleSP, kHorizontalAngleSP
+    };
   }
 
   public static class BoxConstants{
-    public static final int kShooterMotorID = 60;
-    public static final int kIntakeMotorID = 61;
+    public static final int kShooterMotorID = 30;
+    public static final int kIntakeMotorID = 31;
     public static final int kForwardLimitSwitchID = 0;
     public static final double kIntakeMotorNominalVoltage = 11.5;
     public static final double kShooterMotorNominalVoltage = 11.5;
 
-    public static final double kIntakeSpeed = 0.5;
-    public static final double kShooterSpeed = 0.5;
+    public static final double kIntakeSpeed = 1;
+    public static final double kShooterSpeed = 0.1;
     public static final double kFeedSpeed = 0.5;
   }
 

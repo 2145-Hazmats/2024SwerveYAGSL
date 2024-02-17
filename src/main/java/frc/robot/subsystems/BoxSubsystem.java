@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
+import frc.robot.Constants;
 import frc.robot.Constants.BoxConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,13 +27,15 @@ public class BoxSubsystem extends SubsystemBase {
 
     intakeMotor.enableVoltageCompensation(BoxConstants.kIntakeMotorNominalVoltage);
     shooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
+
+    shooterMotor.setInverted(true);
   }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("isForwardLimitSwitchPressed", isForwardLimitSwitchPressed());
+    SmartDashboard.putBoolean("isForwardLimitSwitchPressed", isForwardLimitSwitchPressed()); //might be reverse
   }
 
 
@@ -53,6 +56,15 @@ public class BoxSubsystem extends SubsystemBase {
     return startEnd(
       () -> intakeMotor.set(BoxConstants.kFeedSpeed), 
       () -> stopCommand()
+    );
+  }
+
+
+  public Command shootCommand2() {
+    //shooterMotor.set(Constants.BoxConstants.kShooterSpeed);
+    //intakeMotor.set(Constants.BoxConstants.kIntakeSpeed);
+    return runOnce(() -> intakeMotor.set(BoxConstants.kFeedSpeed)).withTimeout(1).andThen(() -> shooterMotor.set(BoxConstants.kFeedSpeed), this)
+    .handleInterrupt(() -> stopCommand()
     );
   }
 

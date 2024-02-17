@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.8104536608502588,
-        "y": 2.2719022898816124
+        "x": 0.7050561319382253,
+        "y": 3.6537810022838304
       },
       "isLocked": false,
       "linkedName": "Bottom Sub"
     },
     {
       "anchor": {
-        "x": 6.185727635363972,
-        "y": 0.9134452505709579
+        "x": 6.619028587557887,
+        "y": 0.772915212021579
       },
       "prevControl": {
-        "x": 5.062076593604258,
-        "y": 0.788595134819879
+        "x": 6.266134795297084,
+        "y": 0.7842988827396705
       },
       "nextControl": {
-        "x": 6.9235103377482075,
-        "y": 0.9954211063914283
+        "x": 6.982064520477113,
+        "y": 0.7612043754757963
       },
       "isLocked": false,
       "linkedName": null
@@ -79,20 +79,20 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 8.471144633014818,
+      "rotationDegrees": 56.821488340607225,
       "rotateFast": false
     },
     {
       "waypointRelativePos": 2,
       "rotationDegrees": 131.76029970389803,
-      "rotateFast": false
+      "rotateFast": true
     }
   ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.7,
-    "maxAcceleration": 2.5,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0
   },
@@ -107,5 +107,5 @@
     "rotation": -60.0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

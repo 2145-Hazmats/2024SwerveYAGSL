@@ -46,17 +46,19 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auton Picker", m_autonChooser);
   
-    m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
-        () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> -m_driverController.getRawAxis(4),
-        Constants.OperatorConstants.kFastModeSpeed
-    ));
+    //m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
+    //    () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+    //    () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+    //    () -> -m_driverController.getRawAxis(4),
+    //    Constants.OperatorConstants.kFastModeSpeed
+    //));
   }
 
 
   private void configureBindings() {
     /* Driver Controls */
+
+    /*
     // Locks the wheels
     m_driverController.start().toggleOnTrue(
       m_swerve.run(()->{
@@ -64,13 +66,24 @@ public class RobotContainer {
       })
     );
 
-    m_driverController.a().onTrue(m_swerve.driveCommandPoint(
+    // Rotate towards the driver
+    m_driverController.a().whileTrue(m_swerve.driveCommandPoint(
       () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
       () -> 0,
       () -> -1
-    ).until(() -> Math.abs(m_driverController.getRightX()) >= OperatorConstants.RIGHT_X_DEADBAND));
-    
+    ));
+
+
+    //m_driverController.a().onTrue(m_swerve.driveCommandPoint(
+    //  () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+    //  () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+    //  () -> 0,
+    //  () -> -1
+    //).until(() -> Math.abs(m_driverController.getRightX()) >= OperatorConstants.RIGHT_X_DEADBAND));
+
+
+    // Rotate to the right
     m_driverController.b().whileTrue(m_swerve.driveCommandPoint(
       () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
@@ -78,6 +91,7 @@ public class RobotContainer {
       () -> 0
     ));
 
+    // Rotate to the left
     m_driverController.x().whileTrue(m_swerve.driveCommandPoint(
       () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
@@ -85,6 +99,7 @@ public class RobotContainer {
       () -> 0
     ));
 
+    // Rotate away from the driver
     m_driverController.y().whileTrue(m_swerve.driveCommandPoint(
       () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
@@ -99,6 +114,7 @@ public class RobotContainer {
       })
     );
  
+    // Medium speed
     m_driverController.rightTrigger().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -108,6 +124,7 @@ public class RobotContainer {
       )
     );
   
+    // Slow speed
     m_driverController.leftTrigger().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -117,6 +134,7 @@ public class RobotContainer {
       )
     );
 
+    // Alternate drive mode
     m_driverController.rightBumper().toggleOnTrue(m_swerve.driveCommandPoint(
       () -> MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
@@ -124,20 +142,24 @@ public class RobotContainer {
       () -> MathUtil.applyDeadband(-m_driverController.getRightY(), OperatorConstants.LEFT_X_DEADBAND)
     ));
 
-
     // Elbow PID Test
     m_driverController.povUp().onTrue(m_arm.setArmPIDCommand(45, 0));
-    m_driverController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.IdleAngleSP[0], ArmConstants.IdleAngleSP[1]));
+    m_driverController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]));
     m_driverController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
+    */
 
     /* Operator Controls */
    
     // Winds up shoot motors then starts intake/feed motor, afterwards stops both motors.
+    //m_operatorController.rightTrigger().whileTrue(
+    //  m_box.prepareShootCommand()
+    //  .handleInterrupt(() -> m_box.stopCommand())
+    //  .withTimeout(1)
+    //  .andThen(m_box.shootCommand())
+    //);
+
     m_operatorController.rightTrigger().whileTrue(
-      m_box.prepareShootCommand()
-      .withTimeout(1)
-      .andThen(m_box.shootCommand())
-      .handleInterrupt(() -> m_box.stopCommand())
+      m_box.shootCommand2()
     );
 
     // Intakes note into robot and keeps it there
@@ -146,30 +168,39 @@ public class RobotContainer {
       .until(m_box::isForwardLimitSwitchPressed)
     );
 
+    m_operatorController.a().whileTrue(
+      m_box.stopCommand()
+    );
+
+    /*
+    // Manual control
+    m_operatorController.button(9).toggleOnTrue(m_arm.manualElbowCommand(m_operatorController.getLeftY()));
+    m_operatorController.button(10).toggleOnTrue(m_arm.manualWristCommand(m_operatorController.getRightY()));   
+
     // Reverse intake ( rare use case scenario )
     m_operatorController.back().onTrue(m_box.intakeCommand(true));
 
     // Arm set point for picking off the floor
-    m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(ArmConstants.FloorAngleSP[0], ArmConstants.FloorAngleSP[1]));
+    m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]));
 
     // Arm set point for picking out of source :)
-    m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(ArmConstants.SourceAngleSP[0], ArmConstants.SourceAngleSP[1]));
+    m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSourceAngleSP[0], ArmConstants.kSourceAngleSP[1]));
 
     // Arm set point for playing amp
-    m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.AmpAngleSP[0], ArmConstants.AmpAngleSP[1]));
+    m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
 
     // Arm set point for playing trap
-    m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.TrapAngleSP[0], ArmConstants.TrapAngleSP[1]));
+    m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.kTrapAngleSP[0], ArmConstants.kTrapAngleSP[1]));
 
     // Arm set point for shooting speaker from the subwoofer
-    m_operatorController.y().onTrue(m_arm.setArmPIDCommand(ArmConstants.SpeakerSubwooferAngleSP[0], ArmConstants.SpeakerSubwooferAngleSP[1]));
+    m_operatorController.y().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerSubwooferAngleSP[0], ArmConstants.kSpeakerSubwooferAngleSP[1]));
 
     // Arm set point for shooting speaker from the podium
-    m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.SpeakerPodiumAngleSP[0], ArmConstants.SpeakerPodiumAngleSP[1]));
+    m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.start().onTrue(m_arm.setArmPIDCommand(ArmConstants.HorizontalAngleSP[0], ArmConstants.HorizontalAngleSP[1]));
-  
+    m_operatorController.start().onTrue(m_arm.setArmPIDCommand(ArmConstants.kHorizontalAngleSP[0], ArmConstants.kHorizontalAngleSP[1])); 
+  */
   }
 
   public Command getAutonomousCommand() {
