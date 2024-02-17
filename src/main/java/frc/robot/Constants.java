@@ -25,16 +25,17 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.01;
     public static final double RIGHT_Y_DEADBAND = 0.01;
 
-    public static final double kSlowModeSpeed = 0.1;
     public static final double kFastModeSpeed = 1;
+    public static final double kMidModeSpeed = 0.5;
+    public static final double kSlowModeSpeed = 0.1;
   }
 
   public static class ArmConstants{
     public static final int kElbowMotorLeaderID = 20;
     public static final int kElbowMotorFollowerID = 21;
     public static final int kWristMotorID = 22;
-    public static final double kElbowMotorNominalVoltage = 11.5;
-    public static final double kWristMotorNominalVoltage = 11.5;
+    public static final double kElbowMotorNominalVoltage = 12;
+    public static final double kWristMotorNominalVoltage = 12;
 
     public static final double kElbowP = 0.05; //0.1
     public static final double kElbowI = 0.000001; //0.0001

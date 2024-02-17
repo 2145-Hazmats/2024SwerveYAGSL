@@ -174,17 +174,17 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param headingY     Heading Y to calculate angle of the joystick.
    * @return Drive command.
    */
-  public Command driveCommandPoint(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY,DoubleSupplier speedMod) {
+  public Command driveCommandPoint(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY) {
     swerveDrive.setHeadingCorrection(true, 0.01); // Normally you would want heading correction for this kind of control.
     return run(() -> {
-      double xInput =translationX.getAsDouble() * speedMod.getAsDouble() ; // Smooth controll out
-      double yInput = translationY.getAsDouble() * speedMod.getAsDouble(); // Smooth controll out
+      double xInput =translationX.getAsDouble(); // Smooth controll out
+      double yInput = translationY.getAsDouble(); // Smooth controll out
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
           headingX.getAsDouble(),
           headingY.getAsDouble(),
           swerveDrive.getYaw().getRadians(),
-          swerveDrive.getMaximumVelocity() * speedMod.getAsDouble()));
+          swerveDrive.getMaximumVelocity()));
     });
   }
 
@@ -196,18 +196,19 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
    * @return Drive command.
    */
-  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, DoubleSupplier speedMod) {
+  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, double nerfChooser) {
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
-            translationX.getAsDouble() * swerveDrive.getMaximumVelocity() * speedMod.getAsDouble(),
-            translationY.getAsDouble() * swerveDrive.getMaximumVelocity() * speedMod.getAsDouble()),
-          Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity() * speedMod.getAsDouble(),
+            translationX.getAsDouble() * swerveDrive.getMaximumVelocity() * nerfChooser,
+            translationY.getAsDouble() * swerveDrive.getMaximumVelocity() * nerfChooser),
+          Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
           true, 
           false);
     });
   }
+
 
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
