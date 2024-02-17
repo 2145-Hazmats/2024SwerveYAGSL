@@ -10,6 +10,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -30,16 +32,12 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
-
-  /**
-   * Constructor and setup methods (automatically called)
-   **/
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -48,7 +46,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE; // No verbosity
 
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED);
@@ -85,13 +83,12 @@ public class SwerveSubsystem extends SubsystemBase {
           var alliance = DriverStation.getAlliance();
           return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
         },
-        this); // Reference to this subsystem to set requirements
+    this); // Reference to this subsystem to set requirements
   }
 
 
-
   /**
-   * High-level Methods
+   * Drive Methods
    **/
 
   /**
@@ -131,13 +128,15 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.driveFieldOriented(velocity);
   }
 
+
+
+  /**
+   * Other Methods
+   **/
+
   /* Lock the swerve drive to prevent it from moving */
   public void lock() {
     swerveDrive.lockPose();
-  }
-
-  public void resetGyro(){
-    swerveDrive.setGyro(new Rotation3d(0, 0, 0));
   }
 
 
@@ -177,8 +176,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command driveCommandPoint(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY) {
     swerveDrive.setHeadingCorrection(true, 0.01); // Normally you would want heading correction for this kind of control.
     return run(() -> {
-      double xInput =translationX.getAsDouble(); // Smooth controll out
-      double yInput = translationY.getAsDouble(); // Smooth controll out
+      double xInput = MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND); // Smooth controll out
+      double yInput = MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND); // Smooth controll out
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
           headingX.getAsDouble(),
@@ -201,14 +200,13 @@ public class SwerveSubsystem extends SubsystemBase {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
-            translationX.getAsDouble() * swerveDrive.getMaximumVelocity() * nerfChooser,
-            translationY.getAsDouble() * swerveDrive.getMaximumVelocity() * nerfChooser),
-          Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
+            MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
+            MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser),
+          Math.pow(MathUtil.applyDeadband(angularRotationX.getAsDouble(), OperatorConstants.RIGHT_X_DEADBAND), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
           true, 
           false);
     });
   }
-
 
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
@@ -384,6 +382,11 @@ public class SwerveSubsystem extends SubsystemBase {
   /* Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0 */
   public void zeroGyro() {
     swerveDrive.zeroGyro();
+  }
+
+  // Resets the gyro angle
+  public void resetGyro(){
+    swerveDrive.setGyro(new Rotation3d(0, 0, 0));
   }
 
   /**

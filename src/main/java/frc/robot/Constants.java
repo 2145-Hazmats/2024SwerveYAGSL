@@ -6,6 +6,7 @@ package frc.robot;
 
 
 public final class Constants {
+  /* Constants for the swerve chassis */
   public static class SwerveConstants {
     public static final double MAX_SPEED = 3.70;         // maximum m/s for the robot
     /* PathPlanner constants */
@@ -16,67 +17,72 @@ public final class Constants {
     //public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
   }
 
+  /* Constants for the controllers */
   public static class OperatorConstants {
     public static final int kDriverControllerPort   = 0;
     public static final int kOperatorControllerPort = 1;
     /* Deadbands */
-    public static final double LEFT_X_DEADBAND  = 0.03;
-    public static final double LEFT_Y_DEADBAND  = 0.03;
-    public static final double RIGHT_X_DEADBAND = 0.01;
-    public static final double RIGHT_Y_DEADBAND = 0.01;
-
+    public static final double LEFT_X_DEADBAND  = 0.02;
+    public static final double LEFT_Y_DEADBAND  = 0.02;
+    public static final double RIGHT_X_DEADBAND = 0.02;
+    public static final double RIGHT_Y_DEADBAND = 0.02;
+    /* Speed Modes */
     public static final double kFastModeSpeed = 1;
-    public static final double kMidModeSpeed = 0.5;
+    public static final double kMidModeSpeed  = 0.5;
     public static final double kSlowModeSpeed = 0.1;
   }
 
+  /* Constants for the arm subsystem */
   public static class ArmConstants{
-    public static final int kElbowMotorLeaderID = 20;
+    // Motor IDs
+    public static final int kElbowMotorLeaderID   = 20;
     public static final int kElbowMotorFollowerID = 21;
-    public static final int kWristMotorID = 22;
+    public static final int kWristMotorID         = 22;
+    // NominalVoltage
     public static final double kElbowMotorNominalVoltage = 12;
     public static final double kWristMotorNominalVoltage = 12;
-
-    public static final double kElbowP = 0.05; //0.1
-    public static final double kElbowI = 0.000001; //0.0001
-    public static final double kElbowD = 0.1; //1
-    public static final double kElbowFF = 0;
-    public static final double kElbowMinSpeed = -1.0;
-    public static final double kElbowMaxSpeed = 1.0;
-
-    public static final double kWristP = 0.1;
-    public static final double kWristI = 0.0001;
-    public static final double kWristD = 1;
-    public static final double kWristFF = 0;
+    // Elbow PID + PID max speed
+    public static final double kElbowP        = 0.05; //0.1
+    public static final double kElbowI        = 0.000001; //0.0001
+    public static final double kElbowD        = 0.1; //1
+    public static final double kElbowFF       = 0;
+    public static final double kElbowMinSpeed = -0.4;
+    public static final double kElbowMaxSpeed = 0.4;
+    // Wrist PID + PID max speed
+    public static final double kWristP        = 0.1;
+    public static final double kWristI        = 0.0001;
+    public static final double kWristD        = 1;
+    public static final double kWristFF       = 0;
     public static final double kWristMinSpeed = -0.1;
     public static final double kWristMaxSpeed = 0.1;
-
+    // Setpoints for the arm subsystem
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
-    public static final double[] kFloorAngleSP = {0, 0};
-    public static final double[] kSourceAngleSP = {15, 30};
-    public static final double[] kIdleAngleSP = {30, 15};
-    public static final double[] kSpeakerSubwooferAngleSP = {45, 60};
-    public static final double[] kSpeakerPodiumAngleSP = {-20, 30};
-    public static final double[] kTrapAngleSP = {25, 25};
-    public static final double[] kAmpAngleSP = {-15, 20};
-    public static final double[] kHorizontalAngleSP = {30, 30};
-
-    public static final double[][] kMasterAngleArray = {
-        kFloorAngleSP, kSourceAngleSP, kIdleAngleSP, kSpeakerSubwooferAngleSP,
-        kSpeakerPodiumAngleSP, kTrapAngleSP, kAmpAngleSP, kHorizontalAngleSP
-    };
+    public static final double[] kFloorAngleSP            = {0, 0};
+    public static final double[] kSourceAngleSP           = {0, 0};
+    public static final double[] kIdleAngleSP             = {0, 0};
+    public static final double[] kSpeakerSubwooferAngleSP = {0, 0};
+    public static final double[] kSpeakerPodiumAngleSP    = {0, 0};
+    public static final double[] kTrapAngleSP             = {0, 0};
+    public static final double[] kAmpAngleSP              = {0, 0};
+    public static final double[] kHorizontalAngleSP       = {0, 0};
   }
 
+  /* Constants for the box subsystem */
   public static class BoxConstants{
+    // Motor IDs
     public static final int kShooterMotorID = 30;
-    public static final int kIntakeMotorID = 31;
-    public static final int kForwardLimitSwitchID = 0;
-    public static final double kIntakeMotorNominalVoltage = 11.5;
-    public static final double kShooterMotorNominalVoltage = 11.5;
-
-    public static final double kIntakeSpeed = 1;
-    public static final double kShooterSpeed = 0.1;
-    public static final double kFeedSpeed = 0.5;
+    public static final int kIntakeMotorID  = 31;
+    // Nominal Voltage
+    public static final double kIntakeMotorNominalVoltage  = 12;
+    public static final double kShooterMotorNominalVoltage = 12;
+    // Shooter motor speeds
+    public static final double kShooterSpeed = 0.25;
+    // Intake motor speeds
+    public static final double kIntakeSpeed      = 1;
+    public static final double kFeedSpeed        = 0.5;
+    public static final double kRegurgitateSpeed = -0.5;
+    // Shooter delay
+    public static final double kShooterDelay = 1;
   }
 
 }
