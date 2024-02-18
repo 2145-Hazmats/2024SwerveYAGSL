@@ -11,7 +11,10 @@ import com.revrobotics.SparkLimitSwitch.Type;
 import frc.robot.Constants.BoxConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 
 public class BoxSubsystem extends SubsystemBase {
@@ -65,6 +68,22 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> intakeMotor.set(speed));
   }
 
+  public Command shootCommand(double intakeSpeed, double shooterSpeed) {
+    return new ParallelCommandGroup(
+      startEnd(
+      () -> setShooterSpeedCommand(shooterSpeed), 
+      () -> setShooterSpeedCommand(0)
+      ),
+      new SequentialCommandGroup( 
+        new WaitCommand(1),
+        startEnd(
+          () -> setIntakeSpeedCommand(intakeSpeed), 
+          () -> setIntakeSpeedCommand(0))
+      )
+      );
+
+
+  }
   /**
    * Sets the speed of the shooter motor.
    *

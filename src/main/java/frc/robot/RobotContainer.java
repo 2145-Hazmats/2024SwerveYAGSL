@@ -52,8 +52,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeSpeedCommand(BoxConstants.kIntakeSpeed).until(m_box::isReverseLimitSwitchPressed));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterSpeedCommand(BoxConstants.kShooterSpeed));
-    NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.setIntakeSpeedCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-  
+    NamedCommands.registerCommand("FeedNote", m_box.setIntakeSpeedCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
+    NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(Constants.BoxConstants.kFeedSpeed, Constants.BoxConstants.kShooterSpeed).withTimeout(2));
+
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
@@ -211,7 +212,7 @@ public class RobotContainer {
     m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kHorizontalAngleSP[0], ArmConstants.kHorizontalAngleSP[1]));
+    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kHorizontalAngleSP[0], ArmConstants.kHorizontalAngleSP[1])); 
   }
 
   // AutonomousCommand
