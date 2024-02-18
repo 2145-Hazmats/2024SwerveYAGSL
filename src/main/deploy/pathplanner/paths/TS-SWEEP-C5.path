@@ -3,96 +3,101 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6795490514047873,
-        "y": 4.45422134636644
+        "x": 0.6562616171044571,
+        "y": 6.666235790098635
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7050561319382253,
-        "y": 3.6537810022838304
+        "x": 1.656261617104457,
+        "y": 6.666235790098635
       },
       "isLocked": false,
-      "linkedName": "Bottom Sub"
+      "linkedName": "Top Sub"
     },
     {
       "anchor": {
-        "x": 6.619028587557887,
-        "y": 0.772915212021579
+        "x": 8.457728453918447,
+        "y": 7.341005451241673
       },
       "prevControl": {
-        "x": 6.266134795297084,
-        "y": 0.7842988827396705
+        "x": 8.339000040908667,
+        "y": 7.31273678147744
       },
       "nextControl": {
-        "x": 6.982064520477113,
-        "y": 0.7612043754757963
+        "x": 8.66493425294543,
+        "y": 7.390340165295717
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.281967377058862,
-        "y": 2.435854001522554
+        "x": 8.635333424513004,
+        "y": 0.8090893104863154
       },
       "prevControl": {
-        "x": 9.456866331345562,
-        "y": 1.3156015102259357
+        "x": 8.857266606230029,
+        "y": 0.5669803849768327
       },
       "nextControl": {
-        "x": 7.27483543412165,
-        "y": 3.3961425982766382
+        "x": 8.309724311756318,
+        "y": 1.1642992516754285
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.902114508936577,
-        "y": 1.8386013376876962
+        "x": 6.415271292081047,
+        "y": 6.2063070279986725
       },
       "prevControl": {
-        "x": 5.552871371431631,
-        "y": 0.8862416093251648
+        "x": 6.890845713819129,
+        "y": 5.963235656888098
       },
       "nextControl": {
-        "x": 2.6841875081753,
-        "y": 2.541251530434588
+        "x": 5.971258865594655,
+        "y": 6.433246712647272
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.6795490514047873,
-        "y": 4.45422134636644
+        "x": 0.6562616171044571,
+        "y": 6.666235790098635
       },
       "prevControl": {
-        "x": 1.44283883432246,
-        "y": 3.7006243484669565
+        "x": 0.9884527461362624,
+        "y": 6.551650026376977
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bottom Sub"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 56.821488340607225,
+      "rotationDegrees": -140.9374160994815,
       "rotateFast": false
     },
     {
       "waypointRelativePos": 2,
-      "rotationDegrees": 131.76029970389803,
-      "rotateFast": true
+      "rotationDegrees": -138.29,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -4.763641690726263,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Suck Piece",
-      "waypointRelativePos": 0.7,
+      "waypointRelativePos": 1.6,
       "command": {
         "type": "sequential",
         "data": {
@@ -112,23 +117,40 @@
           ]
         }
       }
+    },
+    {
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 3.3,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SpinUpShooter"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 3.7,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -60.0,
-    "rotateFast": true
+    "rotation": 60.0,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "Riley's OP Lines",
   "previewStartingState": {
-    "rotation": -60.0,
+    "rotation": 60.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

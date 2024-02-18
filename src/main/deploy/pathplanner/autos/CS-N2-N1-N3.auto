@@ -8,7 +8,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom Sub Mid Note 1"
+            "pathName": "CS N2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS N1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS N3"
           }
         }
       ]

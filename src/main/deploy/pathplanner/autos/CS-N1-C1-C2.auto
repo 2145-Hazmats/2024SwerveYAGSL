@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.28,
-      "y": 5.528365618134744
+      "x": 0.6562616171044571,
+      "y": 6.666235790098635
     },
-    "rotation": 0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
@@ -14,49 +14,61 @@
         {
           "type": "named",
           "data": {
-            "name": "Arm Angle Speaker at Sub"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoote Noote"
+            "name": "ShootNoteSubwoofer"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Center Sub to Center Note"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "MoveArm"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "TS-N1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Center Note to Center Sub"
+            "pathName": "N1-TS"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoote Noote"
+            "name": "ShootNoteSubwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TS-C1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C1-TS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TS-C2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C2-TS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwoofer"
           }
         }
       ]

@@ -3,43 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6562616171044571,
-        "y": 6.666235790098635
+        "x": 8.072917684296907,
+        "y": 5.851097086809559
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0180535745686892,
-        "y": 6.778589711025576
+        "x": 7.086223403215641,
+        "y": 7.005529395676951
       },
       "isLocked": false,
-      "linkedName": "Top Sub"
+      "linkedName": "C2"
     },
     {
       "anchor": {
-        "x": 2.557296653054846,
-        "y": 7.005529395674177
+        "x": 0.6562616171044571,
+        "y": 6.666235790098635
       },
       "prevControl": {
-        "x": 2.271155311541394,
-        "y": 6.768722768214768
+        "x": 1.284461030460128,
+        "y": 6.748988882595925
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Note 1"
+      "linkedName": "Top Sub"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Suck Piece",
-      "waypointRelativePos": 0.1,
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 0.5,
       "command": {
         "type": "sequential",
         "data": {
@@ -47,13 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "ArmToFloor"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
+                "name": "SpinUpShooter"
               }
             }
           ]
@@ -63,20 +51,20 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.7,
-    "maxAcceleration": 2.5,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": false
+    "rotation": 60.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Riley's OP Lines",
   "previewStartingState": {
-    "rotation": 60.0,
+    "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

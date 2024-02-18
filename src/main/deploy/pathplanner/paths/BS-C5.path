@@ -52,7 +52,48 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Suck Piece",
+      "waypointRelativePos": 0.4,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Arm to Floor"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 1.55,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SpinUpShooter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.7,
     "maxAcceleration": 2.5,

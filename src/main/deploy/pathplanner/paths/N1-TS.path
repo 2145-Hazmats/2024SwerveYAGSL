@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5,
-        "y": 5.528365618134744
+        "x": 2.557296653054846,
+        "y": 7.005529395674177
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9000000000000004,
-        "y": 5.528365618134744
+        "x": 1.9554131415955156,
+        "y": 6.9364607959985145
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Note 1"
     },
     {
       "anchor": {
-        "x": 1.28,
-        "y": 5.528365618134744
+        "x": 0.6562616171044571,
+        "y": 6.666235790098635
       },
       "prevControl": {
-        "x": 1.3800000000000001,
-        "y": 5.528365618134744
+        "x": 1.2548602020231756,
+        "y": 6.788456653836403
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Sub"
+      "linkedName": "Top Sub"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Prep to Shoot",
-      "waypointRelativePos": 0.05,
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 0,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Arm Angle Speaker at Sub"
+                "name": "SpinUpShooter"
               }
             }
           ]
@@ -57,7 +57,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 60.0,
     "rotateFast": false
   },
   "reversed": false,

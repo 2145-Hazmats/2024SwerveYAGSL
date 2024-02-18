@@ -3,57 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6562616171044571,
-        "y": 6.666235790098635
+        "x": 2.5,
+        "y": 5.528365618134744
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0180535745686892,
-        "y": 6.778589711025576
+        "x": 1.9000000000000004,
+        "y": 5.528365618134744
       },
       "isLocked": false,
-      "linkedName": "Top Sub"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.557296653054846,
-        "y": 7.005529395674177
+        "x": 1.28,
+        "y": 5.528365618134744
       },
       "prevControl": {
-        "x": 2.271155311541394,
-        "y": 6.768722768214768
+        "x": 1.3800000000000001,
+        "y": 5.528365618134744
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Note 1"
+      "linkedName": "Center Sub"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Suck Piece",
-      "waypointRelativePos": 0.1,
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 0.0,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "ArmToFloor"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
+                "name": "SpinUpShooter"
               }
             }
           ]
@@ -75,7 +63,7 @@
   "reversed": false,
   "folder": "Riley's OP Lines",
   "previewStartingState": {
-    "rotation": 60.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

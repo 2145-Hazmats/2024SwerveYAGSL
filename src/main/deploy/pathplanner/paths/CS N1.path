@@ -8,20 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.88,
-        "y": 5.528365618132186
+        "x": 2.2800000000000002,
+        "y": 5.528365618134744
       },
       "isLocked": false,
       "linkedName": "Center Sub"
     },
     {
       "anchor": {
-        "x": 2.502840795154915,
+        "x": 2.3106230827846286,
+        "y": 7.015396338484985
+      },
+      "prevControl": {
+        "x": 1.3106230827846286,
+        "y": 7.015396338484985
+      },
+      "nextControl": {
+        "x": 3.3106230827846286,
+        "y": 7.015396338484985
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.28,
         "y": 5.528365618134744
       },
       "prevControl": {
-        "x": 2.402840795154915,
-        "y": 5.528365618134286
+        "x": 1.6396709716496372,
+        "y": 5.949766514917646
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,22 +48,33 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Prep Intake",
-      "waypointRelativePos": 0.0,
+      "name": "Suck Piece",
+      "waypointRelativePos": 0,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Arm to Floor"
+                "name": "Intake"
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 1.5,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Start Intake"
+                "name": "SpinUpShooter"
               }
             }
           ]
