@@ -68,7 +68,7 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> intakeMotor.set(speed));
   }
 
-  public Command shootCommand(double intakeSpeed, double shooterSpeed) {
+ /* public Command shootCommand(double intakeSpeed, double shooterSpeed) {
     return new ParallelCommandGroup(
       startEnd(
       () -> setShooterSpeedCommand(shooterSpeed), 
@@ -83,7 +83,7 @@ public class BoxSubsystem extends SubsystemBase {
       );
 
 
-  }
+  }*/
   /**
    * Sets the speed of the shooter motor.
    *

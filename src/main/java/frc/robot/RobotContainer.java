@@ -53,7 +53,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", m_box.setIntakeSpeedCommand(BoxConstants.kIntakeSpeed).until(m_box::isReverseLimitSwitchPressed));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterSpeedCommand(BoxConstants.kShooterSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeSpeedCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-    NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(Constants.BoxConstants.kFeedSpeed, Constants.BoxConstants.kShooterSpeed).withTimeout(2));
+    //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(Constants.BoxConstants.kFeedSpeed, Constants.BoxConstants.kShooterSpeed).withTimeout(2));
 
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -200,8 +200,8 @@ public class RobotContainer {
     m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSourceAngleSP[0], ArmConstants.kSourceAngleSP[1]));
 
     // Arm set point for playing amp
-    m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
-
+    //m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
+      m_operatorController.a().onTrue(m_arm.RileysManualControlPID());
     // Arm set point for playing trap
     m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.kTrapAngleSP[0], ArmConstants.kTrapAngleSP[1]));
 
@@ -212,7 +212,7 @@ public class RobotContainer {
     m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kHorizontalAngleSP[0], ArmConstants.kHorizontalAngleSP[1])); 
+    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1])); 
   }
 
   // AutonomousCommand

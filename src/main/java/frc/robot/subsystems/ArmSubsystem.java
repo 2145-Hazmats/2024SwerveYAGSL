@@ -26,7 +26,8 @@ public class ArmSubsystem extends SubsystemBase {
   private RelativeEncoder elbowEncoder = elbowMotorLeader.getAlternateEncoder(8192);
 
   private final CANSparkMax wristMotor = new CANSparkMax(ArmConstants.kWristMotorID, MotorType.kBrushless);
-  private RelativeEncoder wristEncoder = wristMotor.getAlternateEncoder(8192);
+  //private RelativeEncoder wristEncoder = wristMotor.getAlternateEncoder(8192);
+  private final RelativeEncoder wristEncoder = wristMotor.getEncoder();
   // Get the PIDController object for the elbow and wrist
   private SparkPIDController elbowPIDController = elbowMotorLeader.getPIDController();
   private SparkPIDController wristPIDController = wristMotor.getPIDController();
@@ -50,7 +51,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Setup encoders
     elbowEncoder.setPositionConversionFactor(180);
-    wristEncoder.setPositionConversionFactor(180);
+    wristEncoder.setPositionConversionFactor(1); //180
     elbowEncoder.setPosition(0);
     wristEncoder.setPosition(0);
     // Invert the elbow encoder. Mandatory
@@ -120,9 +121,15 @@ public class ArmSubsystem extends SubsystemBase {
     return runOnce(() -> {
       elbowPIDController.setReference(0, ControlType.kVelocity);
       wristPIDController.setReference(0, ControlType.kVelocity);
+       wristPIDController.setReference(0, ControlType.kVelocity);
     });
   }
-
+ 
+  public Command RileysManualControlPID() {
+    return run(() -> {elbowPIDController.setReference(-0.25, ControlType.kDutyCycle);
+    });
+  }
+ 
   /**
    * Sets the elbow motor speed.
    * 
