@@ -35,19 +35,19 @@
       "name": "Suck Piece",
       "waypointRelativePos": 0.0,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Arm to Floor"
+                "name": "ArmToFloor"
               }
             },
             {
               "type": "named",
               "data": {
-                "name": "Start Intake"
+                "name": "Intake"
               }
             }
           ]
