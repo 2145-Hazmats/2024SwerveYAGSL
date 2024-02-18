@@ -76,11 +76,11 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter motor speeds
-    public static final double kShooterSpeed = 0.25;
+    public static final double kShooterSpeed = 1;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
-    public static final double kFeedSpeed        = 0.5;
-    public static final double kRegurgitateSpeed = -0.5;
+    public static final double kFeedSpeed        = 1;
+    public static final double kRegurgitateSpeed = -0.25;
     // Shooter delay
     public static final double kShooterDelay = 1;
   }

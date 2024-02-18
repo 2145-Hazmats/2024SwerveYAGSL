@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -129,17 +132,24 @@ public class ArmSubsystem extends SubsystemBase {
     elbowMotorLeader.set(speed);
   }
 
+  public Command manualArmCommand(DoubleSupplier wristSpeed, DoubleSupplier elbowSpeed){
+    return run(()->{
+      wristMotor.set(wristSpeed.getAsDouble());
+      elbowMotorLeader.set(elbowSpeed.getAsDouble());
+    });
+  }
+
   /**
    * Sets the elbow motor speed in manual mode by giving the elbow PIDController a speed in ControlType.kDutyCycle mode.
    * 
    * @param speed  The speed of the elbow motor from a joystick axis.
    */
-  public Command manualElbowCommand(Double speed) {
+  public Command manualElbowCommand(double speed) {
     //double standStill = wristEncoder.getPosition();
     //wristPIDController.setReference(standStill, ControlType.kPosition);
     return run(() -> {
       //elbowMotorLeader.set(speed);
-      elbowPIDController.setReference(speed, ControlType.kDutyCycle);
+      elbowPIDController.setReference(speed, ControlType.kVelocity);
       }
     // When the command is interrupted, set the elbow PIDController to a reference of the current position
     ).handleInterrupt(() -> elbowPIDController.setReference(elbowEncoder.getPosition(), ControlType.kPosition));
@@ -159,12 +169,12 @@ public class ArmSubsystem extends SubsystemBase {
    * 
    * @param speed  The speed of the elbow motor from a joystick axis.
    */
-  public Command manualWristCommand(Double speed) {
+  public Command manualWristCommand(double speed) {
     //double standStill = elbowEncoder.getPosition();
     //elbowPIDController.setReference(standStill, ControlType.kPosition);
     return run(() -> {
       //wristMotorLeader.set(speed)
-      wristPIDController.setReference(speed, ControlType.kDutyCycle);
+      wristPIDController.setReference(speed, ControlType.kVelocity);
     // When the command is interrupted, set the wrist PIDController to a reference of the current position
     }).handleInterrupt(() -> wristPIDController.setReference(wristEncoder.getPosition(), ControlType.kPosition));
   }

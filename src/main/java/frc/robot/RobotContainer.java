@@ -62,6 +62,11 @@ public class RobotContainer {
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
+
+    m_arm.setDefaultCommand(m_arm.manualArmCommand(
+      () -> m_operatorController.getRightY() * 0.3, 
+      () -> m_operatorController.getLeftY() * 0.3)
+    );
   }
 
 
@@ -135,9 +140,9 @@ public class RobotContainer {
     ));
 
     // Elbow PID Test
-    m_driverController.povUp().onTrue(m_arm.setArmPIDCommand(45, 0));
-    m_driverController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]));
-    m_driverController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
+    m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(-90, 0));
+    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]));
+    m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
 
     /* Operator Controls */
 
@@ -159,9 +164,9 @@ public class RobotContainer {
 
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
-      m_box.setIntakeSpeedCommand(BoxConstants.kFeedSpeed)
+      m_box.setShooterSpeedCommand(BoxConstants.kShooterSpeed)
       .withTimeout(BoxConstants.kShooterDelay)
-      .andThen(m_box.setShooterSpeedCommand(BoxConstants.kShooterSpeed))
+      .andThen(m_box.setIntakeSpeedCommand(BoxConstants.kFeedSpeed))
     );
 
     // Intakes note into robot and keeps it there
@@ -181,8 +186,11 @@ public class RobotContainer {
     );
 
     // Manual control toggle for arm and wrist
+    // UPDATE: Made the Arm's default command manual control in the RobotContainer constructor for Oxford
+    /*
     m_operatorController.button(9).toggleOnTrue(m_arm.manualElbowCommand(m_operatorController.getLeftY()));
     m_operatorController.button(10).toggleOnTrue(m_arm.manualWristCommand(m_operatorController.getRightY()));
+    */
 
     // Arm set point for picking off the floor
     m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]));
@@ -203,7 +211,7 @@ public class RobotContainer {
     m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kHorizontalAngleSP[0], ArmConstants.kHorizontalAngleSP[1])); 
+    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kHorizontalAngleSP[0], ArmConstants.kHorizontalAngleSP[1]));
   }
 
   // AutonomousCommand
