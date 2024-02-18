@@ -141,9 +141,9 @@ public class RobotContainer {
     ));
 
     // Elbow PID Test
-    m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(-90, 0));
-    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]));
-    m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
+    //m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(-90, 0));
+    //m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]));
+    //m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
 
     /* Operator Controls */
 
@@ -201,10 +201,12 @@ public class RobotContainer {
 
     // Arm set point for playing amp
     //m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
-      m_operatorController.a().toggleOnTrue(m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
+      m_operatorController.start().toggleOnTrue(m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
       () -> m_operatorController.getLeftY() * 0.3));
+
+      m_operatorController.back().onTrue(m_arm.ResetWristCommand());
     // Arm set point for playing trap
-    m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.kTrapAngleSP[0], ArmConstants.kTrapAngleSP[1]));
+    m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
 
     // Arm set point for shooting speaker from the subwoofer
     m_operatorController.y().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerSubwooferAngleSP[0], ArmConstants.kSpeakerSubwooferAngleSP[1]));
@@ -213,7 +215,7 @@ public class RobotContainer {
     m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1])); 
+    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.ResetWrist())); 
   }
 
   // AutonomousCommand

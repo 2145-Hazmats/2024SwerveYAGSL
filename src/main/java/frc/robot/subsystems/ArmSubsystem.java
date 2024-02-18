@@ -10,11 +10,13 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
@@ -125,10 +127,15 @@ public class ArmSubsystem extends SubsystemBase {
     });
   }
  
-  public Command RileysManualControlPID() {
-    return run(() -> {elbowPIDController.setReference(-0.25, ControlType.kDutyCycle);
-    });
+  public void ResetWrist() {
+      wristEncoder.setPosition(0);
+    };
+
+  public Command ResetWristCommand() {
+    return new StartEndCommand(() -> this.ResetWrist(), () -> this.ResetWrist(), this);
   }
+  
+
  
   /**
    * Sets the elbow motor speed.
@@ -145,6 +152,14 @@ public class ArmSubsystem extends SubsystemBase {
       //elbowMotorLeader.set(elbowSpeed.getAsDouble());
       wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
       elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
+    });
+  }
+  public Command PIDFallin(){
+    return run(()->{
+      //wristMotor.set(wristSpeed.getAsDouble());
+      //elbowMotorLeader.set(elbowSpeed.getAsDouble());
+      wristPIDController.setReference(0, ControlType.kDutyCycle);
+      elbowPIDController.setReference(0, ControlType.kDutyCycle);
     });
   }
 

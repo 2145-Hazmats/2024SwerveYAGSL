@@ -53,17 +53,17 @@ public final class Constants {
     public static final double kWristI        = 0.00005;
     public static final double kWristD        = 0.0002;
     public static final double kWristFF       = 0;
-    public static final double kWristMinSpeed = -0.6;
-    public static final double kWristMaxSpeed = 0.6;
+    public static final double kWristMinSpeed = -0.55;
+    public static final double kWristMaxSpeed = 0.55;
     // Setpoints for the arm subsystem
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
-    public static final double[] kFloorAngleSP            = {0, 38};
+    public static final double[] kFloorAngleSP            = {0, 38.8};
     public static final double[] kSourceAngleSP           = {0, 0};
     public static final double[] kIdleAngleSP             = {-1, 1};
     public static final double[] kSpeakerSubwooferAngleSP = {0, 0};
     public static final double[] kSpeakerPodiumAngleSP    = {0, 0};
     public static final double[] kTrapAngleSP             = {0, 0};
-    public static final double[] kAmpAngleSP              = {0, 0};
+    public static final double[] kAmpAngleSP              = {-110, 42};
     public static final double[] kHorizontalAngleSP       = {0, 0};
   }
 
