@@ -141,8 +141,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public Command manualArmCommand(DoubleSupplier wristSpeed, DoubleSupplier elbowSpeed){
     return run(()->{
-      wristMotor.set(wristSpeed.getAsDouble());
-      elbowMotorLeader.set(elbowSpeed.getAsDouble());
+      //wristMotor.set(wristSpeed.getAsDouble());
+      //elbowMotorLeader.set(elbowSpeed.getAsDouble());
+      wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
+      elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
     });
   }
 

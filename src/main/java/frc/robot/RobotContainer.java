@@ -64,10 +64,10 @@ public class RobotContainer {
 
     m_box.setDefaultCommand(m_box.stopCommand());
 
-    m_arm.setDefaultCommand(m_arm.manualArmCommand(
+    /*m_arm.setDefaultCommand(m_arm.manualArmCommand(
       () -> m_operatorController.getRightY() * 0.3, 
       () -> m_operatorController.getLeftY() * 0.3)
-    );
+    );*/
   }
 
 
@@ -201,7 +201,8 @@ public class RobotContainer {
 
     // Arm set point for playing amp
     //m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
-      m_operatorController.a().onTrue(m_arm.RileysManualControlPID());
+      m_operatorController.a().toggleOnTrue(m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
+      () -> m_operatorController.getLeftY() * 0.3));
     // Arm set point for playing trap
     m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.kTrapAngleSP[0], ArmConstants.kTrapAngleSP[1]));
 
