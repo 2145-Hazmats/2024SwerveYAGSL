@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import frc.robot.Constants.BoxConstants;
+import frc.robot.Constants.ArmConstants.ArmPosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,7 +41,7 @@ public class BoxSubsystem extends SubsystemBase {
    * @param speed     Speed of the motor.
    * @param reversed  False = intakes or shoots the note. True = regurgitates the note.
    */
-  public Command setIntakeSpeedCommand(double speed) {
+  public Command setIntakeMotorCommand(double speed) {
     return run(() -> intakeMotor.set(speed));
   }
 
@@ -49,8 +50,19 @@ public class BoxSubsystem extends SubsystemBase {
    *
    * @param speed     Speed of the motor.
    */
-  public Command setShooterSpeedCommand(double speed) {
+  public Command setShooterMotorCommand(double speed) {
     return run(() -> shooterMotor.set(speed));
+  }
+
+  public Command setShooterMotorCommand(ArmPosition position) {
+    switch(position) {
+      case SHOOT_SUB:
+        return run(() -> shooterMotor.set(BoxConstants.kSpeakerShootSpeed));
+      case AMP:
+        return run(() -> shooterMotor.set(BoxConstants.kAmpShootSpeed));
+      default:
+        return run(() -> shooterMotor.set(BoxConstants.kDeafultShootSpeed));
+    }
   }
 
   /**

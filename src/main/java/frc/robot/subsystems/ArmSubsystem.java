@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ArmConstants.ArmPosition;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -37,6 +38,8 @@ public class ArmSubsystem extends SubsystemBase {
   // Variables used during SmartDashboard changes
   private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
+
+  private ArmPosition currentPosition = ArmPosition.IDLE;
 
 
   /** Creates a new Arm. */
@@ -100,10 +103,42 @@ public class ArmSubsystem extends SubsystemBase {
    * @param elbowAngle  The angle the elbow will rotate to and stay at.
    * @param wristAngle  The angle the wrist will rotate to and stay at.
    */
-  public Command setArmPIDCommand(double elbowAngle, double wristAngle ) {
+  public Command setArmPIDCommand(ArmPosition position) {
     return startEnd(
       // When the command is called, the elbow and wrist PIDController is set and updated on SmartDashboard
       () -> {
+
+        double elbowAngle = 0;
+        double wristAngle = 0;
+        currentPosition = position;
+
+        switch(position){
+          case IDLE:
+            elbowAngle = ArmConstants.kIdleAngleSP[0];
+            wristAngle = ArmConstants.kIdleAngleSP[1];
+            break;
+          case SOURCE:
+            elbowAngle = ArmConstants.kSourceAngleSP[0];
+            wristAngle = ArmConstants.kSourceAngleSP[1];
+            break;
+          case FLOOR:
+            elbowAngle = ArmConstants.kFloorAngleSP[0];
+            wristAngle = ArmConstants.kFloorAngleSP[1];
+            break;
+          case AMP:
+            elbowAngle = ArmConstants.kAmpAngleSP[0];
+            wristAngle = ArmConstants.kAmpAngleSP[1];
+            break;
+          case SHOOT_SUB:
+            elbowAngle = ArmConstants.kSpeakerSubwooferAngleSP[0];
+            wristAngle = ArmConstants.kSpeakerSubwooferAngleSP[1];
+            break;
+          case TRAP:
+            elbowAngle = ArmConstants.kTrapAngleSP[0];
+            wristAngle = ArmConstants.kTrapAngleSP[1];
+            break;
+        }
+
         elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
         wristPIDController.setReference(wristAngle, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
@@ -182,6 +217,10 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void setWristSpeed(double speed) {
     wristMotor.set(speed);
+  }
+
+  public ArmPosition getArmPosition() {
+    return currentPosition;
   }
 
 

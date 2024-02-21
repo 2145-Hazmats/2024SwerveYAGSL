@@ -34,7 +34,7 @@ public final class Constants {
 
   /* Constants for the arm subsystem */
   public static class ArmConstants{
-    enum ArmPositions {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP};
+    public static enum ArmPosition {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP};
 
     // Motor IDs
     public static final int kElbowMotorLeaderID   = 20;
@@ -78,7 +78,9 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter motor speeds
-    public static final double kShooterSpeed = 1;
+    public static final double kSpeakerShootSpeed = 1;
+    public static final double kAmpShootSpeed = 0.25;
+    public static final double kDeafultShootSpeed = 0.5;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;

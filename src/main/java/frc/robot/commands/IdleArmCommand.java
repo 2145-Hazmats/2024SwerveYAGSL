@@ -24,7 +24,7 @@ public class IdleArmCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]);
+    m_arm.setArmPIDCommand(ArmConstants.ArmPosition.IDLE);
     canPIDEnd = true;
     canWristReset = false;
   }
