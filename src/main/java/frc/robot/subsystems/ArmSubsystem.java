@@ -135,6 +135,15 @@ public class ArmSubsystem extends SubsystemBase {
   public Command resetWristCommand() {
     return runOnce(() -> resetWrist());
   }
+
+  public double getWristEncoder() {
+    return wristEncoder.getPosition();
+  }
+
+  public double getWristVelocity() {
+    return wristEncoder.getVelocity();
+
+  }
  
   /**
    * Sets the elbow motor speed.
