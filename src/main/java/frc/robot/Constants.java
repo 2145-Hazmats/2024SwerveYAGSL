@@ -34,6 +34,8 @@ public final class Constants {
 
   /* Constants for the arm subsystem */
   public static class ArmConstants{
+    enum ArmPositions {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP};
+
     // Motor IDs
     public static final int kElbowMotorLeaderID   = 20;
     public static final int kElbowMotorFollowerID = 21;

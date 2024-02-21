@@ -19,6 +19,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IdleArmCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -67,7 +68,7 @@ public class RobotContainer {
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
-    //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
+    m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
   }
 
 
@@ -140,11 +141,6 @@ public class RobotContainer {
       () -> -m_driverController.getRightY()
     ));
 
-    // Elbow PID Test
-    //m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(-90, 0));
-    //m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]));
-    //m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(-45, 0));
-
     /* Operator Controls */
 
     // Winds up shoot motors then starts intake/feed motor
@@ -169,6 +165,16 @@ public class RobotContainer {
     m_operatorController.rightBumper().whileTrue(
       m_box.stopCommand()
     );
+
+    m_operatorController.a().whileTrue(
+      new IntakeCommand(m_arm, m_box, ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1])
+    );
+
+    /* //SOURCE COMMAND UNCOMMENT OUT LATER AND MAP A BUTTON
+    m_operatorController.b().whileTrue(
+      new IntakeCommand(m_arm, m_box, ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1])
+    );
+    */
 
     // Manual control toggle for arm and wrist
     // UPDATE: Made the Arm's default command manual control in the RobotContainer constructor for Oxford
