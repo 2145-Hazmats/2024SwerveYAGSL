@@ -98,8 +98,8 @@ public class BoxSubsystem extends SubsystemBase {
    */
   public Command stopCommand() {
     return runOnce( () -> {
-      intakeMotor.set(0);
-      shooterMotor.set(0);
+      intakeMotor.stopMotor();
+      shooterMotor.stopMotor();
     });
   }
 

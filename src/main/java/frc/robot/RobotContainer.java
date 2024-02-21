@@ -13,13 +13,16 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.IdleArmCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+
 
 
 // This class is instantiated when the robot is first started up
@@ -28,6 +31,7 @@ public class RobotContainer {
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
+  
 
   // Other variables
   private SendableChooser<Command> m_autonChooser;
@@ -43,17 +47,17 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    // Setup PathPlanner and put autons on SmartDashboard
+    // Setup PathPlanner and autons
     m_swerve.setupPathPlanner();
-    m_autonChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auton Picker", m_autonChooser);
-
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]));//.withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeSpeedCommand(BoxConstants.kIntakeSpeed).until(m_box::isReverseLimitSwitchPressed));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterSpeedCommand(BoxConstants.kShooterSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeSpeedCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(Constants.BoxConstants.kFeedSpeed, Constants.BoxConstants.kShooterSpeed).withTimeout(2));
+    // Build the auto chooser after defining NamedCommands
+    m_autonChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auton Picker", m_autonChooser);
 
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -63,11 +67,7 @@ public class RobotContainer {
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
-
-    /*m_arm.setDefaultCommand(m_arm.manualArmCommand(
-      () -> m_operatorController.getRightY() * 0.3, 
-      () -> m_operatorController.getLeftY() * 0.3)
-    );*/
+    //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
   }
 
 
@@ -147,22 +147,6 @@ public class RobotContainer {
 
     /* Operator Controls */
 
-    // Winds up shoot motors then starts intake/feed motor, afterwards stops both motors.
-    /*
-    m_operatorController.rightTrigger().whileTrue(
-      m_box.prepareShootCommand()
-      .withTimeout(1)
-      .andThen(m_box.shootCommand())
-      .handleInterrupt(() -> m_box.stopCommand())
-    );
-
-    // Intakes note into robot and keeps it there
-    m_operatorController.leftTrigger().whileTrue(
-      m_box.intakeCommand(false)
-      .until(m_box::isForwardLimitSwitchPressed)
-    );
-    */
-
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
       m_box.setShooterSpeedCommand(BoxConstants.kShooterSpeed)
@@ -194,28 +178,42 @@ public class RobotContainer {
     */
 
     // Arm set point for picking off the floor
-    m_operatorController.povDown().onTrue(m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]));
+    m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]));
 
     // Arm set point for picking out of source
-    m_operatorController.povUp().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSourceAngleSP[0], ArmConstants.kSourceAngleSP[1]));
+    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kSourceAngleSP[0], ArmConstants.kSourceAngleSP[1]));
 
     // Arm set point for playing amp
     //m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
-      m_operatorController.start().toggleOnTrue(m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
-      () -> m_operatorController.getLeftY() * 0.3));
+    m_operatorController.start().toggleOnTrue(
+        m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
+        () -> m_operatorController.getLeftY() * 0.3)
+    );
 
-      m_operatorController.back().onTrue(m_arm.ResetWristCommand());
+    m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWrist()));
+
     // Arm set point for playing trap
-    m_operatorController.x().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
+    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
 
     // Arm set point for shooting speaker from the subwoofer
-    m_operatorController.y().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerSubwooferAngleSP[0], ArmConstants.kSpeakerSubwooferAngleSP[1]));
+    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerSubwooferAngleSP[0], ArmConstants.kSpeakerSubwooferAngleSP[1]));
 
     // Arm set point for shooting speaker from the podium
-    m_operatorController.b().onTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
+    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().onTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.ResetWrist())); 
+    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1]).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWrist())); 
+  
+    // some code button thing ask riley idk
+    m_operatorController.povLeft().whileTrue(
+      Commands.sequence(
+        Commands.parallel(
+          m_arm.setArmPIDCommand(ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1]),
+          m_box.setIntakeSpeedCommand(BoxConstants.kIntakeSpeed)
+        ).until(m_box::isReverseLimitSwitchPressed),
+        m_arm.setArmPIDCommand(ArmConstants.kIdleAngleSP[0], ArmConstants.kIdleAngleSP[1])
+      )
+    );
   }
 
   // AutonomousCommand

@@ -14,6 +14,7 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -53,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Setup encoders
     elbowEncoder.setPositionConversionFactor(180);
-    wristEncoder.setPositionConversionFactor(1); //180
+    wristEncoder.setPositionConversionFactor(1);
     elbowEncoder.setPosition(0);
     wristEncoder.setPosition(0);
     // Invert the elbow encoder. Mandatory
@@ -127,15 +128,13 @@ public class ArmSubsystem extends SubsystemBase {
     });
   }
  
-  public void ResetWrist() {
-      wristEncoder.setPosition(0);
-    };
+  public void resetWrist() {
+    wristEncoder.setPosition(0);
+  };
 
-  public Command ResetWristCommand() {
-    return new StartEndCommand(() -> this.ResetWrist(), () -> this.ResetWrist(), this);
+  public Command resetWristCommand() {
+    return runOnce(() -> resetWrist());
   }
-  
-
  
   /**
    * Sets the elbow motor speed.
@@ -146,37 +145,25 @@ public class ArmSubsystem extends SubsystemBase {
     elbowMotorLeader.set(speed);
   }
 
+  /**
+   * Sets the elbow motor speed and wrist motor speed in manual mode by giving their PIDControllers
+   * a speed in ControlType.kDutyCycle mode.
+   * 
+   * @param wristSpeed  The speed of the wrist motor from a joystick axis.
+   * @param elbowSpeed  The speed of the elbow motor from a joystick axis.
+   */
   public Command manualArmCommand(DoubleSupplier wristSpeed, DoubleSupplier elbowSpeed){
     return run(()->{
-      //wristMotor.set(wristSpeed.getAsDouble());
-      //elbowMotorLeader.set(elbowSpeed.getAsDouble());
       wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
       elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
     });
   }
+
   public Command PIDFallin(){
     return run(()->{
-      //wristMotor.set(wristSpeed.getAsDouble());
-      //elbowMotorLeader.set(elbowSpeed.getAsDouble());
       wristPIDController.setReference(0, ControlType.kDutyCycle);
       elbowPIDController.setReference(0, ControlType.kDutyCycle);
     });
-  }
-
-  /**
-   * Sets the elbow motor speed in manual mode by giving the elbow PIDController a speed in ControlType.kDutyCycle mode.
-   * 
-   * @param speed  The speed of the elbow motor from a joystick axis.
-   */
-  public Command manualElbowCommand(double speed) {
-    //double standStill = wristEncoder.getPosition();
-    //wristPIDController.setReference(standStill, ControlType.kPosition);
-    return run(() -> {
-      //elbowMotorLeader.set(speed);
-      elbowPIDController.setReference(speed, ControlType.kVelocity);
-      }
-    // When the command is interrupted, set the elbow PIDController to a reference of the current position
-    ).handleInterrupt(() -> elbowPIDController.setReference(elbowEncoder.getPosition(), ControlType.kPosition));
   }
 
   /**
@@ -186,21 +173,6 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void setWristSpeed(double speed) {
     wristMotor.set(speed);
-  }
-
-  /**
-   * Sets the wrist motor speed in manual mode by giving the wrist PIDController a speed in ControlType.kDutyCycle mode.
-   * 
-   * @param speed  The speed of the elbow motor from a joystick axis.
-   */
-  public Command manualWristCommand(double speed) {
-    //double standStill = elbowEncoder.getPosition();
-    //elbowPIDController.setReference(standStill, ControlType.kPosition);
-    return run(() -> {
-      //wristMotorLeader.set(speed)
-      wristPIDController.setReference(speed, ControlType.kVelocity);
-    // When the command is interrupted, set the wrist PIDController to a reference of the current position
-    }).handleInterrupt(() -> wristPIDController.setReference(wristEncoder.getPosition(), ControlType.kPosition));
   }
 
 
