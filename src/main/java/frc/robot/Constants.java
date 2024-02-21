@@ -8,7 +8,7 @@ package frc.robot;
 public final class Constants {
   /* Constants for the swerve chassis */
   public static class SwerveConstants {
-    public static final double MAX_SPEED = 3.70;         // maximum m/s for the robot
+    public static final double MAX_SPEED = 3.93;         // maximum m/s for the robot
     /* PathPlanner constants */
     public static final double PATHPLANNER_TRANS_KP = 1; // Translational P for the pathplanner PID (default 5?)
     /* Unused constants */
