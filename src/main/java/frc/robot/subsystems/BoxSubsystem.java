@@ -22,6 +22,8 @@ public class BoxSubsystem extends SubsystemBase {
   private CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
+  private double shooterMotorSpeed = 0.0;
+
 
   /** Creates a new Box. */
   public BoxSubsystem() {
@@ -42,7 +44,7 @@ public class BoxSubsystem extends SubsystemBase {
    * @param reversed  False = intakes or shoots the note. True = regurgitates the note.
    */
   public Command setIntakeMotorCommand(double speed) {
-    return runOnce(() -> intakeMotor.set(speed));
+    return run(() -> intakeMotor.set(speed));
   }
 
   /**
@@ -51,18 +53,23 @@ public class BoxSubsystem extends SubsystemBase {
    * @param speed     Speed of the motor.
    */
   public Command setShooterMotorCommand(double speed) {
-    return runOnce(() -> shooterMotor.set(speed));
+    return run(() -> shooterMotor.set(speed));
   }
 
   public Command setShooterMotorCommand(ArmPosition position) {
+    // doesn't work. Just goes to default
     switch(position) {
       case SHOOT_SUB:
-        return runOnce(() -> shooterMotor.set(BoxConstants.kSpeakerShootSpeed));
+        shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
       case AMP:
-        return runOnce(() -> shooterMotor.set(BoxConstants.kAmpShootSpeed));
+        shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
+      case IDLE:
+        shooterMotorSpeed = 0.0;
       default:
-        return runOnce(() -> shooterMotor.set(BoxConstants.kDeafultShootSpeed));
+        shooterMotorSpeed = BoxConstants.kDeafultShootSpeed;
     }
+    // return run() in switch statement wasn't working
+    return run(() -> shooterMotor.set(shooterMotorSpeed));
   }
 
   /**
@@ -78,8 +85,8 @@ public class BoxSubsystem extends SubsystemBase {
 
   public double getIntakeVelocity() {
     return intakeEncoder.getVelocity();
-
   }
+
   /**
    * Returns a boolean based on if the forward limit switch is pressed.
    */

@@ -19,7 +19,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IdleArmCommand;
-//import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -67,7 +67,7 @@ public class RobotContainer {
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
-    //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
+   // m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
   }
 
 
@@ -76,7 +76,7 @@ public class RobotContainer {
 
     // Lock the wheels on toggle
     m_driverController.start().toggleOnTrue(
-      m_swerve.runOnce(()->{
+      m_swerve.run(()->{
         m_swerve.lock();
       })
     );
@@ -145,6 +145,7 @@ public class RobotContainer {
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
       m_box.setShooterMotorCommand(m_arm.getArmPosition())
+      //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
       .withTimeout(BoxConstants.kShooterDelay)
       .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))
     );
@@ -160,14 +161,9 @@ public class RobotContainer {
       m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed)
     );
 
-    // Stop the box motors
-    m_operatorController.rightBumper().whileTrue(
-      m_box.stopCommand()
+    m_operatorController.a().whileTrue(
+      new IntakeCommand(m_arm, m_box)
     );
-
-    //m_operatorController.a().whileTrue(
-    //  new IntakeCommand(m_arm, m_box)
-    //);
 
     /* //SOURCE COMMAND UNCOMMENT OUT LATER AND MAP A BUTTON
     m_operatorController.b().whileTrue(

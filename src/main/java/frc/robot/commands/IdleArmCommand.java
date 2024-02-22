@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
@@ -27,6 +28,7 @@ public class IdleArmCommand extends Command {
     m_arm.setArmPIDCommand(ArmConstants.ArmPosition.IDLE);
     canPIDEnd = true;
     canWristReset = false;
+    SmartDashboard.putBoolean("isIdleArmRunning", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,6 +51,7 @@ public class IdleArmCommand extends Command {
     if(canWristReset == true) {
       m_arm.resetWrist();
     }
+    SmartDashboard.putBoolean("isIdleArmRunning", false);
   }
 
 }

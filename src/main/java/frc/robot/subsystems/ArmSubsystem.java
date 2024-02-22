@@ -144,6 +144,7 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Wrist Set Point", wristAngle);
       },
       // When the command is interrupted, the elbow and wrist go to their idle position
+      // Or not if it is commented out
       () -> {
         elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
         wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
