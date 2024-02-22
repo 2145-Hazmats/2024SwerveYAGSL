@@ -59,15 +59,12 @@ public class RobotContainer {
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
 
-    // SWERVE COMMANDS CAUSE COMMAND SCHEDULER LOOP OVERRUN
-    /*
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
         Constants.OperatorConstants.kFastModeSpeed
     ));
-    */
 
     m_box.setDefaultCommand(m_box.stopCommand());
     //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
