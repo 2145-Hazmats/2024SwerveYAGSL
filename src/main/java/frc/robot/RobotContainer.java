@@ -19,7 +19,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IdleArmCommand;
-import frc.robot.commands.IntakeCommand;
+//import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -33,7 +33,6 @@ public class RobotContainer {
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
   
-
   // Other variables
   private SendableChooser<Command> m_autonChooser;
 
@@ -60,15 +59,18 @@ public class RobotContainer {
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
 
+    // SWERVE COMMANDS CAUSE COMMAND SCHEDULER LOOP OVERRUN
+    /*
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
         Constants.OperatorConstants.kFastModeSpeed
     ));
+    */
 
     m_box.setDefaultCommand(m_box.stopCommand());
-    m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
+    //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
   }
 
 
@@ -77,7 +79,7 @@ public class RobotContainer {
 
     // Lock the wheels on toggle
     m_driverController.start().toggleOnTrue(
-      m_swerve.run(()->{
+      m_swerve.runOnce(()->{
         m_swerve.lock();
       })
     );
@@ -166,9 +168,9 @@ public class RobotContainer {
       m_box.stopCommand()
     );
 
-    m_operatorController.a().whileTrue(
-      new IntakeCommand(m_arm, m_box)
-    );
+    //m_operatorController.a().whileTrue(
+    //  new IntakeCommand(m_arm, m_box)
+    //);
 
     /* //SOURCE COMMAND UNCOMMENT OUT LATER AND MAP A BUTTON
     m_operatorController.b().whileTrue(
@@ -209,7 +211,7 @@ public class RobotContainer {
     
     // Arm set point for shooting horizontally
     m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmPosition.IDLE).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWrist())); 
-  
+
     // some code button thing ask riley idk
     m_operatorController.povLeft().whileTrue(
       Commands.sequence(

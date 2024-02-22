@@ -42,7 +42,7 @@ public class BoxSubsystem extends SubsystemBase {
    * @param reversed  False = intakes or shoots the note. True = regurgitates the note.
    */
   public Command setIntakeMotorCommand(double speed) {
-    return run(() -> intakeMotor.set(speed));
+    return runOnce(() -> intakeMotor.set(speed));
   }
 
   /**
@@ -51,17 +51,17 @@ public class BoxSubsystem extends SubsystemBase {
    * @param speed     Speed of the motor.
    */
   public Command setShooterMotorCommand(double speed) {
-    return run(() -> shooterMotor.set(speed));
+    return runOnce(() -> shooterMotor.set(speed));
   }
 
   public Command setShooterMotorCommand(ArmPosition position) {
     switch(position) {
       case SHOOT_SUB:
-        return run(() -> shooterMotor.set(BoxConstants.kSpeakerShootSpeed));
+        return runOnce(() -> shooterMotor.set(BoxConstants.kSpeakerShootSpeed));
       case AMP:
-        return run(() -> shooterMotor.set(BoxConstants.kAmpShootSpeed));
+        return runOnce(() -> shooterMotor.set(BoxConstants.kAmpShootSpeed));
       default:
-        return run(() -> shooterMotor.set(BoxConstants.kDeafultShootSpeed));
+        return runOnce(() -> shooterMotor.set(BoxConstants.kDeafultShootSpeed));
     }
   }
 
@@ -69,7 +69,7 @@ public class BoxSubsystem extends SubsystemBase {
    * Stops the intake and shooter motor.
    */
   public Command stopCommand() {
-    return runOnce( () -> {
+    return runOnce(() -> {
       intakeMotor.stopMotor();
       shooterMotor.stopMotor();
     });

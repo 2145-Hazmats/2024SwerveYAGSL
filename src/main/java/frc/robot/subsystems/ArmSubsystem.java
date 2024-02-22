@@ -107,7 +107,6 @@ public class ArmSubsystem extends SubsystemBase {
     return startEnd(
       // When the command is called, the elbow and wrist PIDController is set and updated on SmartDashboard
       () -> {
-
         double elbowAngle = 0;
         double wristAngle = 0;
         currentPosition = position;
@@ -204,7 +203,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Command PIDFallin(){
-    return run(()->{
+    return runOnce(()->{
       wristPIDController.setReference(0, ControlType.kDutyCycle);
       elbowPIDController.setReference(0, ControlType.kDutyCycle);
     });
@@ -222,7 +221,6 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmPosition getArmPosition() {
     return currentPosition;
   }
-
 
   @Override
   public void periodic() {
