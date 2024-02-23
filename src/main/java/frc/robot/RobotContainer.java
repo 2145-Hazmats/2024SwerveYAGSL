@@ -33,7 +33,7 @@ public class RobotContainer {
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
-  private final LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
+  //private final LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
   
   // Other variables
   private SendableChooser<Command> m_autonChooser;
@@ -52,7 +52,7 @@ public class RobotContainer {
     // Setup PathPlanner and autons
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
-    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmPosition.FLOOR));//.withTimeout(1.5));
+    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));//.withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed).until(m_box::isReverseLimitSwitchPressed));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
@@ -77,8 +77,8 @@ public class RobotContainer {
     /* Driver Controls */
 
     // Vision snapping command. Active when the right axis is 0
-    // Not tested, you might have to comment it out
-    m_driverController.axisGreaterThan(4, OperatorConstants.kVisionModeDeadband)
+    // If there is no limelight, there will be an exception
+    /*m_driverController.axisGreaterThan(4, OperatorConstants.kVisionModeDeadband)
     .or(m_driverController.axisLessThan(4, -OperatorConstants.kVisionModeDeadband)).whileFalse(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -86,7 +86,7 @@ public class RobotContainer {
         () -> -m_limelight.getTargetRotation(),
         Constants.OperatorConstants.kFastModeSpeed
       )
-    );
+    );*/
 
     // These commands work, but the drivers weren't using them. I'm commenting them out so we can reuse these buttons for other commands
     /*
@@ -161,7 +161,7 @@ public class RobotContainer {
 
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
-      m_box.setShooterMotorCommand(m_arm.getArmPosition())
+      m_box.setShooterMotorCommand(() -> m_arm.getArmState())
       //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
       .withTimeout(BoxConstants.kShooterDelay)
       .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))
@@ -196,10 +196,10 @@ public class RobotContainer {
     */
 
     // Arm set point for picking off the floor
-    m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmPosition.FLOOR));
+    m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
 
     // Arm set point for picking out of source
-    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmPosition.SOURCE));
+    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE));
 
     // Arm set point for playing amp
     //m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
@@ -211,25 +211,25 @@ public class RobotContainer {
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWrist()));
 
     // Arm set point for playing trap
-    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmPosition.AMP));
+    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP));
 
     // Arm set point for shooting speaker from the subwoofer
-    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmPosition.SHOOT_SUB));
+    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB));
 
     // Arm set point for shooting speaker from the podium
     //m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
     
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmPosition.IDLE).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWrist())); 
+    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWrist())); 
 
     // some code button thing ask riley idk
     m_operatorController.povLeft().whileTrue(
       Commands.sequence(
         Commands.parallel(
-          m_arm.setArmPIDCommand(ArmConstants.ArmPosition.FLOOR),
+          m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
         ).until(m_box::isReverseLimitSwitchPressed),
-        m_arm.setArmPIDCommand(ArmConstants.ArmPosition.IDLE)
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE)
       )
     );
   }

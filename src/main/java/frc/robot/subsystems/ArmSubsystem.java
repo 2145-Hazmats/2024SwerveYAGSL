@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ArmConstants.ArmPosition;
+import frc.robot.Constants.ArmConstants.ArmState;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
 
-  private ArmPosition currentPosition = ArmPosition.IDLE;
+  private ArmState currentPosition = ArmState.IDLE;
 
 
   /** Creates a new Arm. */
@@ -103,7 +103,7 @@ public class ArmSubsystem extends SubsystemBase {
    * @param elbowAngle  The angle the elbow will rotate to and stay at.
    * @param wristAngle  The angle the wrist will rotate to and stay at.
    */
-  public Command setArmPIDCommand(ArmPosition position) {
+  public Command setArmPIDCommand(ArmState position) {
     return startEnd(
       // When the command is called, the elbow and wrist PIDController is set and updated on SmartDashboard
       () -> {
@@ -111,7 +111,7 @@ public class ArmSubsystem extends SubsystemBase {
         double wristAngle = 0;
         currentPosition = position;
 
-        switch(position){
+        switch(position) {
           case IDLE:
             elbowAngle = ArmConstants.kIdleAngleSP[0];
             wristAngle = ArmConstants.kIdleAngleSP[1];
@@ -136,6 +136,8 @@ public class ArmSubsystem extends SubsystemBase {
             elbowAngle = ArmConstants.kTrapAngleSP[0];
             wristAngle = ArmConstants.kTrapAngleSP[1];
             break;
+          default:
+            break;
         }
 
         elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
@@ -146,6 +148,7 @@ public class ArmSubsystem extends SubsystemBase {
       // When the command is interrupted, the elbow and wrist go to their idle position
       // Or not if it is commented out
       () -> {
+        currentPosition = ArmConstants.ArmState.IDLE;
         elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
         wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
       }
@@ -197,10 +200,11 @@ public class ArmSubsystem extends SubsystemBase {
    * @param elbowSpeed  The speed of the elbow motor from a joystick axis.
    */
   public Command manualArmCommand(DoubleSupplier wristSpeed, DoubleSupplier elbowSpeed){
-    return run(()->{
-      wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
-      elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
-    });
+    return runOnce(() -> currentPosition = ArmState.MANUAL)
+      .andThen(run(()->{
+        wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
+        elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
+      }));
   }
 
   public Command PIDFallin(){
@@ -219,7 +223,7 @@ public class ArmSubsystem extends SubsystemBase {
     wristMotor.set(speed);
   }
 
-  public ArmPosition getArmPosition() {
+  public ArmState getArmState() {
     return currentPosition;
   }
 
@@ -274,6 +278,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elbow Angle", elbowEncoder.getPosition());
     SmartDashboard.putNumber("Wrist Angular Velocity", wristEncoder.getVelocity());
     SmartDashboard.putNumber("Wrist Angle", wristEncoder.getPosition());
+    SmartDashboard.putString("NameofEnum", getArmState().toString());
   }
 
 }

@@ -22,8 +22,8 @@ public final class Constants {
     public static final int kDriverControllerPort   = 0;
     public static final int kOperatorControllerPort = 1;
     /* Deadbands */
-    public static final double LEFT_X_DEADBAND  = 0.02;
-    public static final double LEFT_Y_DEADBAND  = 0.02;
+    public static final double LEFT_X_DEADBAND  = 0.04;
+    public static final double LEFT_Y_DEADBAND  = 0.04;
     public static final double RIGHT_X_DEADBAND = 0.02;
     public static final double RIGHT_Y_DEADBAND = 0.02;
     public static final double kVisionModeDeadband = 0.10;
@@ -35,7 +35,7 @@ public final class Constants {
 
   /* Constants for the arm subsystem */
   public static class ArmConstants{
-    public static enum ArmPosition {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP};
+    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP, MANUAL};
 
     // Motor IDs
     public static final int kElbowMotorLeaderID   = 20;
@@ -80,8 +80,8 @@ public final class Constants {
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter motor speeds
     public static final double kSpeakerShootSpeed = 1;
-    public static final double kAmpShootSpeed = 0.10;
-    public static final double kDeafultShootSpeed = 0.5;
+    public static final double kAmpShootSpeed = 0.25;
+    public static final double kDefaultShootSpeed = 0.5;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;

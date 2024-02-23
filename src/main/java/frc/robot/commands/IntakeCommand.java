@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants.ArmPosition;
+import frc.robot.Constants.ArmConstants.ArmState;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
 
@@ -26,7 +26,7 @@ public class IntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.setArmPIDCommand(ArmPosition.FLOOR);
+    m_arm.setArmPIDCommand(ArmState.FLOOR);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

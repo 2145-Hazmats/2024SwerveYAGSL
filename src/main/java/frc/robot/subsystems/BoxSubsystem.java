@@ -4,13 +4,15 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import frc.robot.Constants.BoxConstants;
-import frc.robot.Constants.ArmConstants.ArmPosition;
+import frc.robot.Constants.ArmConstants.ArmState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,20 +58,28 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> shooterMotor.set(speed));
   }
 
-  public Command setShooterMotorCommand(ArmPosition position) {
-    // doesn't work. Just goes to default
-    switch(position) {
-      case SHOOT_SUB:
-        shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
-      case AMP:
-        shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
-      case IDLE:
-        shooterMotorSpeed = 0.0;
-      default:
-        shooterMotorSpeed = BoxConstants.kDeafultShootSpeed;
-    }
-    // return run() in switch statement wasn't working
-    return run(() -> shooterMotor.set(shooterMotorSpeed));
+  public Command setShooterMotorCommand(Supplier<ArmState> position) {
+    return run(() -> {
+
+      SmartDashboard.putString("Shooter Motor Command Position", position.get().toString());
+
+      switch(position.get()) {
+        case SHOOT_SUB:
+          shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
+          break;
+        case AMP:
+          shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
+          break;
+        case IDLE:
+          shooterMotorSpeed = 0.0;
+          break;
+        default:
+          shooterMotorSpeed = BoxConstants.kDefaultShootSpeed;
+          break;
+      }
+
+      shooterMotor.set(shooterMotorSpeed);
+    });
   }
 
   /**

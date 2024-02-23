@@ -25,7 +25,7 @@ public class IdleArmCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.setArmPIDCommand(ArmConstants.ArmPosition.IDLE);
+    m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE);
     canPIDEnd = true;
     canWristReset = false;
     SmartDashboard.putBoolean("isIdleArmRunning", true);
