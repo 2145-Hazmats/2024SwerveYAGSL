@@ -13,6 +13,7 @@ import com.revrobotics.SparkLimitSwitch.Type;
 
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
+import frc.robot.Constants.ArmConstants.ArmState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -108,6 +109,7 @@ public class BoxSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("isReverseLimitSwitchPressed", isReverseLimitSwitchPressed());
+    SmartDashboard.putNumber("Shooter Motor Speed", shooterMotorSpeed);
   }
 
 }

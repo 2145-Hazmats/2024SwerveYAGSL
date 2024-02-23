@@ -13,8 +13,8 @@ import frc.robot.subsystems.ArmSubsystem;
 public class IdleArmCommand extends Command {
   
   private final ArmSubsystem m_arm;
-  private boolean canPIDEnd;
-  private boolean canWristReset;
+  //private boolean canPIDEnd;
+  //private boolean canWristReset;
 
   public IdleArmCommand(ArmSubsystem Marm) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -34,24 +34,24 @@ public class IdleArmCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_arm.getWristEncoder() <= 2.0 && canPIDEnd) {
+    /*if(m_arm.getWristEncoder() <= 2.0 && canPIDEnd) {
       m_arm.PIDFallin();
       canPIDEnd = false;
     }
 
     if (Math.abs(m_arm.getWristVelocity()) <= 0.05 && (canWristReset == false) && (canPIDEnd == false)) {
       canWristReset = true;
-    }
+    }*/
   }
 
   // Called once the command ends or is interrupted.
    
   @Override
   public void end(boolean interrupted) {
-    if(canWristReset == true) {
+    /*if(canWristReset == true) {
       m_arm.resetWrist();
     }
-    SmartDashboard.putBoolean("isIdleArmRunning", false);
+    SmartDashboard.putBoolean("isIdleArmRunning", false);*/
   }
 
 }

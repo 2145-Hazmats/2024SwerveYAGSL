@@ -165,6 +165,7 @@ public class RobotContainer {
       //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
       .withTimeout(BoxConstants.kShooterDelay)
       .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))
+      //m_box.setShooterMotorCommand(.25).withTimeout(2).andThen(m_box.setIntakeMotorCommand(.25))
     );
 
     // Intakes note into robot and keeps it there

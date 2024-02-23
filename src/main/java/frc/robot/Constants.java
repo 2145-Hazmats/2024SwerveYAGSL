@@ -24,6 +24,8 @@ public final class Constants {
     /* Deadbands */
     public static final double LEFT_X_DEADBAND  = 0.04;
     public static final double LEFT_Y_DEADBAND  = 0.04;
+    public static final double LEFT_X_DEADBAND  = 0.04;
+    public static final double LEFT_Y_DEADBAND  = 0.04;
     public static final double RIGHT_X_DEADBAND = 0.02;
     public static final double RIGHT_Y_DEADBAND = 0.02;
     public static final double kVisionModeDeadband = 0.10;
@@ -35,6 +37,7 @@ public final class Constants {
 
   /* Constants for the arm subsystem */
   public static class ArmConstants{
+    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP, MANUAL};
     public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP, MANUAL};
 
     // Motor IDs
