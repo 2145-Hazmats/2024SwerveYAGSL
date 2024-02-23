@@ -22,16 +22,18 @@ import frc.robot.commands.IdleArmCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
 
 // This class is instantiated when the robot is first started up
 public class RobotContainer {
-  // Make the one and only instance of each subsystem
+  // Make the one and only object of each subsystem
   private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File (Filesystem.getDeployDirectory(), "swerve"));
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
+  private final LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
   
   // Other variables
   private SendableChooser<Command> m_autonChooser;
@@ -67,20 +69,27 @@ public class RobotContainer {
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
-   // m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
+    //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
   }
 
 
   private void configureBindings() {
     /* Driver Controls */
 
-    // Lock the wheels on toggle
-    m_driverController.start().toggleOnTrue(
-      m_swerve.run(()->{
-        m_swerve.lock();
-      })
+    // Vision snapping command. Active when the right axis is 0
+    // Not tested, you might have to comment it out
+    m_driverController.axisGreaterThan(4, OperatorConstants.kVisionModeDeadband)
+    .or(m_driverController.axisLessThan(4, -OperatorConstants.kVisionModeDeadband)).whileFalse(
+      m_swerve.driveCommandAngularVelocity(
+        () -> -m_driverController.getLeftY(),
+        () -> -m_driverController.getLeftX(),
+        () -> -m_limelight.getTargetRotation(),
+        Constants.OperatorConstants.kFastModeSpeed
+      )
     );
 
+    // These commands work, but the drivers weren't using them. I'm commenting them out so we can reuse these buttons for other commands
+    /*
     // Rotate towards the driver
     m_driverController.a().whileTrue(m_swerve.driveCommandPoint(() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
       () -> 0,
@@ -104,6 +113,7 @@ public class RobotContainer {
       () -> 0,
       () -> 1
     ));
+    */
 
     // Resets the gyro
     m_driverController.back().onTrue(
@@ -139,6 +149,13 @@ public class RobotContainer {
       () -> -m_driverController.getRightX(),
       () -> -m_driverController.getRightY()
     ));
+
+    // Lock the wheels on toggle
+    m_driverController.start().toggleOnTrue(
+      m_swerve.run(()->{
+        m_swerve.lock();
+      })
+    );
 
     /* Operator Controls */
 
