@@ -10,17 +10,17 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.MatterConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
+import swervelib.math.Matter;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -38,8 +38,11 @@ public class ArmSubsystem extends SubsystemBase {
   // Variables used during SmartDashboard changes
   private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
-
+  // Arm state
   private ArmState currentPosition = ArmState.IDLE;
+  // Matter of the elbow that changes in real time
+  private Matter elbowMatter;
+
 
 
   /** Creates a new Arm. */
@@ -217,13 +220,9 @@ public class ArmSubsystem extends SubsystemBase {
     });
   }
  
-  public void resetWrist() {
+  public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
-
-  public Command resetWristCommand() {
-    return runOnce(() -> resetWrist());
-  }
 
   public double getWristEncoder() {
     return wristEncoder.getPosition();
@@ -278,8 +277,14 @@ public class ArmSubsystem extends SubsystemBase {
     return currentPosition;
   }
 
+  public Matter getElbowMatter() {
+    return elbowMatter;
+  }
+
   @Override
   public void periodic() {
+    elbowMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.ELBOW_MASS);
+
     // If the elbow PID or setpoint values are different from SmartDashboard, use the new values
     if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
       elbowP = SmartDashboard.getNumber("Elbow P", 0);
@@ -323,7 +328,7 @@ public class ArmSubsystem extends SubsystemBase {
       wristSetPoint = SmartDashboard.getNumber("Wrist Set Point", 0);
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
     }
-
+  
     // Update SmartDashboard with elbow and wrist information
     SmartDashboard.putNumber("Elbow Angular Velocity", elbowEncoder.getVelocity());
     SmartDashboard.putNumber("Elbow Angle", elbowEncoder.getPosition());

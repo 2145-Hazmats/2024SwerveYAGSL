@@ -12,8 +12,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import frc.robot.Constants.BoxConstants;
+import frc.robot.Constants.MatterConstants;
+import swervelib.math.Matter;
 import frc.robot.Constants.ArmConstants.ArmState;
-import frc.robot.Constants.ArmConstants.ArmState;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,8 +29,10 @@ public class BoxSubsystem extends SubsystemBase {
   private CANSparkMax shooterMotor = new CANSparkMax(BoxConstants.kShooterMotorID, MotorType.kBrushless);
   private CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
-
+  // Speed of the shooter motor
   private double shooterMotorSpeed = 0.0;
+  // Matter of the elbow that changes in real time
+  private Matter wristMatter;
 
 
   /** Creates a new Box. */
@@ -58,9 +63,17 @@ public class BoxSubsystem extends SubsystemBase {
 
   public Command setIntakeMotorCommandThenStop(double speed) {
     return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
-
   }
-  public Command ShootPieceAtSubwoofer() {
+
+  public Command ShootNoteAmp() {
+    return setShooterMotorCommandAuto(BoxConstants.kAmpShootSpeed)
+    .andThen(new WaitCommand(1))
+    .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
+    .andThen(new WaitCommand(0.75))
+    .andThen(stopCommand());
+  }
+
+  public Command ShootNoteSubwoofer() {
     return setShooterMotorCommandAuto(BoxConstants.kSpeakerShootSpeed)
     .andThen(new WaitCommand(2))
     .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
@@ -132,8 +145,15 @@ public class BoxSubsystem extends SubsystemBase {
   }
 
 
+  public Matter getWristMatter() {
+    return wristMatter;
+  }
+
+
   @Override
   public void periodic() {
+    wristMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.WRIST_MASS);
+
     SmartDashboard.putBoolean("isReverseLimitSwitchPressed", isReverseLimitSwitchPressed());
     SmartDashboard.putNumber("Shooter Motor Speed", shooterMotorSpeed);
   }

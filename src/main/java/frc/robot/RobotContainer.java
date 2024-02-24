@@ -6,8 +6,10 @@ package frc.robot;
 
 import java.io.File;
 
+import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,6 +26,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
 //import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import swervelib.math.Matter;
 
 
 
@@ -34,7 +37,6 @@ public class RobotContainer {
   private final BoxSubsystem m_box = new BoxSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
   //private final LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
-  
   // Other variables
   private SendableChooser<Command> m_autonChooser;
 
@@ -53,13 +55,13 @@ public class RobotContainer {
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommandAndStay(ArmConstants.ArmState.FLOOR).withTimeout(1.5));
+    NamedCommands.registerCommand("ArmToAmp", m_arm.setArmPIDCommandAndStay(ArmConstants.ArmState.AMP).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.25));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-    NamedCommands.registerCommand("ShootNoteSubwoofer",
+    NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer());
+    NamedCommands.registerCommand("ShootNoteAmp", m_box.ShootNoteAmp());
     //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(m_box.setShooterMotorCommand(() -> m_arm.getArmState())
-     m_box.ShootPieceAtSubwoofer()
-      );
 
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
@@ -69,6 +71,8 @@ public class RobotContainer {
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
+        m_arm::getElbowMatter,
+        m_box::getWristMatter,
         Constants.OperatorConstants.kFastModeSpeed
     ));
 
@@ -82,7 +86,8 @@ public class RobotContainer {
 
     // Vision snapping command. Active when the right axis is 0
     // If there is no limelight, there will be an exception
-    /*m_driverController.axisGreaterThan(4, OperatorConstants.kVisionModeDeadband)
+    /*
+    m_driverController.axisGreaterThan(4, OperatorConstants.kVisionModeDeadband)
     .or(m_driverController.axisLessThan(4, -OperatorConstants.kVisionModeDeadband)).whileFalse(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -90,7 +95,11 @@ public class RobotContainer {
         () -> -m_limelight.getTargetRotation()/360,
         Constants.OperatorConstants.kFastModeSpeed
       )
-    );*/
+    );
+    */
+
+    // Drives to amp and plays amp
+    m_driverController.a().onTrue(m_swerve.driveToPathThenFollowPath(PathPlannerPath.fromPathFile("PlayAmp")));
 
     // These commands work, but the drivers weren't using them. I'm commenting them out so we can reuse these buttons for other commands
     /*
@@ -132,6 +141,8 @@ public class RobotContainer {
         () -> -m_driverController.getLeftY(),
         () ->-m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
+        m_arm::getElbowMatter,
+        m_box::getWristMatter,
         OperatorConstants.kMidModeSpeed
       )
     );
@@ -142,6 +153,8 @@ public class RobotContainer {
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
+        m_arm::getElbowMatter,
+        m_box::getWristMatter,
         OperatorConstants.kSlowModeSpeed
       )
     );
@@ -185,50 +198,36 @@ public class RobotContainer {
 
     //m_operatorController.a().whileTrue(
       //new IntakeCommand(m_arm, m_box)
-    
-   // );
-
-    /* //SOURCE COMMAND UNCOMMENT OUT LATER AND MAP A BUTTON
-    m_operatorController.b().whileTrue(
-      new IntakeCommand(m_arm, m_box, ArmConstants.kFloorAngleSP[0], ArmConstants.kFloorAngleSP[1])
-    );
-    */
-
-    // Manual control toggle for arm and wrist
-    // UPDATE: Made the Arm's default command manual control in the RobotContainer constructor for Oxford
-    /*
-    m_operatorController.button(9).toggleOnTrue(m_arm.manualElbowCommand(m_operatorController.getLeftY()));
-    m_operatorController.button(10).toggleOnTrue(m_arm.manualWristCommand(m_operatorController.getRightY()));
-    */
+    //);
 
     // Arm set point for picking off the floor
-   // m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
+    m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
 
     // Arm set point for picking out of source
     m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE));
 
     // Arm set point for playing amp
-    //m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.kAmpAngleSP[0], ArmConstants.kAmpAngleSP[1]));
+    m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP));
+
+    // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
         m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
         () -> m_operatorController.getLeftY() * 0.3)
     );
 
-    m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWrist()));
+    // Reset wrist encoder
+    m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
 
-    // Arm set point for playing trap
+    // Arm set point for playing amp (again?)
     m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP));
 
     // Arm set point for shooting speaker from the subwoofer
     m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB));
 
-    // Arm set point for shooting speaker from the podium
-    //m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.kSpeakerPodiumAngleSP[0], ArmConstants.kSpeakerPodiumAngleSP[1]));
-    
     // Arm set point for shooting horizontally
-    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWrist())); 
+    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWristEncoder())); 
 
-    // some code button thing ask riley idk
+    // some code button thing ask Riley idk he wanted it
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(

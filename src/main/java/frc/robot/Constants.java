@@ -4,17 +4,29 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+import swervelib.math.Matter;
 
 public final class Constants {
   /* Constants for the swerve chassis */
   public static class SwerveConstants {
-    public static final double MAX_SPEED = 4.46;         // maximum m/s for the robot
-    /* PathPlanner constants */
+    public static final double MAX_SPEED  = 4.46; // maximum m/s for the robot
     public static final double PATHPLANNER_TRANS_KP = 1; // Translational P for the pathplanner PID (default 5?)
-    /* Unused constants */
-    //public static final double ROBOT_MASS = 45 * 0.453592; // mass in kg
-    //public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
-    //public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
+    public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
+  }
+
+  public static class MatterConstants {
+    // Mass of matter
+    // NEED TO FILL IT OUT
+    public static final double ROBOT_MASS      = 45 * 0.453592; // mass in kg
+    public static final double ELBOW_BASE_MASS = 45 * 0.453592; // mass in kg
+    public static final double ELBOW_MASS      = 45 * 0.453592; // mass in kg
+    public static final double WRIST_MASS      = 45 * 0.453592; // mass in kg
+    // Matter that doesn't move
+    // NEED TO FILL OUT POSITION
+    public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ROBOT_MASS);
+    public static final Matter ELBOW_BASE = new Matter(new Translation3d(0, 0, Units.inchesToMeters(24)), ELBOW_BASE_MASS);
   }
 
   /* Constants for the controllers */
@@ -78,7 +90,7 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter motor speeds
-    public static final double kSpeakerShootSpeed = 1;
+    public static final double kSpeakerShootSpeed = 0.9;
     public static final double kAmpShootSpeed = 0.25;
     public static final double kDefaultShootSpeed = 0.5;
     // Intake motor speeds
