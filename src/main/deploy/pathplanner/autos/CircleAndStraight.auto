@@ -22,12 +22,6 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": null
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "drive_straight"
