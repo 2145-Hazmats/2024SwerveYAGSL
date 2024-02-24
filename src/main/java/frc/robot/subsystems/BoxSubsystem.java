@@ -75,7 +75,7 @@ public class BoxSubsystem extends SubsystemBase {
 
   public Command ShootNoteSubwoofer() {
     return setShooterMotorCommandAuto(BoxConstants.kSpeakerShootSpeed)
-    .andThen(new WaitCommand(2))
+    .andThen(new WaitCommand(2.5))
     .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
     .andThen(new WaitCommand(0.75))
     .andThen(stopCommand());

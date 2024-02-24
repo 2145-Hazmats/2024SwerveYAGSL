@@ -18,6 +18,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwoofer"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "MS-N2"
@@ -27,6 +33,12 @@
           "type": "path",
           "data": {
             "pathName": "N2-MS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwoofer"
           }
         }
       ]

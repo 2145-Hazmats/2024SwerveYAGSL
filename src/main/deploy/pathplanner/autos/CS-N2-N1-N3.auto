@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "ArmToFloor"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CS N2"
