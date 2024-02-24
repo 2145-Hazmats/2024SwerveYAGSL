@@ -14,9 +14,18 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.MatterConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
@@ -43,14 +52,25 @@ public class ArmSubsystem extends SubsystemBase {
   // Matter of the elbow that changes in real time
   private Matter elbowMatter;
 
+  /* SysID variables and routine */
+  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
+  private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(Units.Volts.of(0));
+  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation
+  private final MutableMeasure<Angle> m_angle = MutableMeasure.mutable(Units.Rotations.of(0));
+  // Mutable holder for unit-safe linear velocitry values, persisted to avoid reallocation
+  private final MutableMeasure<Velocity<Angle>> m_velocity = MutableMeasure.mutable(Units.RotationsPerSecond.of(0));
+
+  private SysIdRoutine armSysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(),
+    new SysIdRoutine.Mechanism(
+        this::motorVoltageControl,
+        this::logMotor,
+        this)
+  );
 
 
   /** Creates a new Arm. */
   public ArmSubsystem() {
-    // Restore factory defaults
-    //elbowMotorLeader.restoreFactoryDefaults();
-    //elbowMotorFollower.restoreFactoryDefaults();
-    //wristMotor.restoreFactoryDefaults();
     // Have the second elbow motor follow the first
     elbowMotorFollower.follow(elbowMotorLeader, true);
     // Enable voltage compensation
@@ -157,6 +177,7 @@ public class ArmSubsystem extends SubsystemBase {
       }
     );
   }
+
   public Command setArmPIDCommandAndStay(ArmState position) {
     return startEnd(
       // When the command is called, the elbow and wrist PIDController is set and updated on SmartDashboard
@@ -257,11 +278,30 @@ public class ArmSubsystem extends SubsystemBase {
       }));
   }
 
-  public Command PIDFallin(){
+  public Command TurnPIDOff(){
     return runOnce(()->{
       wristPIDController.setReference(0, ControlType.kDutyCycle);
       elbowPIDController.setReference(0, ControlType.kDutyCycle);
     });
+  }
+
+  public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
+    return armSysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
+    return armSysIdRoutine.dynamic(direction);
+  }
+
+  public void motorVoltageControl(Measure<Voltage> volts) {
+    elbowMotorLeader.setVoltage(volts.in(Units.Volts));
+  }
+
+  public void logMotor(SysIdRoutineLog log) {
+    log.motor("elbow-motor")
+      .voltage(m_appliedVoltage.mut_replace(elbowMotorLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
+      .angularPosition(m_angle.mut_replace(elbowEncoder.getPosition(), Units.Rotations))
+      .angularVelocity(m_velocity.mut_replace(elbowEncoder.getVelocity(), Units.RotationsPerSecond));
   }
 
   /**

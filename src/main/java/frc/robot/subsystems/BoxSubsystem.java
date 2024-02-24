@@ -15,7 +15,6 @@ import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.MatterConstants;
 import swervelib.math.Matter;
 import frc.robot.Constants.ArmConstants.ArmState;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,9 +36,6 @@ public class BoxSubsystem extends SubsystemBase {
 
   /** Creates a new Box. */
   public BoxSubsystem() {
-    // Restore factory defaults
-    //intakeMotor.restoreFactoryDefaults();
-    //shooterMotor.restoreFactoryDefaults();
     // Enable voltage compensation
     intakeMotor.enableVoltageCompensation(BoxConstants.kIntakeMotorNominalVoltage);
     shooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
