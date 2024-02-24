@@ -8,7 +8,7 @@ package frc.robot;
 public final class Constants {
   /* Constants for the swerve chassis */
   public static class SwerveConstants {
-    public static final double MAX_SPEED = 3.93;         // maximum m/s for the robot
+    public static final double MAX_SPEED = 4.46;         // maximum m/s for the robot
     /* PathPlanner constants */
     public static final double PATHPLANNER_TRANS_KP = 1; // Translational P for the pathplanner PID (default 5?)
     /* Unused constants */
@@ -49,18 +49,17 @@ public final class Constants {
     public static final double kElbowI        = 0.000001; //0.0001
     public static final double kElbowD        = 0.1; //1
     public static final double kElbowFF       = 0;
-    public static final double kElbowMinSpeed = -0.4;
+    public static final double kElbowMinSpeed = -0.4; //-0.4
     public static final double kElbowMaxSpeed = 0.4;
-    // Wrist PID + PID max speed
     public static final double kWristP        = 0.4;
     public static final double kWristI        = 0.00005;
     public static final double kWristD        = 0.0002;
     public static final double kWristFF       = 0;
-    public static final double kWristMinSpeed = -0.55;
-    public static final double kWristMaxSpeed = 0.55;
+    public static final double kWristMinSpeed = -0.55; //-0.55
+    public static final double kWristMaxSpeed = 0.55; //0.55
     // Setpoints for the arm subsystem
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
-    public static final double[] kFloorAngleSP            = {0, 38.8};
+    public static final double[] kFloorAngleSP            = {0, 38};
     public static final double[] kSourceAngleSP           = {0, 0};
     public static final double[] kIdleAngleSP             = {-1, 1};
     public static final double[] kSpeakerSubwooferAngleSP = {0, 0};

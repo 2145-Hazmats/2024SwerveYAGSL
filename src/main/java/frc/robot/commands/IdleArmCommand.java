@@ -13,8 +13,8 @@ import frc.robot.subsystems.ArmSubsystem;
 public class IdleArmCommand extends Command {
   
   private final ArmSubsystem m_arm;
-  //private boolean canPIDEnd;
-  //private boolean canWristReset;
+  private boolean canPIDEnd;
+  private boolean canWristReset;
 
   public IdleArmCommand(ArmSubsystem Marm) {
     // Use addRequirements() here to declare subsystem dependencies.

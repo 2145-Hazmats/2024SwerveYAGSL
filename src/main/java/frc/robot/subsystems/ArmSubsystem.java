@@ -154,6 +154,57 @@ public class ArmSubsystem extends SubsystemBase {
       }
     );
   }
+  public Command setArmPIDCommandAndStay(ArmState position) {
+    return startEnd(
+      // When the command is called, the elbow and wrist PIDController is set and updated on SmartDashboard
+      () -> {
+        double elbowAngle = 0;
+        double wristAngle = 0;
+        currentPosition = position;
+
+        switch(position) {
+          case IDLE:
+            elbowAngle = ArmConstants.kIdleAngleSP[0];
+            wristAngle = ArmConstants.kIdleAngleSP[1];
+            break;
+          case SOURCE:
+            elbowAngle = ArmConstants.kSourceAngleSP[0];
+            wristAngle = ArmConstants.kSourceAngleSP[1];
+            break;
+          case FLOOR:
+            elbowAngle = ArmConstants.kFloorAngleSP[0];
+            wristAngle = ArmConstants.kFloorAngleSP[1];
+            break;
+          case AMP:
+            elbowAngle = ArmConstants.kAmpAngleSP[0];
+            wristAngle = ArmConstants.kAmpAngleSP[1];
+            break;
+          case SHOOT_SUB:
+            elbowAngle = ArmConstants.kSpeakerSubwooferAngleSP[0];
+            wristAngle = ArmConstants.kSpeakerSubwooferAngleSP[1];
+            break;
+          case TRAP:
+            elbowAngle = ArmConstants.kTrapAngleSP[0];
+            wristAngle = ArmConstants.kTrapAngleSP[1];
+            break;
+          default:
+            break;
+        }
+
+        elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
+        wristPIDController.setReference(wristAngle, ControlType.kPosition);
+        SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
+        SmartDashboard.putNumber("Wrist Set Point", wristAngle);
+      },
+      // When the command is interrupted, the elbow and wrist go to their idle position
+      // Or not if it is commented out
+      () -> {
+        //currentPosition = ArmConstants.ArmState.IDLE;
+        //elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
+        //wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
+      }
+    );
+  }
 
   /**
    * Stops the arm by setting the PIDControllers to a value of 0 with a type of ControlType.kVelocity.

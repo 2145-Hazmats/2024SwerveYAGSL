@@ -12,15 +12,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "drive_straight"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToFloor"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwoofer"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "ArmToFloor"
+            "pathName": "drive_straight"
           }
         }
       ]

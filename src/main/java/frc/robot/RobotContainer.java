@@ -22,7 +22,7 @@ import frc.robot.commands.IdleArmCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
+//import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
@@ -52,15 +52,19 @@ public class RobotContainer {
     // Setup PathPlanner and autons
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
-    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));//.withTimeout(1.5));
-    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed).until(m_box::isReverseLimitSwitchPressed));
+    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommandAndStay(ArmConstants.ArmState.FLOOR).withTimeout(1.5));
+    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(.75));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-    //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(Constants.BoxConstants.kFeedSpeed, Constants.BoxConstants.kShooterSpeed).withTimeout(2));
-    // Build the auto chooser after defining NamedCommands
+    NamedCommands.registerCommand("ShootNoteSubwoofer",
+    //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(m_box.setShooterMotorCommand(() -> m_arm.getArmState())
+     m_box.ShootPieceAtSubwoofer()
+      );
+
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
 
+    // This causes a command scheduler loop overrun
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
@@ -83,7 +87,7 @@ public class RobotContainer {
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
-        () -> -m_limelight.getTargetRotation(),
+        () -> -m_limelight.getTargetRotation()/360,
         Constants.OperatorConstants.kFastModeSpeed
       )
     );*/

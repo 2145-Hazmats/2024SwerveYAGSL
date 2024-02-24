@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -32,12 +33,15 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import swervelib.math.Matter;
+import swervelib.math.SwerveMath;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
+  private SwerveMath m_swerveMath = new SwerveMath();
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -46,7 +50,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE; // No verbosity
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED);
@@ -54,6 +58,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle
   }
+
+
 
   /* Setup AutoBuilder for PathPlanner */
   public void setupPathPlanner() {
@@ -128,7 +134,19 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.driveFieldOriented(velocity);
   }
 
-
+  /*
+   * This method can be used to limit the swerve's velocity based on the
+   * center of gravity. You have to pass a list of matter, this is how it will
+   * calculate a dynamic center of gravity.
+   */
+  /*
+  public Translation2d setSwerveMaxVelocity(Pose2d robotPose, List<Matter> matter) {
+    // This takes in a lot of parameters based on the bot.
+    // Any parameters that change need to be passed as arguments
+    // to setSwerveMaxVelocity
+    return m_swerveMath.limitVelocity();
+  }
+  */
 
   /**
    * Other Methods

@@ -16,7 +16,9 @@ import frc.robot.Constants.ArmConstants.ArmState;
 import frc.robot.Constants.ArmConstants.ArmState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 
 public class BoxSubsystem extends SubsystemBase {
@@ -50,6 +52,22 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> intakeMotor.set(speed));
   }
 
+  public Command setIntakeMotorCommandAuto(double speed){
+    return runOnce(() -> intakeMotor.set(speed));
+  }
+
+  public Command setIntakeMotorCommandThenStop(double speed) {
+    return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
+
+  }
+  public Command ShootPieceAtSubwoofer() {
+    return setShooterMotorCommandAuto(BoxConstants.kSpeakerShootSpeed)
+    .andThen(new WaitCommand(2))
+    .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
+    .andThen(new WaitCommand(0.75))
+    .andThen(stopCommand());
+  }
+
   /**
    * Sets the speed of the shooter motor.
    *
@@ -57,6 +75,14 @@ public class BoxSubsystem extends SubsystemBase {
    */
   public Command setShooterMotorCommand(double speed) {
     return run(() -> shooterMotor.set(speed));
+  }
+
+  public Command setShooterMotorCommandAuto(double speed) {
+    return runOnce(() -> shooterMotor.set(speed));
+  }
+
+  public Command setShooterMotorCommandThenStop(double speed) {
+    return Commands.startEnd(() -> shooterMotor.set(speed),() -> shooterMotor.set(0),this);
   }
 
   public Command setShooterMotorCommand(Supplier<ArmState> position) {
