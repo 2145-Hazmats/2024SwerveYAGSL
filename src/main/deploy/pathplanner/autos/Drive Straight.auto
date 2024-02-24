@@ -12,25 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ArmToFloor"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootNoteSubwoofer"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "drive_straight"

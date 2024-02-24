@@ -53,7 +53,7 @@ public class RobotContainer {
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommandAndStay(ArmConstants.ArmState.FLOOR).withTimeout(1.5));
-    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(.75));
+    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.25));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     NamedCommands.registerCommand("ShootNoteSubwoofer",
@@ -183,9 +183,10 @@ public class RobotContainer {
       m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed)
     );
 
-    m_operatorController.a().whileTrue(
-      new IntakeCommand(m_arm, m_box)
-    );
+    //m_operatorController.a().whileTrue(
+      //new IntakeCommand(m_arm, m_box)
+    
+   // );
 
     /* //SOURCE COMMAND UNCOMMENT OUT LATER AND MAP A BUTTON
     m_operatorController.b().whileTrue(
@@ -201,7 +202,7 @@ public class RobotContainer {
     */
 
     // Arm set point for picking off the floor
-    m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
+   // m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
 
     // Arm set point for picking out of source
     m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE));
@@ -228,7 +229,7 @@ public class RobotContainer {
     m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE).withTimeout(2).andThen(m_arm.PIDFallin()).andThen(() -> m_arm.resetWrist())); 
 
     // some code button thing ask riley idk
-    m_operatorController.povLeft().whileTrue(
+    m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR),

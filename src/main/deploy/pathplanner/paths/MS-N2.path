@@ -41,12 +41,6 @@
             {
               "type": "named",
               "data": {
-                "name": "ArmToFloor"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
                 "name": "Intake"
               }
             }
@@ -56,13 +50,13 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.7,
+    "maxVelocity": 4.46,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 0,
     "rotateFast": false
   },

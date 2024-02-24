@@ -45,9 +45,9 @@ public class ArmSubsystem extends SubsystemBase {
   /** Creates a new Arm. */
   public ArmSubsystem() {
     // Restore factory defaults
-    elbowMotorLeader.restoreFactoryDefaults();
-    elbowMotorFollower.restoreFactoryDefaults();
-    wristMotor.restoreFactoryDefaults();
+    //elbowMotorLeader.restoreFactoryDefaults();
+    //elbowMotorFollower.restoreFactoryDefaults();
+    //wristMotor.restoreFactoryDefaults();
     // Have the second elbow motor follow the first
     elbowMotorFollower.follow(elbowMotorLeader, true);
     // Enable voltage compensation

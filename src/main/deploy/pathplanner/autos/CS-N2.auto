@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "FeedNote"
+            "name": "ArmToFloor"
           }
         },
         {
@@ -27,12 +27,6 @@
           "type": "path",
           "data": {
             "pathName": "N2-MS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedNote"
           }
         }
       ]

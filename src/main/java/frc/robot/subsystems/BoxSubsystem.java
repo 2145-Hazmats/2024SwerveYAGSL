@@ -33,8 +33,8 @@ public class BoxSubsystem extends SubsystemBase {
   /** Creates a new Box. */
   public BoxSubsystem() {
     // Restore factory defaults
-    intakeMotor.restoreFactoryDefaults();
-    shooterMotor.restoreFactoryDefaults();
+    //intakeMotor.restoreFactoryDefaults();
+    //shooterMotor.restoreFactoryDefaults();
     // Enable voltage compensation
     intakeMotor.enableVoltageCompensation(BoxConstants.kIntakeMotorNominalVoltage);
     shooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
