@@ -159,6 +159,7 @@ public class RobotContainer {
       )
     );
 
+    /*
     // Alternate drive mode
     m_driverController.rightBumper().toggleOnTrue(m_swerve.driveCommandPoint(
       () -> -m_driverController.getLeftY(),
@@ -166,6 +167,7 @@ public class RobotContainer {
       () -> -m_driverController.getRightX(),
       () -> -m_driverController.getRightY()
     ));
+    */
 
     // Lock the wheels on toggle
     m_driverController.start().toggleOnTrue(
