@@ -47,7 +47,7 @@ public final class Constants {
 
   /* Constants for the arm subsystem */
   public static class ArmConstants{
-    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, AMP, TRAP, MANUAL};
+    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, SHOOT_PODIUM, SHOOT_HORIZONTAL, CLIMBING_POSITION, AMP, TRAP, MANUAL};
 
     // Motor IDs
     public static final int kElbowMotorLeaderID   = 20;
@@ -79,6 +79,7 @@ public final class Constants {
     public static final double[] kTrapAngleSP             = {0, 0};
     public static final double[] kAmpAngleSP              = {-110, 42};
     public static final double[] kHorizontalAngleSP       = {0, 0};
+    public static final double[] kClimbingAngleSP         = {0,0};
   }
 
   /* Constants for the box subsystem */
@@ -99,6 +100,7 @@ public final class Constants {
     public static final double kRegurgitateSpeed = -0.25;
     // Shooter delay
     public static final double kShooterDelay = 1;
+    public static final double kShooteDelayAmp = .25;
   }
 
 }
