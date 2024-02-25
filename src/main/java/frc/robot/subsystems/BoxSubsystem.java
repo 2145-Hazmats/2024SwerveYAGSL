@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
+import frc.robot.Constants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.MatterConstants;
 import swervelib.math.Matter;
@@ -30,6 +31,7 @@ public class BoxSubsystem extends SubsystemBase {
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
   // Speed of the shooter motor
   private double shooterMotorSpeed = 0.0;
+  private double shooterChargeTime = Constants.BoxConstants.kDefaultShootSpeed;
   // Matter of the elbow that changes in real time
   private Matter wristMatter;
 
@@ -63,7 +65,7 @@ public class BoxSubsystem extends SubsystemBase {
 
   public Command ShootNoteAmp() {
     return setShooterMotorCommandAuto(BoxConstants.kAmpShootSpeed)
-    .andThen(new WaitCommand(1))
+    .andThen(new WaitCommand(shooterChargeTime))
     .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
     .andThen(new WaitCommand(0.75))
     .andThen(stopCommand());
@@ -76,6 +78,13 @@ public class BoxSubsystem extends SubsystemBase {
     .andThen(new WaitCommand(0.75))
     .andThen(stopCommand());
   }
+
+  public Command ShootNoteTeleop() {
+    return setShooterMotorCommand(ArmSubsystem::getArmState)
+    //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
+    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
+    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed));
+  } 
 
   /**
    * Sets the speed of the shooter motor.
@@ -105,6 +114,7 @@ public class BoxSubsystem extends SubsystemBase {
           break;
         case AMP:
           shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
+
           break;
         case IDLE:
           shooterMotorSpeed = 0.0;
@@ -116,6 +126,21 @@ public class BoxSubsystem extends SubsystemBase {
 
       shooterMotor.set(shooterMotorSpeed);
     });
+  }
+
+  public double getChargeTime(Supplier<ArmState> position) {
+    switch(position.get()) {
+        
+        case AMP:
+          shooterChargeTime = BoxConstants.kShooteDelayAmp;
+          break;
+        
+        default:
+          shooterMotorSpeed = BoxConstants.kShooterDelay;
+          break;
+      }
+    return shooterChargeTime;
+
   }
 
   /**

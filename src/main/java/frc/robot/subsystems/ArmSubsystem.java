@@ -48,7 +48,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
   // Arm state
-  private ArmState currentPosition = ArmState.IDLE;
+  private static ArmState currentPosition = ArmState.IDLE;
   // Matter of the elbow that changes in real time
   private Matter elbowMatter;
 
@@ -159,6 +159,15 @@ public class ArmSubsystem extends SubsystemBase {
             elbowAngle = ArmConstants.kTrapAngleSP[0];
             wristAngle = ArmConstants.kTrapAngleSP[1];
             break;
+          case CLIMBING_POSITION:
+            elbowAngle = ArmConstants.kClimbingAngleSP[0];
+            wristAngle = ArmConstants.kClimbingAngleSP[1];
+          case SHOOT_HORIZONTAL:
+            elbowAngle = ArmConstants.kHorizontalAngleSP[0];
+            wristAngle = ArmConstants.kHorizontalAngleSP[1];
+          case SHOOT_PODIUM:
+            elbowAngle = ArmConstants.kSpeakerPodiumAngleSP[0];
+            wristAngle = ArmConstants.kSpeakerPodiumAngleSP[1];
           default:
             break;
         }
@@ -263,7 +272,7 @@ public class ArmSubsystem extends SubsystemBase {
     wristMotor.set(speed);
   }
 
-  public ArmState getArmState() {
+  public static ArmState getArmState() {
     return currentPosition;
   }
 

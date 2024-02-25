@@ -51,13 +51,14 @@ public class RobotContainer {
     // Setup PathPlanner and autons
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
-    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommandAndStay(ArmConstants.ArmState.FLOOR).withTimeout(1.5));
-    NamedCommands.registerCommand("ArmToAmp", m_arm.setArmPIDCommandAndStay(ArmConstants.ArmState.AMP).withTimeout(1.5));
+    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
+    NamedCommands.registerCommand("ArmToAmp", m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.25));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer());
     NamedCommands.registerCommand("ShootNoteAmp", m_box.ShootNoteAmp());
+    NamedCommands.registerCommand("StopIntakeAndShooter", m_box.stopCommand());
     //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(m_box.setShooterMotorCommand(() -> m_arm.getArmState())
 
     m_autonChooser = AutoBuilder.buildAutoChooser();
@@ -185,13 +186,13 @@ public class RobotContainer {
     );
 
     // Intakes note into robot and keeps it there
-    m_operatorController.leftTrigger().whileTrue(
+    m_operatorController.leftBumper().whileTrue(
       m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
       .until(m_box::isReverseLimitSwitchPressed)
     );
 
     // Regurgitate
-    m_operatorController.leftBumper().whileTrue(
+    m_operatorController.rightBumper().whileTrue(
       m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed)
     );
 
@@ -203,10 +204,10 @@ public class RobotContainer {
     //m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
 
     // Arm set point for picking out of source
-    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE));
+    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE, false));
 
-    // Arm set point for playing amp
-    m_operatorController.a().onTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP));
+    // Arm set point for shooting speaker from subwoofer
+    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, false));
 
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
@@ -217,23 +218,44 @@ public class RobotContainer {
     // Reset wrist encoder
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
 
-    // Arm set point for playing amp (again?)
-    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP));
+    // Arm set point for playing amp 
+    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, false));
 
-    // Arm set point for shooting speaker from the subwoofer
-    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB));
+    // Arm set point for shooting speaker from the podium
+    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, false));
 
-    // Arm set point for shooting horizontally
-    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE).withTimeout(2).andThen(m_arm.TurnPIDOff()).andThen(() -> m_arm.resetWristEncoder())); 
+    // Arm set point for shooting trap
+    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, false));
+
+    // Arm set point for shooting horizontal across the field
+    m_operatorController.povLeft().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, false));
+
+
+    // Arm set point for climbing
+    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMBING_POSITION, false));
+
+  
+    //m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false).withTimeout(2).andThen(m_arm.TurnPIDOff()).andThen(() -> m_arm.resetWristEncoder())); 
 
     // some code button thing ask Riley idk he wanted it. Edit: IT WORKS
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(
-          m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR),
+          m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
         ).until(m_box::isReverseLimitSwitchPressed),
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE)
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
+      )
+    );
+
+    // Intake from the source
+    m_operatorController.povUp().whileTrue(
+      Commands.sequence(
+        Commands.parallel(
+          m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE, false),
+          m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
+        ).until(m_box::isReverseLimitSwitchPressed),
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
       )
     );
   }
