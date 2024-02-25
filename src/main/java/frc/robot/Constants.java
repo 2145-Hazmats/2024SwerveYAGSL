@@ -86,7 +86,8 @@ public final class Constants {
   public static class BoxConstants{
     // Motor IDs
     public static final int kShooterMotorID = 30;
-    public static final int kIntakeMotorID  = 31;
+    public static final int kTheOtherShooterMotorID = 31;
+    public static final int kIntakeMotorID  = 32;
     // Nominal Voltage
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;

@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class BoxSubsystem extends SubsystemBase {
   // Declare and intialize motor variables to a new instance of CANSparkMax
   private CANSparkMax shooterMotor = new CANSparkMax(BoxConstants.kShooterMotorID, MotorType.kBrushless);
+  private CANSparkMax theOtherShooterMotor = new CANSparkMax(BoxConstants.kTheOtherShooterMotorID, MotorType.kBrushless);
+
   private CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
   // Speed of the shooter motor
@@ -41,8 +43,11 @@ public class BoxSubsystem extends SubsystemBase {
     // Enable voltage compensation
     intakeMotor.enableVoltageCompensation(BoxConstants.kIntakeMotorNominalVoltage);
     shooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
+    //set the other shooter motor to follow the OG
+    theOtherShooterMotor.follow(shooterMotor);
     // Invert the shooter motor
     shooterMotor.setInverted(true);
+    theOtherShooterMotor.setInverted(false);
   }
 
   /**
