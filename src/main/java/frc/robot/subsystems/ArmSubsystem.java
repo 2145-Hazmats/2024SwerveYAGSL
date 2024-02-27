@@ -60,13 +60,13 @@ public class ArmSubsystem extends SubsystemBase {
   // Mutable holder for unit-safe linear velocitry values, persisted to avoid reallocation
   private final MutableMeasure<Velocity<Angle>> m_velocity = MutableMeasure.mutable(Units.RotationsPerSecond.of(0));
 
-  private SysIdRoutine armSysIdRoutine = new SysIdRoutine(
+  /*private SysIdRoutine armSysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(),
     new SysIdRoutine.Mechanism(
         this::motorVoltageControl,
         this::logMotor,
         this)
-  );
+  );*/
 
 
   /** Creates a new Arm. */
@@ -244,7 +244,7 @@ public class ArmSubsystem extends SubsystemBase {
     });
   }
 
-  public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
+  /*public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
     return armSysIdRoutine.quasistatic(direction);
   }
 
@@ -261,7 +261,7 @@ public class ArmSubsystem extends SubsystemBase {
       .voltage(m_appliedVoltage.mut_replace(elbowMotorLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
       .angularPosition(m_angle.mut_replace(elbowEncoder.getPosition(), Units.Rotations))
       .angularVelocity(m_velocity.mut_replace(elbowEncoder.getVelocity(), Units.RotationsPerSecond));
-  }
+  }*/
 
   /**
    * Sets the wrist motor speed.
@@ -282,10 +282,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    elbowMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.ELBOW_MASS);
+    //elbowMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.ELBOW_MASS);
 
     // If the elbow PID or setpoint values are different from SmartDashboard, use the new values
-    if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
+    /*if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
       elbowP = SmartDashboard.getNumber("Elbow P", 0);
       elbowPIDController.setP(elbowP);
     }
@@ -326,7 +326,7 @@ public class ArmSubsystem extends SubsystemBase {
     if (wristSetPoint != SmartDashboard.getNumber("Wrist Set Point", 0)) {
       wristSetPoint = SmartDashboard.getNumber("Wrist Set Point", 0);
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
-    }
+    }*/
   
     // Update SmartDashboard with elbow and wrist information
     SmartDashboard.putNumber("Elbow Angular Velocity", elbowEncoder.getVelocity());

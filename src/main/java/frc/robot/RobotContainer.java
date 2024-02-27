@@ -59,19 +59,27 @@ public class RobotContainer {
     NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer());
     NamedCommands.registerCommand("ShootNoteAmp", m_box.ShootNoteAmp());
     NamedCommands.registerCommand("StopIntakeAndShooter", m_box.stopCommand());
+    NamedCommands.registerCommand("ArmToIdle",m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
     //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(m_box.setShooterMotorCommand(() -> m_arm.getArmState())
 
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
 
     // This causes a command scheduler loop overrun
-    m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
+    /*m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
-        m_arm::getElbowMatter,
-        m_box::getWristMatter,
+        //m_arm::getElbowMatter,
+        //m_box::getWristMatter,
         Constants.OperatorConstants.kFastModeSpeed
+    ));*/
+
+    m_swerve.setDefaultCommand(m_swerve.driveCommandPoint(
+      () -> -m_driverController.getLeftX(),
+      () -> -m_driverController.getLeftY(),
+      () -> -m_driverController.getRightX(),
+      () -> -m_driverController.getRightY()
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
@@ -139,8 +147,8 @@ public class RobotContainer {
         () -> -m_driverController.getLeftY(),
         () ->-m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
-        m_arm::getElbowMatter,
-        m_box::getWristMatter,
+        //m_arm::getElbowMatter,
+        //m_box::getWristMatter,
         OperatorConstants.kMidModeSpeed
       )
     );
@@ -151,8 +159,8 @@ public class RobotContainer {
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRawAxis(4),
-        m_arm::getElbowMatter,
-        m_box::getWristMatter,
+        //m_arm::getElbowMatter,
+        //m_box::getWristMatter,
         OperatorConstants.kSlowModeSpeed
       )
     );
@@ -177,8 +185,8 @@ public class RobotContainer {
     /* Operator Controls */
 
     // Winds up shoot motors then starts intake/feed motor
-    m_operatorController.rightTrigger().whileTrue(
-      m_box.setShooterMotorCommand(() -> m_arm.getArmState())
+   m_operatorController.rightTrigger().whileTrue(
+      m_box.setShooterMotorCommand(ArmSubsystem::getArmState)
       //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
       .withTimeout(BoxConstants.kShooterDelay)
       .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))

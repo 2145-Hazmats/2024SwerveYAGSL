@@ -221,17 +221,20 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param nerfChooser      A speed multiplier.
    * @return Drive command.
    */
-  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, Supplier<Matter> elbowMatter, Supplier<Matter> wristMatter, double nerfChooser) {
+  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, /*Supplier<Matter> elbowMatter, Supplier<Matter> wristMatter,*/ double nerfChooser) {
     swerveDrive.setHeadingCorrection(false);
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
-          setSwerveVelocity(new Translation2d(
+          /*setSwerveVelocity(new Translation2d(
               MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
                   MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser),
               elbowMatter,
               wristMatter
-          ),
+          )*/
+          new Translation2d(
+              MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
+              MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser),
           Math.pow(MathUtil.applyDeadband(angularRotationX.getAsDouble(), OperatorConstants.RIGHT_X_DEADBAND), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
           true, 
           false);

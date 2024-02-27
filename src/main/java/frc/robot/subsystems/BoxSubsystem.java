@@ -89,7 +89,7 @@ public class BoxSubsystem extends SubsystemBase {
     //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
     .withTimeout(getChargeTime(ArmSubsystem::getArmState))
     .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed));
-  } 
+  }
 
   /**
    * Sets the speed of the shooter motor.
@@ -119,7 +119,6 @@ public class BoxSubsystem extends SubsystemBase {
           break;
         case AMP:
           shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
-
           break;
         case IDLE:
           shooterMotorSpeed = 0.0;
@@ -178,7 +177,7 @@ public class BoxSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    wristMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.WRIST_MASS);
+    //wristMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.WRIST_MASS);
 
     SmartDashboard.putBoolean("isReverseLimitSwitchPressed", isReverseLimitSwitchPressed());
     SmartDashboard.putNumber("Shooter Motor Speed", shooterMotorSpeed);

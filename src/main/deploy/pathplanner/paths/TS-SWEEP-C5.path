@@ -96,39 +96,16 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Suck Piece",
-      "waypointRelativePos": 1.6,
+      "name": "ArmToIdle",
+      "waypointRelativePos": 0.2,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "ArmToFloor"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "SpinUpShooter",
-      "waypointRelativePos": 3.3,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpinUpShooter"
+                "name": "ArmToIdle"
               }
             }
           ]

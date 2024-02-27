@@ -91,22 +91,16 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Suck Piece",
-      "waypointRelativePos": 0.7,
+      "name": "ArmToIdle",
+      "waypointRelativePos": 0.25,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "ArmToFloor"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
+                "name": "ArmToIdle"
               }
             }
           ]
