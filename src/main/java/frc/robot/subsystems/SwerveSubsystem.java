@@ -129,34 +129,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public void driveFieldOriented(ChassisSpeeds velocity) {
     swerveDrive.driveFieldOriented(velocity);
   }
-
-
-  /*
-   * This method can be used to limit the swerve's velocity based on the
-   * center of gravity. You have to pass a list of matter, this is how it will
-   * calculate a dynamic center of gravity.
-   */
-  
-  public Translation2d setSwerveVelocity(Translation2d commandedVelocity, Supplier<Matter> elbowMatter, Supplier<Matter> wristMatter) {
-    return commandedVelocity;
-    // The position and weight of matter is not set correctly yet, so simply return the commandedVelocity
-    /*
-    List<Matter> matterList = new ArrayList<>();
-    matterList.add(MatterConstants.CHASSIS);
-    matterList.add(MatterConstants.ELBOW_BASE);
-    matterList.add(elbowMatter.get());
-    matterList.add(wristMatter.get());
-
-    return SwerveMath.limitVelocity(
-        commandedVelocity,
-        swerveDrive.getFieldVelocity(),
-        swerveDrive.getPose(),
-        SwerveConstants.LOOP_TIME,
-        MatterConstants.ROBOT_MASS,
-        matterList,
-        swerveDrive.swerveDriveConfiguration);
-    */
-  }
   
 
   /* Lock the swerve drive to prevent it from moving */
@@ -226,12 +198,6 @@ public class SwerveSubsystem extends SubsystemBase {
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
-          /*setSwerveVelocity(new Translation2d(
-              MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
-                  MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser),
-              elbowMatter,
-              wristMatter
-          )*/
           new Translation2d(
               MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
               MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser),

@@ -27,9 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.MatterConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
-import swervelib.math.Matter;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -49,8 +47,6 @@ public class ArmSubsystem extends SubsystemBase {
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
   // Arm state
   private static ArmState currentPosition = ArmState.IDLE;
-  // Matter of the elbow that changes in real time
-  private Matter elbowMatter;
 
   /* SysID variables and routine */
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
@@ -79,7 +75,7 @@ public class ArmSubsystem extends SubsystemBase {
     wristMotor.enableVoltageCompensation(ArmConstants.kWristMotorNominalVoltage);
 
     // Setup encoders
-    elbowEncoder.setPositionConversionFactor(180);
+    elbowEncoder.setPositionConversionFactor(360);
     wristEncoder.setPositionConversionFactor(1);
     elbowEncoder.setPosition(0);
     wristEncoder.setPosition(0);
@@ -276,14 +272,8 @@ public class ArmSubsystem extends SubsystemBase {
     return currentPosition;
   }
 
-  public Matter getElbowMatter() {
-    return elbowMatter;
-  }
-
   @Override
   public void periodic() {
-    //elbowMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.ELBOW_MASS);
-
     // If the elbow PID or setpoint values are different from SmartDashboard, use the new values
     /*if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
       elbowP = SmartDashboard.getNumber("Elbow P", 0);

@@ -8,6 +8,7 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -45,9 +46,6 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-
     // Setup PathPlanner and autons
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
@@ -56,8 +54,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.25));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-    NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer());
+    NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer().withTimeout(3.5));
     NamedCommands.registerCommand("ShootNoteAmp", m_box.ShootNoteAmp());
+    NamedCommands.registerCommand("ShootNoteAuton", m_box.ShootNoteAuton());
     NamedCommands.registerCommand("StopIntakeAndShooter", m_box.stopCommand());
     NamedCommands.registerCommand("ArmToIdle",m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
     //NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.shootCommand(m_box.setShooterMotorCommand(() -> m_arm.getArmState())
@@ -65,21 +64,15 @@ public class RobotContainer {
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
 
-    // This causes a command scheduler loop overrun
-    /*m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
-        () -> -m_driverController.getLeftY(),
-        () -> -m_driverController.getLeftX(),
-        () -> -m_driverController.getRawAxis(4),
-        //m_arm::getElbowMatter,
-        //m_box::getWristMatter,
-        Constants.OperatorConstants.kFastModeSpeed
-    ));*/
+    // Configure the trigger bindings
+    configureBindings();
 
-    m_swerve.setDefaultCommand(m_swerve.driveCommandPoint(
-      () -> -m_driverController.getLeftX(),
+    // This causes a command scheduler loop overrun
+    m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
       () -> -m_driverController.getLeftY(),
+      () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
-      () -> -m_driverController.getRightY()
+      Constants.OperatorConstants.kFastModeSpeed
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
@@ -146,9 +139,7 @@ public class RobotContainer {
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () ->-m_driverController.getLeftX(),
-        () -> -m_driverController.getRawAxis(4),
-        //m_arm::getElbowMatter,
-        //m_box::getWristMatter,
+        () -> -m_driverController.getRightX(),
         OperatorConstants.kMidModeSpeed
       )
     );
@@ -158,9 +149,7 @@ public class RobotContainer {
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
-        () -> -m_driverController.getRawAxis(4),
-        //m_arm::getElbowMatter,
-        //m_box::getWristMatter,
+        () -> -m_driverController.getRightX(),
         OperatorConstants.kSlowModeSpeed
       )
     );
@@ -186,17 +175,17 @@ public class RobotContainer {
 
     // Winds up shoot motors then starts intake/feed motor
    m_operatorController.rightTrigger().whileTrue(
-      m_box.setShooterMotorCommand(ArmSubsystem::getArmState)
-      //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
-      .withTimeout(BoxConstants.kShooterDelay)
+      m_box.setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
+      .withTimeout(.25)
+      .andThen( m_box.setShooterMotorCommand(ArmSubsystem::getArmState))
+      .withTimeout(m_box.getChargeTime(ArmSubsystem::getArmState))
       .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))
-      //m_box.setShooterMotorCommand(.25).withTimeout(2).andThen(m_box.setIntakeMotorCommand(.25))
-    );
+   );
 
     // Intakes note into robot and keeps it there
     m_operatorController.leftBumper().whileTrue(
       m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-      .until(m_box::isReverseLimitSwitchPressed)
+      
     );
 
     // Regurgitate
@@ -212,10 +201,9 @@ public class RobotContainer {
     //m_operatorController.povDown().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR));
 
     // Arm set point for picking out of source
-    m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE, false));
+    //m_operatorController.povUp().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE, false));
 
-    // Arm set point for shooting speaker from subwoofer
-    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, false));
+   
 
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
@@ -225,6 +213,10 @@ public class RobotContainer {
 
     // Reset wrist encoder
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
+
+     // Arm set point for shooting speaker from subwoofer
+    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, false)
+    );
 
     // Arm set point for playing amp 
     m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, false));
@@ -266,6 +258,11 @@ public class RobotContainer {
         m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
       )
     );
+
+    //TESTING STUFF
+
+    //m_operatorController.x().whileTrue(m_box.setTheOtherShooterMotorCommand(.3));
+    //m_operatorController.b().whileTrue(m_box.setShooterMotorCommand(.3));
   }
 
   // AutonomousCommand

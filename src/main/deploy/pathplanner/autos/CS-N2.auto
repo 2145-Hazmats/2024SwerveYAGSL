@@ -40,6 +40,18 @@
           "data": {
             "name": "ShootNoteSubwoofer"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ArmToIdle"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MS-END"
+          }
         }
       ]
     }

@@ -8,13 +8,12 @@ import java.util.function.Supplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import frc.robot.Constants;
 import frc.robot.Constants.BoxConstants;
-import frc.robot.Constants.MatterConstants;
-import swervelib.math.Matter;
 import frc.robot.Constants.ArmConstants.ArmState;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,21 +32,30 @@ public class BoxSubsystem extends SubsystemBase {
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
   // Speed of the shooter motor
   private double shooterMotorSpeed = 0.0;
-  private double shooterChargeTime = Constants.BoxConstants.kDefaultShootSpeed;
-  // Matter of the elbow that changes in real time
-  private Matter wristMatter;
+  private double shooterChargeTime = Constants.BoxConstants.kShooterDelay;
 
 
   /** Creates a new Box. */
   public BoxSubsystem() {
     // Enable voltage compensation
+    shooterMotor.restoreFactoryDefaults();
+    theOtherShooterMotor.restoreFactoryDefaults();   
+
+    shooterMotor.setSmartCurrentLimit(40);
+    theOtherShooterMotor.setSmartCurrentLimit(40);
+
+
     intakeMotor.enableVoltageCompensation(BoxConstants.kIntakeMotorNominalVoltage);
     shooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
+    theOtherShooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
     //set the other shooter motor to follow the OG
     theOtherShooterMotor.follow(shooterMotor);
     // Invert the shooter motor
+    intakeMotor.setInverted(false);
     shooterMotor.setInverted(true);
-    theOtherShooterMotor.setInverted(false);
+    theOtherShooterMotor.setInverted(true);
+    shooterMotor.setIdleMode(IdleMode.kCoast);
+    theOtherShooterMotor.setIdleMode(IdleMode.kCoast);
   }
 
   /**
@@ -69,26 +77,27 @@ public class BoxSubsystem extends SubsystemBase {
   }
 
   public Command ShootNoteAmp() {
-    return setShooterMotorCommandAuto(BoxConstants.kAmpShootSpeed)
-    .andThen(new WaitCommand(shooterChargeTime))
-    .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
-    .andThen(new WaitCommand(0.75))
-    .andThen(stopCommand());
+    return setShooterMotorCommand(ArmSubsystem::getArmState)
+    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
+    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed))
+    .withTimeout(2.0);
   }
 
   public Command ShootNoteSubwoofer() {
-    return setShooterMotorCommandAuto(BoxConstants.kSpeakerShootSpeed)
-    .andThen(new WaitCommand(2.5))
-    .andThen(setIntakeMotorCommandAuto(BoxConstants.kFeedSpeed))
-    .andThen(new WaitCommand(0.75))
-    .andThen(stopCommand());
+    return setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
+    .withTimeout(.25) 
+    .andThen(setShooterMotorCommand(Constants.BoxConstants.kSpeakerShootSpeed))
+    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
+    .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
+    .withTimeout(2.0)
+    .andThen(setShooterMotorCommand(0));
   }
 
-  public Command ShootNoteTeleop() {
+  public Command ShootNoteAuton() {
     return setShooterMotorCommand(ArmSubsystem::getArmState)
-    //m_box.setShooterMotorCommand(BoxConstants.kDeafultShootSpeed)
     .withTimeout(getChargeTime(ArmSubsystem::getArmState))
-    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed));
+    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed))
+    .withTimeout(2.0);
   }
 
   /**
@@ -100,8 +109,8 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> shooterMotor.set(speed));
   }
 
-  public Command setShooterMotorCommandAuto(double speed) {
-    return runOnce(() -> shooterMotor.set(speed));
+ public Command setTheOtherShooterMotorCommand(double speed) {
+    return run(() -> theOtherShooterMotor.set(speed));
   }
 
   public Command setShooterMotorCommandThenStop(double speed) {
@@ -132,9 +141,9 @@ public class BoxSubsystem extends SubsystemBase {
     });
   }
 
+  // This is broken it always returns the intialized shooterChargeTime value
   public double getChargeTime(Supplier<ArmState> position) {
     switch(position.get()) {
-        
         case AMP:
           shooterChargeTime = BoxConstants.kShooteDelayAmp;
           break;
@@ -143,6 +152,7 @@ public class BoxSubsystem extends SubsystemBase {
           shooterMotorSpeed = BoxConstants.kShooterDelay;
           break;
       }
+
     return shooterChargeTime;
 
   }
@@ -154,6 +164,7 @@ public class BoxSubsystem extends SubsystemBase {
     return runOnce(() -> {
       intakeMotor.stopMotor();
       shooterMotor.stopMotor();
+      theOtherShooterMotor.stopMotor();
     });
   }
 
@@ -169,16 +180,8 @@ public class BoxSubsystem extends SubsystemBase {
     return intakeMotor.getReverseLimitSwitch(Type.kNormallyOpen).isPressed();
   }
 
-
-  public Matter getWristMatter() {
-    return wristMatter;
-  }
-
-
   @Override
   public void periodic() {
-    //wristMatter = new Matter(new Translation3d(0, 0, 0), MatterConstants.WRIST_MASS);
-
     SmartDashboard.putBoolean("isReverseLimitSwitchPressed", isReverseLimitSwitchPressed());
     SmartDashboard.putNumber("Shooter Motor Speed", shooterMotorSpeed);
   }
