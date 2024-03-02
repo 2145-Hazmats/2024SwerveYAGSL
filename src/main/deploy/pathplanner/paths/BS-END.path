@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6795490514047873,
-        "y": 4.45422134636644
+        "x": 0.8338753339418218,
+        "y": 4.543804579763226
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9041403532165119,
-        "y": 4.215901156481341
+        "x": 1.0584666357535464,
+        "y": 4.305484389878127
       },
       "isLocked": false,
       "linkedName": "Bottom Sub"
@@ -52,7 +52,25 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Arm Idle",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ArmToIdle"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.7,
     "maxAcceleration": 4.0,

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6795490514047873,
-        "y": 4.45422134636644
+        "x": 0.8338753339418218,
+        "y": 4.543804579763226
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2190572952574483,
-        "y": 4.353858993432273
+        "x": 1.373383577794483,
+        "y": 4.443442226829059
       },
       "isLocked": false,
       "linkedName": "Bottom Sub"
     },
     {
       "anchor": {
-        "x": 2.1865815160201754,
-        "y": 4.148626582967452
+        "x": 2.5202357965343594,
+        "y": 4.098792791023527
       },
       "prevControl": {
-        "x": 1.6148626582967456,
-        "y": 4.265902246090207
+        "x": 1.9485169388109296,
+        "y": 4.216068454146282
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "Suck Piece",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.4,
       "command": {
         "type": "parallel",
         "data": {

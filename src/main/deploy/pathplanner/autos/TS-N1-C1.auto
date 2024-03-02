@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6562616171044571,
-      "y": 6.666235790098635
+      "x": 0.8338753339418218,
+      "y": 6.5463576290918635
     },
     "rotation": 60.0
   },
@@ -12,9 +12,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ShootNoteSubwoofer"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToFloor"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
           }
         },
         {

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.5316426017467437,
-        "y": 5.543248471112327
+        "x": 2.5670791427174855,
+        "y": 5.528365618134744
       },
       "prevControl": {
-        "x": 1.5316426017467437,
-        "y": 5.543248471112327
+        "x": 2.251202352660578,
+        "y": 5.5365227668383685
       },
       "nextControl": {
-        "x": 3.531642601746742,
-        "y": 5.543248471112327
+        "x": 3.1763466744315205,
+        "y": 5.512631996631289
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 5.528365618134744
       },
       "prevControl": {
-        "x": 3.505982298118443,
-        "y": 5.532312395259068
+        "x": 1.44283883432246,
+        "y": 5.597779868883561
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,30 +57,7 @@
             {
               "type": "named",
               "data": {
-                "name": "ArmToFloor"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
                 "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "SpinUpShooter",
-      "waypointRelativePos": 1.7,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpinUpShooter"
               }
             }
           ]

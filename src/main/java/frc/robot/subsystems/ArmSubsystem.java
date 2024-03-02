@@ -46,6 +46,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
   // Arm state
+  // We make this static because we want to use it without an object of arm subsystem. We can use this in other subsystems even though its private, because we return it in a public get method
   private static ArmState currentPosition = ArmState.IDLE;
 
   /* SysID variables and routine */
@@ -100,20 +101,20 @@ public class ArmSubsystem extends SubsystemBase {
     wristPIDController.setFF(ArmConstants.kWristFF);
     wristPIDController.setOutputRange(ArmConstants.kWristMinSpeed, ArmConstants.kWristMaxSpeed);
 
-    // Put Elbow PIDs on SmartDashboard
+    /* // Put Elbow PIDs on SmartDashboard  
     SmartDashboard.putNumber("Elbow P", ArmConstants.kElbowP);
     SmartDashboard.putNumber("Elbow I", ArmConstants.kElbowI);
     SmartDashboard.putNumber("Elbow D", ArmConstants.kElbowD);
     SmartDashboard.putNumber("Elbow FF", ArmConstants.kElbowFF);
-    SmartDashboard.putNumber("Elbow Set Point", 0);
+    SmartDashboard.putNumber("Elbow Set Point", 0); 
     
     // Put Wrist PIDs on SmartDashboard
     SmartDashboard.putNumber("Wrist P", ArmConstants.kWristP);
     SmartDashboard.putNumber("Wrist I", ArmConstants.kWristI);
     SmartDashboard.putNumber("Wrist D", ArmConstants.kWristD);
     SmartDashboard.putNumber("Wrist FF", ArmConstants.kWristFF);
-    SmartDashboard.putNumber("Wrist Set Point", 0);
-  }
+    SmartDashboard.putNumber("Wrist Set Point", 0);*/
+  } 
 
   /**
    * Sets the reference angle of the elbow and wrist.
@@ -128,8 +129,10 @@ public class ArmSubsystem extends SubsystemBase {
       () -> {
         double elbowAngle = 0;
         double wristAngle = 0;
+        // Updates currentPosition static var
         currentPosition = position;
-
+        // it's like a fancy switching thingy where it like checks if your in like a position and then it goes to that position there and does whatever you tell it to and then when you finish the thingy you tell it to, the "break;" makes it got to the end of the big list and then continues on with its life. 
+        // - Carson 2024
         switch(position) {
           case IDLE:
             elbowAngle = ArmConstants.kIdleAngleSP[0];
@@ -158,12 +161,15 @@ public class ArmSubsystem extends SubsystemBase {
           case CLIMBING_POSITION:
             elbowAngle = ArmConstants.kClimbingAngleSP[0];
             wristAngle = ArmConstants.kClimbingAngleSP[1];
+            break;
           case SHOOT_HORIZONTAL:
             elbowAngle = ArmConstants.kHorizontalAngleSP[0];
             wristAngle = ArmConstants.kHorizontalAngleSP[1];
+            break;
           case SHOOT_PODIUM:
             elbowAngle = ArmConstants.kSpeakerPodiumAngleSP[0];
             wristAngle = ArmConstants.kSpeakerPodiumAngleSP[1];
+            break;
           default:
             break;
         }
@@ -188,35 +194,33 @@ public class ArmSubsystem extends SubsystemBase {
   /**
    * Stops the arm by setting the PIDControllers to a value of 0 with a type of ControlType.kVelocity.
    */
-  public Command stopArmCommand() {
+  /*public Command stopArmCommand() {
     return runOnce(() -> {
       elbowPIDController.setReference(0, ControlType.kVelocity);
       wristPIDController.setReference(0, ControlType.kVelocity);
-       wristPIDController.setReference(0, ControlType.kVelocity);
     });
-  }
+  }*/
  
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
 
-  public double getWristEncoder() {
+  /*public double getWristEncoder() {
     return wristEncoder.getPosition();
   }
 
   public double getWristVelocity() {
     return wristEncoder.getVelocity();
-
-  }
+  }*/
  
   /**
    * Sets the elbow motor speed.
    * 
    * @param speed  The speed of the elbow motor.
    */
-  public void setElbowSpeed(double speed) {
+  /*public void setElbowSpeed(double speed) {
     elbowMotorLeader.set(speed);
-  }
+  }*/
 
   /**
    * Sets the elbow motor speed and wrist motor speed in manual mode by giving their PIDControllers
@@ -233,6 +237,7 @@ public class ArmSubsystem extends SubsystemBase {
       }));
   }
 
+  // We should not use this method guys its super bad - Cody ( this is a joke - Miles)
   public Command TurnPIDOff(){
     return runOnce(()->{
       wristPIDController.setReference(0, ControlType.kDutyCycle);
@@ -264,10 +269,15 @@ public class ArmSubsystem extends SubsystemBase {
    * 
    * @param speed  The speed of the wrist motor.
    */
-  public void setWristSpeed(double speed) {
+  /*public void setWristSpeed(double speed) {
     wristMotor.set(speed);
-  }
+  }*/
 
+  /**
+   * returns our the state of our arm as an enum. 
+   * 
+   * @return
+   */
   public static ArmState getArmState() {
     return currentPosition;
   }

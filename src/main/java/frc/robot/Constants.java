@@ -18,7 +18,7 @@ public final class Constants {
     public static final int kDriverControllerPort   = 0;
     public static final int kOperatorControllerPort = 1;
     /* Deadbands */
-    public static final double LEFT_X_DEADBAND  = 0.02;//0.04
+    public static final double LEFT_X_DEADBAND  = 0.02; //0.04
     public static final double LEFT_Y_DEADBAND  = 0.02; //0.04
     public static final double RIGHT_X_DEADBAND = 0.02;
     public static final double RIGHT_Y_DEADBAND = 0.02;
@@ -31,8 +31,8 @@ public final class Constants {
 
   /* Constants for the arm subsystem */
   public static class ArmConstants{
-    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, SHOOT_PODIUM, SHOOT_HORIZONTAL, CLIMBING_POSITION, AMP, TRAP, MANUAL};
-
+    // All of our PID Postions for the arm
+    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, SHOOT_PODIUM, SHOOT_HORIZONTAL, CLIMBING_POSITION, AMP, TRAP, MANUAL}; 
     // Motor IDs
     public static final int kElbowMotorLeaderID   = 20;
     public static final int kElbowMotorFollowerID = 21;
@@ -51,19 +51,19 @@ public final class Constants {
     public static final double kWristI        = 0.00005;
     public static final double kWristD        = 0.0002;
     public static final double kWristFF       = 0;
-    public static final double kWristMinSpeed = -0.55; //-0.55
-    public static final double kWristMaxSpeed = 0.55; //0.55
+    public static final double kWristMinSpeed = -0.45; //-0.55
+    public static final double kWristMaxSpeed = 0.45; //0.55
     // Setpoints for the arm subsystem
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
-    public static final double[] kFloorAngleSP            = {0, 43}; // 0 , 37
-    public static final double[] kSourceAngleSP           = {0, 9.1};
+    public static final double[] kFloorAngleSP            = {0, 41.5 }; // 0 , 37
+    public static final double[] kSourceAngleSP           = {0,9.1};
     public static final double[] kIdleAngleSP             = {-0.25, 0};
-    public static final double[] kSpeakerSubwooferAngleSP = {0, 37};
-    public static final double[] kSpeakerPodiumAngleSP    = {0, 0};
+    public static final double[] kSpeakerSubwooferAngleSP = {0, 41.5};
+    public static final double[] kSpeakerPodiumAngleSP    = {-34.1, 49};
     public static final double[] kTrapAngleSP             = {0, 0};
-    public static final double[] kAmpAngleSP              = {-107, 50};// -110,42
-    public static final double[] kHorizontalAngleSP       = {-13, 46};
-    public static final double[] kClimbingAngleSP         = {0,0};
+    public static final double[] kAmpAngleSP              = {-112, 44.8};// -110,42
+    public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
+    public static final double[] kClimbingAngleSP         = {-95.2, 32};
   }
 
   /* Constants for the box subsystem */
@@ -76,16 +76,17 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter motor speeds
-    public static final double kSpeakerShootSpeed = 0.9;
-    public static final double kAmpShootSpeed = 0.9;
-    public static final double kDefaultShootSpeed = 0.5;
+    public static final double kSpeakerShootSpeed = 0.36;
+    public static final double kAmpShootSpeed = 0.15;
+    public static final double kHorizontalShootSpeed = 0.6;
+    public static final double kDefaultShootSpeed = 0.36;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;
-    public static final double kRegurgitateSpeed = -0.25;
+    public static final double kRegurgitateSpeed = -0.75;
     // Shooter delay
-    public static final double kShooterDelay = 1.75;
-    public static final double kShooteDelayAmp = .25;
+    public static final double kShooterDelay = 1.25;
+    public static final double kShooteDelayAmp = .1;
   }
 
 }

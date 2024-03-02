@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.28,
-      "y": 5.528365618134744
+      "x": 2,
+      "y": 2
     },
     "rotation": 0
   },
@@ -31,32 +31,14 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "MS-N2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "N2-MS"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "ShootNoteSubwoofer"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MS-END"
+            "name": "ArmToIdle"
           }
         }
       ]
     }
   },
-  "folder": "Riley's OP Autos",
+  "folder": null,
   "choreoAuto": false
 }

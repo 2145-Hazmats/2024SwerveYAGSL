@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6795490514047873,
-        "y": 4.45422134636644
+        "x": 0.8338753339418218,
+        "y": 4.543804579763226
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.6431097477621894,
-        "y": 2.8811473007516146
+        "x": 0.7974360302992239,
+        "y": 2.9707305341484003
       },
       "isLocked": false,
       "linkedName": "Bottom Sub"
     },
     {
       "anchor": {
-        "x": 8.260389597706505,
-        "y": 0.8090893104817876
+        "x": 8.563027454157618,
+        "y": 0.7143610292926715
       },
       "prevControl": {
-        "x": 7.6387722006255565,
-        "y": 0.7202868251845089
+        "x": 7.94141005707667,
+        "y": 0.6255585439953929
       },
       "nextControl": {
-        "x": 8.882006994787453,
-        "y": 0.8978917957790662
+        "x": 9.184644851238566,
+        "y": 0.8031635145899502
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.6795490514047873,
-        "y": 4.45422134636644
+        "x": 0.8338753339418218,
+        "y": 4.543804579763226
       },
       "prevControl": {
-        "x": 0.6113694395719733,
-        "y": 2.8925766268080317
+        "x": 0.7656957221090084,
+        "y": 2.982159860204818
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "Suck Piece",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.75,
       "command": {
         "type": "sequential",
         "data": {
@@ -64,23 +64,6 @@
               "type": "named",
               "data": {
                 "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "SpinUpShooter",
-      "waypointRelativePos": 1.55,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpinUpShooter"
               }
             }
           ]

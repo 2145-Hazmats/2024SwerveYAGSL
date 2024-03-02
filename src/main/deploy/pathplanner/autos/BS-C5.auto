@@ -12,9 +12,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ShootNoteSubwoofer"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToFloor"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
           }
         },
         {

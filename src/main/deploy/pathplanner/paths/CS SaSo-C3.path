@@ -128,23 +128,6 @@
           ]
         }
       }
-    },
-    {
-      "name": "SpinUpShooter",
-      "waypointRelativePos": 4.1499999999999995,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpinUpShooter"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {

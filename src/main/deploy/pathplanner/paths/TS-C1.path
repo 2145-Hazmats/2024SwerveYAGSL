@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6562616171044571,
-        "y": 6.666235790098635
+        "x": 0.7987428243044774,
+        "y": 6.558068465637644
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.383130458568611,
-        "y": 7.1239327094038805
+        "x": 1.1500679206779225,
+        "y": 7.319272841113443
       },
       "isLocked": false,
       "linkedName": "Top Sub"
     },
     {
       "anchor": {
-        "x": 8.003849084621248,
-        "y": 7.419940993728142
+        "x": 8.317099886696207,
+        "y": 7.436381206571257
       },
       "prevControl": {
-        "x": 7.6091713721889,
-        "y": 7.193001309079541
+        "x": 7.922422174263859,
+        "y": 7.209441521922656
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,7 +36,25 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Suck Piece",
+      "waypointRelativePos": 0.8,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.7,
     "maxAcceleration": 6.0,

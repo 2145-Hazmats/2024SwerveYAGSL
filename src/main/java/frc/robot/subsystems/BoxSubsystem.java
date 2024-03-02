@@ -92,6 +92,15 @@ public class BoxSubsystem extends SubsystemBase {
     .withTimeout(2.0)
     .andThen(setShooterMotorCommand(0));
   }
+public Command ShootNoteSubwooferNoRegurgitate() {
+    return //setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
+    //.withTimeout(.25) 
+    setShooterMotorCommand(0.34)
+    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
+    .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
+    .withTimeout(2.0)
+    .andThen(setShooterMotorCommand(0));
+  }
 
   public Command ShootNoteAuton() {
     return setShooterMotorCommand(ArmSubsystem::getArmState)
@@ -131,6 +140,9 @@ public class BoxSubsystem extends SubsystemBase {
           break;
         case IDLE:
           shooterMotorSpeed = 0.0;
+          break;
+        case SHOOT_HORIZONTAL:
+          shooterMotorSpeed = BoxConstants.kHorizontalShootSpeed;
           break;
         default:
           shooterMotorSpeed = BoxConstants.kDefaultShootSpeed;

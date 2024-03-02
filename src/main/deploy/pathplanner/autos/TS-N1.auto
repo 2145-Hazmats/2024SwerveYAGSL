@@ -40,6 +40,12 @@
           "data": {
             "name": "ShootNoteSubwoofer"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TS-END"
+          }
         }
       ]
     }

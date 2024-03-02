@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6795490514047873,
-      "y": 4.45422134636644
+      "x": 0.8338753339418218,
+      "y": 4.543804579763226
     },
     "rotation": -60.0
   },
@@ -39,6 +39,12 @@
           "type": "named",
           "data": {
             "name": "ShootNoteSubwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BS-END"
           }
         }
       ]

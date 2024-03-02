@@ -3,52 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.003849084621248,
-        "y": 7.419940993728142
+        "x": 8.317099886696207,
+        "y": 7.436381206571257
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.253961430999786,
-        "y": 7.321271565620054
+        "x": 7.567212233074746,
+        "y": 7.337711778463169
       },
       "isLocked": false,
       "linkedName": "C1"
     },
     {
       "anchor": {
-        "x": 0.6562616171044571,
-        "y": 6.666235790098635
+        "x": 0.5879477664804101,
+        "y": 6.511225119454518
       },
       "prevControl": {
-        "x": 1.4127312870010371,
-        "y": 6.729254996971533
+        "x": 1.34441743637699,
+        "y": 6.574244326327416
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Top Sub"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "SpinUpShooter",
-      "waypointRelativePos": 0.5,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpinUpShooter"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.7,
     "maxAcceleration": 5.0,
@@ -58,7 +40,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 60.0,
-    "rotateFast": true
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "Riley's OP Lines",
