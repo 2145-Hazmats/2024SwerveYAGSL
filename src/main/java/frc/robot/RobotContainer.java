@@ -49,7 +49,7 @@ public class RobotContainer {
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
     NamedCommands.registerCommand("ArmToAmp", m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true).withTimeout(1.5));
-    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.25));
+    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer().withTimeout(2.25));
@@ -67,9 +67,9 @@ public class RobotContainer {
 
     // This causes a command scheduler loop overrun
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
-      () -> -m_driverController.getLeftY(),
-      () -> -m_driverController.getLeftX(),
-      () -> -m_driverController.getRightX(),
+      () -> m_driverController.getLeftY(),
+      () -> m_driverController.getLeftX(),
+      () -> m_driverController.getRightX(),
       Constants.OperatorConstants.kFastModeSpeed
     ));
 

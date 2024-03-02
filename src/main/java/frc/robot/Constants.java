@@ -25,8 +25,8 @@ public final class Constants {
     public static final double kVisionModeDeadband = 0.10;
     /* Speed Modes */
     public static final double kFastModeSpeed = 1;
-    public static final double kMidModeSpeed  = 0.6;
-    public static final double kSlowModeSpeed = 0.3;
+    public static final double kMidModeSpeed  = 0.5;
+    public static final double kSlowModeSpeed = 0.25;
   }
 
   /* Constants for the arm subsystem */

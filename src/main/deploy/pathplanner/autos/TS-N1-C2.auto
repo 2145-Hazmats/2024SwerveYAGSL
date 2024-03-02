@@ -51,24 +51,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TS-C1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "C1-TS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNoteSubwoofer"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "TS-C2"
           }
         },
