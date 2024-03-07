@@ -200,11 +200,7 @@ public class ArmSubsystem extends SubsystemBase {
       wristPIDController.setReference(0, ControlType.kVelocity);
     });
   }*/
-/* public Command CALIBRATEWRIST() {
-    return startEnd(
-      // When the command is called, the elbow and wrist PIDController is set and updated on SmartDashboard
-      () -> {wristPIDController.setReference(-.15, ControlType.kDutyCycle);}, wristEncoder.setPosition(0));
-        }*/
+ 
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };

@@ -67,9 +67,9 @@ public class RobotContainer {
 
     // This causes a command scheduler loop overrun
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
-      () -> m_driverController.getLeftY(),
-      () -> m_driverController.getLeftX(),
-      () -> m_driverController.getRightX(),
+      () -> -m_driverController.getLeftY(),
+      () -> -m_driverController.getLeftX(),
+      () -> -m_driverController.getRightX(),
       Constants.OperatorConstants.kFastModeSpeed
     ));
 
@@ -133,7 +133,7 @@ public class RobotContainer {
     m_driverController.rightTrigger().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
-        () ->-m_driverController.getLeftX(),
+        () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kMidModeSpeed
       )
@@ -142,8 +142,8 @@ public class RobotContainer {
     // Slow speed
     m_driverController.leftTrigger().whileTrue(
       m_swerve.driveCommandAngularVelocity(
-        () -> -m_driverController.getLeftY(),
-        () -> -m_driverController.getLeftX(),
+        () ->  -m_driverController.getLeftY(),
+        () ->  -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kSlowModeSpeed
       )

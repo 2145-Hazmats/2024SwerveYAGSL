@@ -2,48 +2,48 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.8338753339418218,
-      "y": 4.543804579763226
+      "x": 2,
+      "y": 2
     },
-    "rotation": -60.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "ArmToFloor"
+            "pathName": "drive_straight"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "ShootNoteSubwoofer"
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BS-N3"
+            "pathName": "rotating_path"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "N3-BS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNoteSubwoofer"
+            "pathName": "drive_straight"
           }
         }
       ]
     }
   },
-  "folder": "Riley's OP Autos",
+  "folder": null,
   "choreoAuto": false
 }
