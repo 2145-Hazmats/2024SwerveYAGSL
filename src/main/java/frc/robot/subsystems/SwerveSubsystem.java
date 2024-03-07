@@ -26,15 +26,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import swervelib.math.Matter;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 
@@ -188,12 +185,10 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param translationX     Translation in the X direction.
    * @param translationY     Translation in the Y direction.
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
-   * @param elbowMatter      Matter representing the elbow subsystem.
-   * @param wristMatter      Matter representing the wrist subsystem.
    * @param nerfChooser      A speed multiplier.
    * @return Drive command.
    */
-  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, /*Supplier<Matter> elbowMatter, Supplier<Matter> wristMatter,*/ double nerfChooser) {
+  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, double nerfChooser) {
     swerveDrive.setHeadingCorrection(false);
     return run(() -> {
       // Make the robot move

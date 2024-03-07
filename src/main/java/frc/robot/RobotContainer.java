@@ -48,16 +48,12 @@ public class RobotContainer {
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
-    NamedCommands.registerCommand("ArmToAmp", m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-    NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer().withTimeout(2.25));
-    NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate",  m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
-    NamedCommands.registerCommand("ShootNoteAmp", m_box.ShootNoteAmp());
-    NamedCommands.registerCommand("ShootNoteAuton", m_box.ShootNoteAuton());
-    NamedCommands.registerCommand("StopIntakeAndShooter", m_box.stopCommand());
-    NamedCommands.registerCommand("ArmToIdle",m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
+    NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
+    NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
+    NamedCommands.registerCommand("ArmToIdle", m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
     // Allows us to pick our auton in smartdash board
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
@@ -170,11 +166,16 @@ public class RobotContainer {
 
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
-      m_box.setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
-      .withTimeout(.25)
-      .andThen( m_box.setShooterMotorCommand(ArmSubsystem::getArmState))
-      .withTimeout(m_box.getChargeTime(ArmSubsystem::getArmState))
-      .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))
+      Commands.waitSeconds(4)
+      
+     //.andThen(m_arm.setArmPIDCommand(ArmSubsystem.getArmState(), true))
+     .andThen(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)) 
+      //.alongWith(m_box.setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
+      //.withTimeout(.25)
+      //.andThen( m_box.setShooterMotorCommand(ArmSubsystem::getArmState))
+      //.withTimeout(m_box.getChargeTime(ArmSubsystem::getArmState))
+      //.andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed)))
+      
     );
 
     // Intakes note into robot and keeps it there
@@ -193,10 +194,12 @@ public class RobotContainer {
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
 
     // Arm set point for shooting speaker from subwoofer
-    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, false));
+    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
 
     // Arm set point for playing amp 
-    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, false));
+    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
 
     // Arm set point for shooting speaker from the podium
     m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, false));
@@ -206,7 +209,7 @@ public class RobotContainer {
 
     // Arm set point for shooting horizontal across the field
     m_operatorController.povLeft().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, false));
-
+    //m_operatorController.povLeft().whileTrue(m_box.YeetCommand());
     // Arm set point for climbing
     m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMBING_POSITION, false));
 

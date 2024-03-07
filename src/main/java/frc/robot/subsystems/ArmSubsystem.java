@@ -191,21 +191,13 @@ public class ArmSubsystem extends SubsystemBase {
     );
   }
 
-  /**
-   * Stops the arm by setting the PIDControllers to a value of 0 with a type of ControlType.kVelocity.
-   */
-  /*public Command stopArmCommand() {
-    return runOnce(() -> {
-      elbowPIDController.setReference(0, ControlType.kVelocity);
-      wristPIDController.setReference(0, ControlType.kVelocity);
-    });
-  }*/
+  
  
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
 
-  /*public double getWristEncoder() {
+  /*public double getWristPosition() {
     return wristEncoder.getPosition();
   }
 
@@ -213,14 +205,7 @@ public class ArmSubsystem extends SubsystemBase {
     return wristEncoder.getVelocity();
   }*/
  
-  /**
-   * Sets the elbow motor speed.
-   * 
-   * @param speed  The speed of the elbow motor.
-   */
-  /*public void setElbowSpeed(double speed) {
-    elbowMotorLeader.set(speed);
-  }*/
+  
 
   /**
    * Sets the elbow motor speed and wrist motor speed in manual mode by giving their PIDControllers

@@ -80,6 +80,8 @@ public final class Constants {
     public static final double kAmpShootSpeed = 0.15;
     public static final double kHorizontalShootSpeed = 0.6;
     public static final double kDefaultShootSpeed = 0.36;
+    public static final double kYeetSpeedShooter = .5;
+    public static final double kYeetSpeedIntake = 1;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;

@@ -76,11 +76,12 @@ public class BoxSubsystem extends SubsystemBase {
     return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
   }
 
-  public Command ShootNoteAmp() {
-    return setShooterMotorCommand(ArmSubsystem::getArmState)
-    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
-    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed))
-    .withTimeout(2.0);
+  public void Yeet() {
+    intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
+    shooterMotor.set(Constants.BoxConstants.kYeetSpeedShooter);
+  }
+  public Command YeetCommand() {
+    return Commands.startEnd(() -> Yeet(), () -> Yeet(), this);
   }
 
   public Command ShootNoteSubwoofer() {
@@ -100,13 +101,6 @@ public Command ShootNoteSubwooferNoRegurgitate() {
     .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
     .withTimeout(2.0)
     .andThen(setShooterMotorCommand(0));
-  }
-
-  public Command ShootNoteAuton() {
-    return setShooterMotorCommand(ArmSubsystem::getArmState)
-    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
-    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed))
-    .withTimeout(2.0);
   }
 
   /**
