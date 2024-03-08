@@ -22,9 +22,12 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -38,6 +41,8 @@ import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
+  private Optional<Alliance> alliance = DriverStation.getAlliance();
+  private double allianceInverse = 1;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -53,6 +58,10 @@ public class SwerveSubsystem extends SubsystemBase {
     } catch (Exception e) { throw new RuntimeException(e); }
 
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle
+
+    if (alliance.isPresent()) {
+      if (alliance.get() == DriverStation.Alliance.Blue) { allianceInverse = -1; }
+    }
   }
 
 
@@ -81,7 +90,6 @@ public class SwerveSubsystem extends SubsystemBase {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
           // This will flip the path being followed to the red side of the field.
           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-          var alliance = DriverStation.getAlliance();
           return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
         },
     this); // Reference to this subsystem to set requirements
@@ -190,12 +198,14 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, double nerfChooser) {
     swerveDrive.setHeadingCorrection(false);
+
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
               MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
-              MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser),
+              MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser)
+              .times(allianceInverse),
           Math.pow(MathUtil.applyDeadband(angularRotationX.getAsDouble(), OperatorConstants.RIGHT_X_DEADBAND), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
           true, 
           false);
@@ -219,8 +229,8 @@ public class SwerveSubsystem extends SubsystemBase {
       double yInput = MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND); // Smooth controll out
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
-          headingX.getAsDouble(),
-          headingY.getAsDouble(),
+          headingX.getAsDouble() * allianceInverse,
+          headingY.getAsDouble() * allianceInverse,
           swerveDrive.getYaw().getRadians(),
           swerveDrive.getMaximumVelocity()));
     });

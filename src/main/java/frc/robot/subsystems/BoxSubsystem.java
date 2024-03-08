@@ -122,9 +122,6 @@ public Command ShootNoteSubwooferNoRegurgitate() {
 
   public Command setShooterMotorCommand(Supplier<ArmState> position) {
     return run(() -> {
-
-      SmartDashboard.putString("Shooter Motor Command Position", position.get().toString());
-
       switch(position.get()) {
         case SHOOT_SUB:
           shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
@@ -144,6 +141,31 @@ public Command ShootNoteSubwooferNoRegurgitate() {
       }
 
       shooterMotor.set(shooterMotorSpeed);
+    });
+  }
+
+  public Command setShooterIntakeMotorCommand(Supplier<ArmState> position) {
+    return run(() -> {
+      switch(position.get()) {
+        case SHOOT_SUB:
+          shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
+          break;
+        case AMP:
+          shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
+          break;
+        case IDLE:
+          shooterMotorSpeed = 0.0;
+          break;
+        case SHOOT_HORIZONTAL:
+          shooterMotorSpeed = BoxConstants.kHorizontalShootSpeed;
+          break;
+        default:
+          shooterMotorSpeed = BoxConstants.kDefaultShootSpeed;
+          break;
+      }
+
+      shooterMotor.set(shooterMotorSpeed);
+      intakeMotor.set(BoxConstants.kFeedSpeed);
     });
   }
 

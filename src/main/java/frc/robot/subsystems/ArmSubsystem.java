@@ -191,6 +191,19 @@ public class ArmSubsystem extends SubsystemBase {
     );
   }
 
+
+  public Command SetWristAngle(double angle) {
+    return startEnd(
+      () -> {
+        currentPosition = ArmConstants.ArmState.MANUAL;
+        wristPIDController.setReference(angle, ControlType.kPosition);
+      },
+      () -> {
+        currentPosition = ArmConstants.ArmState.IDLE;
+        wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
+      }
+    );
+  }
   
  
   public void resetWristEncoder() {

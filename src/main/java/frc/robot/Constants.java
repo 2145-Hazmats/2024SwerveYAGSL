@@ -22,7 +22,6 @@ public final class Constants {
     public static final double LEFT_Y_DEADBAND  = 0.02; //0.04
     public static final double RIGHT_X_DEADBAND = 0.02;
     public static final double RIGHT_Y_DEADBAND = 0.02;
-    public static final double kVisionModeDeadband = 0.10;
     /* Speed Modes */
     public static final double kFastModeSpeed = 1;
     public static final double kMidModeSpeed  = 0.6;
@@ -76,10 +75,10 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter motor speeds
-    public static final double kSpeakerShootSpeed = 0.36;
+    public static final double kSpeakerShootSpeed = 1.00;
     public static final double kAmpShootSpeed = 0.15;
     public static final double kHorizontalShootSpeed = 0.6;
-    public static final double kDefaultShootSpeed = 0.36;
+    public static final double kDefaultShootSpeed = 1.00;
     public static final double kYeetSpeedShooter = .5;
     public static final double kYeetSpeedIntake = 1;
     // Intake motor speeds
@@ -89,6 +88,17 @@ public final class Constants {
     // Shooter delay
     public static final double kShooterDelay = 1.25;
     public static final double kShooteDelayAmp = .1;
+  }
+
+  public static class LimelightConstants {
+    // Wrist offsets
+    public static final double wristAngleOffset = 0.0;  // in degrees
+    public static final double wristPivotOffsetX = 0.00; // in Meters
+    public static final double wristPivotOffsetY = 0.00; // in Meters
+    // Speaker height and offset
+    public static final double speakerHeight = 0.00;     // height to the middle of the speaker opening
+    public static final double speakerOffsetX = 0.22;    // distance to center of speaker opening
+    
   }
 
 }
