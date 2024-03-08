@@ -33,7 +33,7 @@ public class LimelightSubsystem extends SubsystemBase {
     public double getLimelightWristAngle() {
         double adjacent = getCameraTransform(2) + LimelightConstants.wristPivotOffsetX - LimelightConstants.speakerOffsetX;
         double opposite = LimelightConstants.speakerHeight - LimelightConstants.wristPivotOffsetY;
-        return (LimelightConstants.wristAngleOffset + Math.atan(opposite/adjacent));
+        return (LimelightConstants.wristAngleOffset + (Math.atan(opposite/adjacent)*180/Math.PI));
     }
 
 

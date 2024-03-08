@@ -169,7 +169,7 @@ public Command ShootNoteSubwooferNoRegurgitate() {
     });
   }
 
-  // This is broken it always returns the intialized shooterChargeTime value
+  // This might be broken? it might always returns the intialized shooterChargeTime value
   public double getChargeTime(Supplier<ArmState> position) {
     switch(position.get()) {
         case AMP:
