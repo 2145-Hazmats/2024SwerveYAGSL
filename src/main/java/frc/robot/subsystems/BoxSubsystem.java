@@ -90,12 +90,13 @@ public class BoxSubsystem extends SubsystemBase {
     return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
   }
 
-
-  public Command ShootNoteAmp() {
-    return setShooterMotorCommand(ArmSubsystem::getArmState)
-    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
-    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed))
-    .withTimeout(2.0);
+  public void Yeet() {
+    intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
+    shooterMotor.set(Constants.BoxConstants.kYeetSpeedShooter);
+  }
+  
+  public Command YeetCommand() {
+    return Commands.startEnd(() -> Yeet(), () -> Yeet(), this);
   }
 
 
@@ -120,15 +121,6 @@ public class BoxSubsystem extends SubsystemBase {
     .andThen(setShooterMotorCommand(0));
   }
 
-
-  public Command ShootNoteAuton() {
-    return setShooterMotorCommand(ArmSubsystem::getArmState)
-    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
-    .andThen(setIntakeMotorCommand(BoxConstants.kFeedSpeed))
-    .withTimeout(2.0);
-  }
-
-
   /**
    * Sets the speed of the shooter motor.
    *
@@ -151,8 +143,30 @@ public class BoxSubsystem extends SubsystemBase {
 
   public Command setShooterMotorCommand(Supplier<ArmState> position) {
     return run(() -> {
-      SmartDashboard.putString("Shooter Motor Command Position", position.get().toString());
+      switch(position.get()) {
+        case SHOOT_SUB:
+          shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
+          break;
+        case AMP:
+          shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
+          break;
+        case IDLE:
+          shooterMotorSpeed = 0.0;
+          break;
+        case SHOOT_HORIZONTAL:
+          shooterMotorSpeed = BoxConstants.kHorizontalShootSpeed;
+          break;
+        default:
+          shooterMotorSpeed = BoxConstants.kDefaultShootSpeed;
+          break;
+      }
 
+      shooterMotor.set(shooterMotorSpeed);
+    });
+  }
+
+  public Command setShooterIntakeMotorCommand(Supplier<ArmState> position) {
+    return run(() -> {
       switch(position.get()) {
         case SHOOT_SUB:
           shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
@@ -171,11 +185,11 @@ public class BoxSubsystem extends SubsystemBase {
           break;
       }
       shooterMotor.set(shooterMotorSpeed);
+      intakeMotor.set(BoxConstants.kFeedSpeed);
     });
   }
 
-
-  // This is broken it always returns the intialized shooterChargeTime value
+  // This might be broken? it might always returns the intialized shooterChargeTime value
   public double getChargeTime(Supplier<ArmState> position) {
     switch(position.get()) {
         case AMP:

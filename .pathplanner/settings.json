@@ -3,6 +3,7 @@
   "robotLength": 0.78,
   "holonomicMode": true,
   "pathFolders": [
+    "Center Auton Lines",
     "Riley's OP Lines"
   ],
   "autoFolders": [

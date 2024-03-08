@@ -222,12 +222,23 @@ public class ArmSubsystem extends SubsystemBase {
       }
     );
   }
- 
+
+  public Command SetWristAngle(double angle) {
+    return startEnd(
+      () -> {
+        currentPosition = ArmConstants.ArmState.MANUAL;
+        wristPIDController.setReference(angle, ControlType.kPosition);
+      },
+      () -> {
+        currentPosition = ArmConstants.ArmState.IDLE;
+        wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
+      }
+    );
+  }
 
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
-
 
   /*
   public double getWristPosition() {
@@ -239,7 +250,6 @@ public class ArmSubsystem extends SubsystemBase {
     return wristEncoder.getVelocity();
   }
   */
-
 
   /**
    * Sets the elbow motor speed and wrist motor speed in manual mode by giving their PIDControllers

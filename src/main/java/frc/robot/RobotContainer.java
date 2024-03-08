@@ -9,6 +9,7 @@ import java.io.File;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,16 +49,12 @@ public class RobotContainer {
     m_swerve.setupPathPlanner();
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
-    NamedCommands.registerCommand("ArmToAmp", m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kSpeakerShootSpeed));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
-    NamedCommands.registerCommand("ShootNoteSubwoofer",  m_box.ShootNoteSubwoofer().withTimeout(2.25));
-    NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate",  m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
-    NamedCommands.registerCommand("ShootNoteAmp", m_box.ShootNoteAmp());
-    NamedCommands.registerCommand("ShootNoteAuton", m_box.ShootNoteAuton());
-    NamedCommands.registerCommand("StopIntakeAndShooter", m_box.stopCommand());
-    NamedCommands.registerCommand("ArmToIdle",m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
+    NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
+    NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
+    NamedCommands.registerCommand("ArmToIdle", m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
     // Allows us to pick our auton in smartdash board
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
@@ -67,8 +64,8 @@ public class RobotContainer {
 
     // This causes a command scheduler loop overrun
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
-      () -> -m_driverController.getLeftY(),
-      () -> -m_driverController.getLeftX(),
+      () -> m_driverController.getLeftY(),
+      () -> m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
       Constants.OperatorConstants.kFastModeSpeed
     ));
@@ -81,11 +78,10 @@ public class RobotContainer {
   private void configureBindings() {
     /* Driver Controls */
 
-    // TEST-Vision snapping command. Active when the right axis is 0
+    // TEST-Vision snapping command.
     // If there is no limelight, there will be an exception
     /*
-    m_driverController.axisGreaterThan(4, OperatorConstants.kVisionModeDeadband)
-    .or(m_driverController.axisLessThan(4, -OperatorConstants.kVisionModeDeadband)).whileFalse(
+    m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
@@ -95,7 +91,16 @@ public class RobotContainer {
     );
     */
 
-    // TEST-Drives to amp and plays amp
+    // Changes the wrist angle to what it should be at the moment the button is held.
+    // To update the wrist angle, let go and hold the button again
+    /*
+    m_driverController.rightBumper().whileTrue(
+      m_arm.SetWristAngle(getLimelightWristAngle())
+    );
+    */
+    
+
+    // TEST-Drives to and runs a path planner path
     //m_driverController.a().onTrue(m_swerve.driveToPathThenFollowPath(PathPlannerPath.fromPathFile("PlayAmp")));
     
     // Rotate towards the driver
@@ -128,7 +133,7 @@ public class RobotContainer {
         m_swerve.resetGyro();
       })
     );
- 
+    
     // Medium speed
     m_driverController.rightTrigger().whileTrue(
       m_swerve.driveCommandAngularVelocity(
@@ -168,44 +173,58 @@ public class RobotContainer {
 
     /* Operator Controls */
 
+    // THIS CODE DOES NOT WORK? I HAVE WORKING CODE ANYWAY
+    /*
+    m_operatorController.rightTrigger().whileTrue(
+      Commands.waitSeconds(4)
+      
+     //.andThen(m_arm.setArmPIDCommand(ArmSubsystem.getArmState(), true))
+     .andThen(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)) 
+      //.alongWith(m_box.setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
+      //.withTimeout(.25)
+      //.andThen( m_box.setShooterMotorCommand(ArmSubsystem::getArmState))
+      //.withTimeout(m_box.getChargeTime(ArmSubsystem::getArmState))
+      //.andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed)))
+    );
+    */
+
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
-      m_box.setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
-      .withTimeout(.25)
-      .andThen( m_box.setShooterMotorCommand(ArmSubsystem::getArmState))
-      .withTimeout(m_box.getChargeTime(ArmSubsystem::getArmState))
-      .andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed))
-    );
+      m_box.setShooterIntakeMotorCommand(ArmSubsystem::getArmState)
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Intakes note into robot and keeps it there
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
 
-    //Regurgitate SHooter
+    // Regurgitate Shooter
     m_operatorController.leftTrigger().whileTrue(m_box.setShooterMotorCommand(BoxConstants.kRegurgitateSpeed));
-    //Idle mode
-    m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false
-    ));
 
-    // Regurgitate
+    // Regurgitate Intake
     m_operatorController.rightBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed));
 
-    // Reset wrist encoder
-    m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
+    // Idle mode arm set point
+    m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Arm set point for shooting speaker from subwoofer
-    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, false));
+    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
 
     // Arm set point for playing amp 
-    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, false));
+    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
 
     // Arm set point for shooting speaker from the podium
-    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, false));
+    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
 
     // Arm set point for shooting trap
-    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, false));
+    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
 
     // Arm set point for shooting horizontal across the field
-    m_operatorController.povLeft().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, false));
+    m_operatorController.povLeft().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, true)
+    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
+    //m_operatorController.povLeft().whileTrue(m_box.YeetCommand());
 
     // Arm set point for climbing
     m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMBING_POSITION, false));
@@ -237,6 +256,9 @@ public class RobotContainer {
         m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
       )
     );
+
+    // Reset wrist encoder
+    m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
   }
 
   // AutonomousCommand
