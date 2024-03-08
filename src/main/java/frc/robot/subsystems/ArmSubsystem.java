@@ -5,7 +5,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import java.util.function.DoubleSupplier;
 
@@ -35,9 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final CANSparkMax elbowMotorLeader = new CANSparkMax(ArmConstants.kElbowMotorLeaderID, MotorType.kBrushless);
   private final CANSparkMax elbowMotorFollower = new CANSparkMax(ArmConstants.kElbowMotorFollowerID, MotorType.kBrushless);
   private RelativeEncoder elbowEncoder = elbowMotorLeader.getAlternateEncoder(8192);
-
   private final CANSparkMax wristMotor = new CANSparkMax(ArmConstants.kWristMotorID, MotorType.kBrushless);
-  //private RelativeEncoder wristEncoder = wristMotor.getAlternateEncoder(8192);
   private final RelativeEncoder wristEncoder = wristMotor.getEncoder();
   // Get the PIDController object for the elbow and wrist
   private SparkPIDController elbowPIDController = elbowMotorLeader.getPIDController();
@@ -65,23 +65,54 @@ public class ArmSubsystem extends SubsystemBase {
         this)
   );*/
 
-
-  /** Creates a new Arm. */
+  /* Creates a new Arm. */
   public ArmSubsystem() {
-    // Have the second elbow motor follow the first
-    elbowMotorFollower.follow(elbowMotorLeader, true);
+    /* Motor Configuration */
+
+    // Restore factory defaults of the Spark Max.
+    // It's important to have all Spark Maxs behave the expected way, especially if we switch to a different Spark Max in the middle of a competition.
+    elbowMotorLeader.restoreFactoryDefaults();
+    elbowMotorFollower.restoreFactoryDefaults();
+    wristMotor.restoreFactoryDefaults();
+
+    // Set motor current limit
+    elbowMotorLeader.setSmartCurrentLimit(40);
+    elbowMotorFollower.setSmartCurrentLimit(40);
+    wristMotor.setSmartCurrentLimit(40);
+
     // Enable voltage compensation
     elbowMotorLeader.enableVoltageCompensation(ArmConstants.kElbowMotorNominalVoltage);
     elbowMotorFollower.enableVoltageCompensation(ArmConstants.kElbowMotorNominalVoltage);
     wristMotor.enableVoltageCompensation(ArmConstants.kWristMotorNominalVoltage);
 
-    // Setup encoders
+    // Reduce data of the follower motor sent to the roboRIO
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
+
+    // Set the idle mode of the motors
+    elbowMotorLeader.setIdleMode(IdleMode.kBrake);
+    elbowMotorFollower.setIdleMode(IdleMode.kBrake);
+    wristMotor.setIdleMode(IdleMode.kBrake);
+
+    // Have the second elbow motor follow the first
+    elbowMotorFollower.follow(elbowMotorLeader, true);
+
+    /* Encoder Configuration */
+
+    // Setup encoder conversion factors
     elbowEncoder.setPositionConversionFactor(360);
     wristEncoder.setPositionConversionFactor(1);
+
+    // Set encoders position to 0
     elbowEncoder.setPosition(0);
     wristEncoder.setPosition(0);
-    // Invert the elbow encoder. Mandatory
+
+    // Invert the elbow encoder
     elbowEncoder.setInverted(true);
+
+    /* PIDControllers */
 
     // Change PIDController FeedbackDevice from the integrated encoder to the alternate encoder
     elbowPIDController.setFeedbackDevice(elbowEncoder);
@@ -101,7 +132,8 @@ public class ArmSubsystem extends SubsystemBase {
     wristPIDController.setFF(ArmConstants.kWristFF);
     wristPIDController.setOutputRange(ArmConstants.kWristMinSpeed, ArmConstants.kWristMaxSpeed);
 
-    /* // Put Elbow PIDs on SmartDashboard  
+    /*
+    // Put Elbow PIDs on SmartDashboard  
     SmartDashboard.putNumber("Elbow P", ArmConstants.kElbowP);
     SmartDashboard.putNumber("Elbow I", ArmConstants.kElbowI);
     SmartDashboard.putNumber("Elbow D", ArmConstants.kElbowD);
@@ -113,8 +145,10 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist I", ArmConstants.kWristI);
     SmartDashboard.putNumber("Wrist D", ArmConstants.kWristD);
     SmartDashboard.putNumber("Wrist FF", ArmConstants.kWristFF);
-    SmartDashboard.putNumber("Wrist Set Point", 0);*/
+    SmartDashboard.putNumber("Wrist Set Point", 0);
+    */
   } 
+
 
   /**
    * Sets the reference angle of the elbow and wrist.
@@ -173,7 +207,6 @@ public class ArmSubsystem extends SubsystemBase {
           default:
             break;
         }
-
         elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
         wristPIDController.setReference(wristAngle, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
@@ -186,11 +219,9 @@ public class ArmSubsystem extends SubsystemBase {
           elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
           wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
         }
-    
       }
     );
   }
-
 
   public Command SetWristAngle(double angle) {
     return startEnd(
@@ -204,21 +235,21 @@ public class ArmSubsystem extends SubsystemBase {
       }
     );
   }
-  
- 
+
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
 
-  /*public double getWristPosition() {
+  /*
+  public double getWristPosition() {
     return wristEncoder.getPosition();
   }
 
+
   public double getWristVelocity() {
     return wristEncoder.getVelocity();
-  }*/
- 
-  
+  }
+  */
 
   /**
    * Sets the elbow motor speed and wrist motor speed in manual mode by giving their PIDControllers
@@ -229,47 +260,45 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public Command manualArmCommand(DoubleSupplier wristSpeed, DoubleSupplier elbowSpeed){
     return runOnce(() -> currentPosition = ArmState.MANUAL)
-      .andThen(run(()->{
+      .andThen(run(() -> {
         wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
         elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
-      }));
+    }));
   }
 
-  // We should not use this method guys its super bad - Cody ( this is a joke - Miles)
+
   public Command TurnPIDOff(){
-    return runOnce(()->{
+    return runOnce(() -> {
       wristPIDController.setReference(0, ControlType.kDutyCycle);
       elbowPIDController.setReference(0, ControlType.kDutyCycle);
     });
   }
 
-  /*public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
+
+  /*
+  public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
     return armSysIdRoutine.quasistatic(direction);
   }
+
 
   public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
     return armSysIdRoutine.dynamic(direction);
   }
 
+
   public void motorVoltageControl(Measure<Voltage> volts) {
     elbowMotorLeader.setVoltage(volts.in(Units.Volts));
   }
+
 
   public void logMotor(SysIdRoutineLog log) {
     log.motor("elbow-motor")
       .voltage(m_appliedVoltage.mut_replace(elbowMotorLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
       .angularPosition(m_angle.mut_replace(elbowEncoder.getPosition(), Units.Rotations))
       .angularVelocity(m_velocity.mut_replace(elbowEncoder.getVelocity(), Units.RotationsPerSecond));
-  }*/
+  }
+  */
 
-  /**
-   * Sets the wrist motor speed.
-   * 
-   * @param speed  The speed of the wrist motor.
-   */
-  /*public void setWristSpeed(double speed) {
-    wristMotor.set(speed);
-  }*/
 
   /**
    * returns our the state of our arm as an enum. 
@@ -280,10 +309,12 @@ public class ArmSubsystem extends SubsystemBase {
     return currentPosition;
   }
 
+
   @Override
   public void periodic() {
     // If the elbow PID or setpoint values are different from SmartDashboard, use the new values
-    /*if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
+    /*
+    if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
       elbowP = SmartDashboard.getNumber("Elbow P", 0);
       elbowPIDController.setP(elbowP);
     }
@@ -324,7 +355,8 @@ public class ArmSubsystem extends SubsystemBase {
     if (wristSetPoint != SmartDashboard.getNumber("Wrist Set Point", 0)) {
       wristSetPoint = SmartDashboard.getNumber("Wrist Set Point", 0);
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
-    }*/
+    }
+    */
   
     // Update SmartDashboard with elbow and wrist information
     SmartDashboard.putNumber("Elbow Angular Velocity", elbowEncoder.getVelocity());
