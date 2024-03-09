@@ -9,9 +9,9 @@
   "autoFolders": [
     "Riley's OP Autos"
   ],
-  "defaultMaxVel": 4.46,
+  "defaultMaxVel": 5.4,
   "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 360.0,
   "defaultMaxAngAccel": 360.0,
-  "maxModuleSpeed": 4.46
+  "maxModuleSpeed": 5.4
 }

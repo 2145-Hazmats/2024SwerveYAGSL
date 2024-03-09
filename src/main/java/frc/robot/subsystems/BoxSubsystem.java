@@ -8,13 +8,16 @@ import java.util.function.Supplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkLimitSwitch.Type;
+import com.revrobotics.SparkPIDController;
 
 import frc.robot.Constants;
 import frc.robot.Constants.BoxConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,13 +26,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BoxSubsystem extends SubsystemBase {
   // Declare and intialize motor variables to a new instance of CANSparkMax
-  private CANSparkMax shooterMotor = new CANSparkMax(BoxConstants.kShooterMotorID, MotorType.kBrushless);
-  private CANSparkMax theOtherShooterMotor = new CANSparkMax(BoxConstants.kTheOtherShooterMotorID, MotorType.kBrushless);
-  private CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
+  private final CANSparkMax topShooterMotor = new CANSparkMax(BoxConstants.kTopShooterMotorID, MotorType.kBrushless);
+  private final RelativeEncoder topShooterEncoder = topShooterMotor.getEncoder();
+  private final CANSparkMax bottomShooterMotor = new CANSparkMax(BoxConstants.kBottomShooterMotorID, MotorType.kBrushless);
+  private final RelativeEncoder bottomShooterEncoder = bottomShooterMotor.getEncoder();
+  private final CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
-  // Speed of the shooter motor
+  // Get the PIDController object for the 2 shooter motors
+  private SparkPIDController topPIDController = topShooterMotor.getPIDController();
+  private SparkPIDController bottomPIDController = bottomShooterMotor.getPIDController();
+  // Variables used during SmartDashboard changes
+  private double topP, topFF, topSetPoint = 0;
+  private double bottomP, bottomFF, bottomSetPoint = 0;
+  // shooterMotor variables
   private double shooterMotorSpeed = 0.0;
   private double shooterChargeTime = Constants.BoxConstants.kShooterDelay;
+  // Sensor 
+  private static DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
 
   /** Creates a new Box. */
   public BoxSubsystem() {
@@ -37,45 +50,69 @@ public class BoxSubsystem extends SubsystemBase {
 
     // Restore factory defaults of the Spark Max.
     // It's important to have all Spark Maxs behave the expected way, especially if we switch to a different Spark Max in the middle of a competition.
-    shooterMotor.restoreFactoryDefaults();
-    theOtherShooterMotor.restoreFactoryDefaults();
+    topShooterMotor.restoreFactoryDefaults();
+    bottomShooterMotor.restoreFactoryDefaults();
     intakeMotor.restoreFactoryDefaults();
 
     // Set motor current limit
-    shooterMotor.setSmartCurrentLimit(40);
-    theOtherShooterMotor.setSmartCurrentLimit(40);
-    intakeMotor.setSmartCurrentLimit(40);
+    topShooterMotor.setSmartCurrentLimit(20);
+    bottomShooterMotor.setSmartCurrentLimit(20);
+    intakeMotor.setSmartCurrentLimit(20);
 
     // Enable voltage compensation
     intakeMotor.enableVoltageCompensation(BoxConstants.kIntakeMotorNominalVoltage);
-    shooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
-    theOtherShooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
+    topShooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
+    bottomShooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
 
     // Set the idle mode of the motors
-    shooterMotor.setIdleMode(IdleMode.kCoast);
-    theOtherShooterMotor.setIdleMode(IdleMode.kCoast);
+    topShooterMotor.setIdleMode(IdleMode.kCoast);
+    bottomShooterMotor.setIdleMode(IdleMode.kCoast);
     // HELP! Should the intake motor be in coast or brake mode?
     //intakeMotor.setIdleMode(IdleMode.kCoast);
 
     // Invert the shooter motor
-    shooterMotor.setInverted(true);
+    topShooterMotor.setInverted(true);
+    bottomShooterMotor.setInverted(true);
 
     // Have the second shooter motor follow the first
-    theOtherShooterMotor.follow(shooterMotor);
+    //bottomShooterMotor.follow(topShooterMotor);
 
     /* Encoder Configuration */
 
+    // Setup encoder conversion factors
+    topShooterEncoder.setPositionConversionFactor(1);
+    bottomShooterEncoder.setPositionConversionFactor(1);
+
+    // Set encoders position to 0
+    topShooterEncoder.setPosition(0);
+    bottomShooterEncoder.setPosition(0);
+
     /* PIDControllers */
 
+    // Set PIDController FeedbackDevice
+    //topPIDController.setFeedbackDevice(topShooterEncoder);
+    //bottomPIDController.setFeedbackDevice(bottomShooterEncoder);
+
+    // Setup the shooterMotor PIDControllers
+    topPIDController.setP(ArmConstants.kElbowP);
+    topPIDController.setFF(ArmConstants.kElbowFF);
+    bottomPIDController.setP(ArmConstants.kWristP);
+    bottomPIDController.setFF(ArmConstants.kWristFF);
+
+    // Put shooterMotor PIDs on SmartDashboard  
+    SmartDashboard.putNumber("topShooter P", BoxConstants.kTopShooterP);
+    SmartDashboard.putNumber("topShooter FF", BoxConstants.kTopShooterFF);
+    SmartDashboard.putNumber("topShooter Set Point", 0); 
+    SmartDashboard.putNumber("bottomShooter P", BoxConstants.kBottomShooterP);
+    SmartDashboard.putNumber("bottomShooter FF", BoxConstants.kBottomShooterFF);
+    SmartDashboard.putNumber("bottomShooter Set Point", 0);
   }
   
 
   /**
-   * Sets the speed of the intake motor. Takes a double for speed and a boolean for reversed.
+   * Sets the speed of the intake motor. Takes a double for speed.
    *
-   * @param speed     Speed of the motor.
-   * @param reversed  False = intakes or shoots the note. True = regurgitates the note.
-   */
+   * @param speed     Speed of the motor.   */
   public Command setIntakeMotorCommand(double speed) {
     return run(() -> intakeMotor.set(speed));
   }
@@ -90,10 +127,12 @@ public class BoxSubsystem extends SubsystemBase {
     return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
   }
 
+
   public void Yeet() {
     intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
-    shooterMotor.set(Constants.BoxConstants.kYeetSpeedShooter);
+    topShooterMotor.set(Constants.BoxConstants.kYeetSpeedShooter);
   }
+
   
   public Command YeetCommand() {
     return Commands.startEnd(() -> Yeet(), () -> Yeet(), this);
@@ -121,27 +160,31 @@ public class BoxSubsystem extends SubsystemBase {
     .andThen(setShooterMotorCommand(0));
   }
 
+
   /**
    * Sets the speed of the shooter motor.
    *
    * @param speed     Speed of the motor.
    */
+  // DOES THIS HAVE TO BE RUN? WHY NOT runOnce()
   public Command setShooterMotorCommand(double speed) {
-    return run(() -> shooterMotor.set(speed));
-  }
-
-
-  public Command setTheOtherShooterMotorCommand(double speed) {
-    return run(() -> theOtherShooterMotor.set(speed));
+    return run(() -> topShooterMotor.set(speed));
   }
 
 
   public Command setShooterMotorCommandThenStop(double speed) {
-    return Commands.startEnd(() -> shooterMotor.set(speed),() -> shooterMotor.set(0),this);
+    return Commands.startEnd(() -> topShooterMotor.set(speed), () -> topShooterMotor.set(0), this);
   }
 
 
-  public Command setShooterMotorCommand(Supplier<ArmState> position) {
+  /**
+   * Sets the speed of the shooter motor depending on a supplied ArmState.
+   *
+   * @param position  ArmState Supplier used to set the speed of the shooter motor.
+   * @param feeder    A boolean if the feeder motor should also spin. 
+   *                  True = feeder motor spins. False = feeder motor does NOT spin.
+   */
+  public Command setShooterFeederCommand(Supplier<ArmState> position, boolean feeder) {
     return run(() -> {
       switch(position.get()) {
         case SHOOT_SUB:
@@ -161,35 +204,19 @@ public class BoxSubsystem extends SubsystemBase {
           break;
       }
 
-      shooterMotor.set(shooterMotorSpeed);
-    });
-  }
+      topShooterMotor.set(shooterMotorSpeed);
 
-  public Command setShooterIntakeMotorCommand(Supplier<ArmState> position) {
-    return run(() -> {
-      switch(position.get()) {
-        case SHOOT_SUB:
-          shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
-          break;
-        case AMP:
-          shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
-          break;
-        case IDLE:
-          shooterMotorSpeed = 0.0;
-          break;
-        case SHOOT_HORIZONTAL:
-          shooterMotorSpeed = BoxConstants.kHorizontalShootSpeed;
-          break;
-        default:
-          shooterMotorSpeed = BoxConstants.kDefaultShootSpeed;
-          break;
+      if (feeder) {
+        intakeMotor.set(BoxConstants.kFeedSpeed);
       }
-      shooterMotor.set(shooterMotorSpeed);
-      intakeMotor.set(BoxConstants.kFeedSpeed);
+
     });
   }
 
-  // This might be broken? it might always returns the intialized shooterChargeTime value
+
+  // This might be broken? it might always returns the intialized shooterChargeTime value, we have to check
+  // THIS METHOD IS ONLY USED FOR SHOOTING THE SUBWOOFER IN AUTON. SO THIS METHOD SEEMS USELESS.
+  // USE A CONSTANT SPEED INSTEAD OF THIS METHOD?
   public double getChargeTime(Supplier<ArmState> position) {
     switch(position.get()) {
         case AMP:
@@ -209,30 +236,50 @@ public class BoxSubsystem extends SubsystemBase {
    */
   public Command stopCommand() {
     return runOnce(() -> {
+      topPIDController.setReference(0.0, ControlType.kVoltage);
+      topShooterMotor.stopMotor();
+      bottomPIDController.setReference(0.0, ControlType.kVoltage);
+      bottomShooterMotor.stopMotor();
       intakeMotor.stopMotor();
-      shooterMotor.stopMotor();
-      theOtherShooterMotor.stopMotor();
     });
   }
 
 
-  public double getIntakeVelocity() {
-    return intakeEncoder.getVelocity();
-  }
-
-
-  /**
-   * Returns a boolean based on if the forward limit switch is pressed.
-   */
-  public boolean isReverseLimitSwitchPressed() {
-    return intakeMotor.getReverseLimitSwitch(Type.kNormallyOpen).isPressed();
+  public static boolean noteSensorTriggered() {
+    return noteSensor.get();
   }
 
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("isReverseLimitSwitchPressed", isReverseLimitSwitchPressed());
-    SmartDashboard.putNumber("Shooter Motor Speed", shooterMotorSpeed);
+    // If the wrist PID or setpoint values are different from SmartDashboard, use the new values
+    if (topP != SmartDashboard.getNumber("topShooter P", 0)) {
+      topP = SmartDashboard.getNumber("topShooter P", 0);
+      topPIDController.setP(topP);
+    }
+    if (topFF != SmartDashboard.getNumber("topShooter FF", 0)) {
+      topFF = SmartDashboard.getNumber("topShooter FF", 0);
+      topPIDController.setI(topFF);
+    }
+    if (topSetPoint != SmartDashboard.getNumber("topShooter Set Point", 0)) {
+      topSetPoint = SmartDashboard.getNumber("topShooter Set Point", 0);
+      topPIDController.setReference(topSetPoint, ControlType.kVelocity);
+    }
+    if (bottomP != SmartDashboard.getNumber("bottomShooter P", 0)) {
+      bottomP = SmartDashboard.getNumber("bottomShooter P", 0);
+      bottomPIDController.setD(bottomP);
+    }
+    if (bottomFF != SmartDashboard.getNumber("bottomShooter FF", 0)) {
+      bottomFF = SmartDashboard.getNumber("bottomShooter FF", 0);
+      bottomPIDController.setFF(bottomFF);
+    }
+    if (bottomSetPoint != SmartDashboard.getNumber("bottomShooter Set Point", 0)) {
+      bottomSetPoint = SmartDashboard.getNumber("bottomShooter Set Point", 0);
+      bottomPIDController.setReference(bottomSetPoint, ControlType.kVelocity);
+    }
+
+    SmartDashboard.putNumber("topShooterMotor Velocity", topShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("bottomShooterMotor Velocity", bottomShooterEncoder.getVelocity());
   }
 
 }

@@ -9,7 +9,6 @@ import java.io.File;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -62,7 +61,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    // This causes a command scheduler loop overrun
+    // This causes a command scheduler loop overrun. Not sure why
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
       () -> m_driverController.getLeftY(),
       () -> m_driverController.getLeftX(),
@@ -70,38 +69,14 @@ public class RobotContainer {
       Constants.OperatorConstants.kFastModeSpeed
     ));
 
-    m_box.setDefaultCommand(m_box.stopCommand());
-    //m_arm.setDefaultCommand(new IdleArmCommand(m_arm));
+    // THIS SHOULD BE UNCOMMENTED OUT SO THE SHOOTER/FEEDER STOPS.
+    // IT IS ONLY COMMENTED OUT BECAUSE WE ARE TESTING/TUNING VELOCITY PID
+    //m_box.setDefaultCommand(m_box.stopCommand());
   }
 
 
   private void configureBindings() {
     /* Driver Controls */
-
-    // TEST-Vision snapping command.
-    // If there is no limelight, there will be an exception
-    /*
-    m_driverController.rightBumper().whileTrue(
-      m_swerve.driveCommandAngularVelocity(
-        () -> -m_driverController.getLeftY(),
-        () -> -m_driverController.getLeftX(),
-        () -> -m_limelight.getTargetRotation()/360,
-        Constants.OperatorConstants.kFastModeSpeed
-      )
-    );
-    */
-
-    // Changes the wrist angle to what it should be at the moment the button is held.
-    // To update the wrist angle, let go and hold the button again
-    /*
-    m_driverController.rightBumper().whileTrue(
-      m_arm.SetWristAngle(getLimelightWristAngle())
-    );
-    */
-    
-
-    // TEST-Drives to and runs a path planner path
-    //m_driverController.a().onTrue(m_swerve.driveToPathThenFollowPath(PathPlannerPath.fromPathFile("PlayAmp")));
     
     // Rotate towards the driver
     m_driverController.a().whileTrue(m_swerve.driveCommandPoint(() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
@@ -154,26 +129,9 @@ public class RobotContainer {
       )
     );
 
-    /*
-    // Alternate drive mode
-    m_driverController.rightBumper().toggleOnTrue(m_swerve.driveCommandPoint(
-      () -> -m_driverController.getLeftY(),
-      () -> -m_driverController.getLeftX(),
-      () -> -m_driverController.getRightX(),
-      () -> -m_driverController.getRightY()
-    ));
-    */
-
-    // Lock the wheels on toggle
-    m_driverController.start().toggleOnTrue(
-      m_swerve.run(()->{
-        m_swerve.lock();
-      })
-    );
-
     /* Operator Controls */
 
-    // THIS CODE DOES NOT WORK? I HAVE WORKING CODE ANYWAY
+    // THIS CODE DOES NOT WORK? I HAVE WORKING CODE ANYWAY. DELETE THIS IF NOT NEEDED
     /*
     m_operatorController.rightTrigger().whileTrue(
       Commands.waitSeconds(4)
@@ -188,10 +146,19 @@ public class RobotContainer {
     );
     */
 
-    // Winds up shoot motors then starts intake/feed motor
+    // Winds up shoot motors then starts intake/feed motor WORKS WORKS WORKS BUT DOESN"T INTAKE TO COUNTER REGURGITATE
+    /*
     m_operatorController.rightTrigger().whileTrue(
       m_box.setShooterIntakeMotorCommand(ArmSubsystem::getArmState)
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+    */
+    
+    // MIGHT NOT WORK - Winds up shoot motors, then starts intake/feed motor, then onFalse it intakes to counter act the regurgitate
+    m_operatorController.rightTrigger().whileTrue(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true))
+      .onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
+      .andThen(m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed))
+      .withTimeout(BoxConstants.kRegurgitateTime)
+      );
 
     // Intakes note into robot and keeps it there
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
@@ -205,25 +172,34 @@ public class RobotContainer {
     // Idle mode arm set point
     m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
-    // Arm set point for shooting speaker from subwoofer
+    // MIGHT NOT WORK - Arm set point for shooting speaker from subwoofer + winds up shooter motors and regurgiates note
     m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true)
-    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
+    .alongWith(m_box.setIntakeMotorCommandThenStop(BoxConstants.kRegurgitateSpeed)
+              .withTimeout(BoxConstants.kRegurgitateTime)
+              .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
+              )
+    );
 
-    // Arm set point for playing amp 
-    m_operatorController.x().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
-    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
+    // MIGHT NOT WORK. REWORDED VERSION OF THE ONE ABOVE - Arm set point for playing amp
+    m_operatorController.x().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true),
+        m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed)
+      ).withTimeout(BoxConstants.kRegurgitateTime)
+      .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
+    );
 
     // Arm set point for shooting speaker from the podium
     m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, true)
-    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
+    .alongWith(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)));
 
     // Arm set point for shooting trap
     m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true)
-    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
+    .alongWith(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)));
 
     // Arm set point for shooting horizontal across the field
     m_operatorController.povLeft().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, true)
-    .alongWith(m_box.setShooterMotorCommand(ArmSubsystem::getArmState)));
+    .alongWith(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)));
     //m_operatorController.povLeft().whileTrue(m_box.YeetCommand());
 
     // Arm set point for climbing
@@ -235,15 +211,25 @@ public class RobotContainer {
         () -> m_operatorController.getLeftY() * 0.3)
     );
 
-    // Floor intake
+    // Floor intake WORKS WORKS WORKS
+    /*
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ).until(m_box::isReverseLimitSwitchPressed),
+        ),//.until(m_box::noteSensorTriggered),
         m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
       )
+    );
+    */
+
+    // Floor intake MIGHT WORK WITH LESS/SIMPLER CODE. IF SO, INTAKE FROM SOURCE CAN ALSO BE UPDATED
+    m_operatorController.povDown().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
+        m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
+      )//.until(m_box::noteSensorTriggered)
     );
 
     // Intake from the source
@@ -252,13 +238,58 @@ public class RobotContainer {
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE, false),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ).until(m_box::isReverseLimitSwitchPressed),
+        ),//.until(m_box::noteSensorTriggered),
         m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
       )
     );
 
     // Reset wrist encoder
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_arm.resetWristEncoder()));
+
+
+
+    /* COMMANDS WE NEVER USE BUT COULD BE USEFUL? */
+
+    /*
+    // Alternate drive mode
+    m_driverController.rightBumper().toggleOnTrue(m_swerve.driveCommandPoint(
+      () -> -m_driverController.getLeftY(),
+      () -> -m_driverController.getLeftX(),
+      () -> -m_driverController.getRightX(),
+      () -> -m_driverController.getRightY()
+    ));
+
+    // Lock the wheels on toggle
+    m_driverController.start().toggleOnTrue(
+      m_swerve.run(()->{
+        m_swerve.lock();
+      })
+    );
+    */
+
+    /* TEST COMMANDS. DO NOT ENABLE DURING COMPETITION */
+
+    /*
+    // TEST-Vision snapping command.
+    // If there is no limelight, there will be an exception
+    m_driverController.rightBumper().whileTrue(
+      m_swerve.driveCommandAngularVelocity(
+        () -> -m_driverController.getLeftY(),
+        () -> -m_driverController.getLeftX(),
+        () -> -m_limelight.getTargetRotation()/360,
+        Constants.OperatorConstants.kFastModeSpeed
+      )
+    );
+
+    // TEST-Vision. Changes the wrist angle to what it should be at the moment the button is held.
+    // To update the wrist angle, let go and hold the button again
+    m_driverController.rightBumper().whileTrue(
+      m_arm.SetWristAngle(getLimelightWristAngle())
+    );
+    
+    // TEST-Drives to and runs a path planner path
+    m_driverController.a().onTrue(m_swerve.driveToPathThenFollowPath(PathPlannerPath.fromPathFile("PlayAmp")));
+    */
   }
 
   // AutonomousCommand

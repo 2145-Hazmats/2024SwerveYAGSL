@@ -4,11 +4,10 @@
 
 package frc.robot;
 
-
 public final class Constants {
   /* Constants for the swerve chassis */
   public static class SwerveConstants {
-    public static final double MAX_SPEED  = 4.46; // maximum m/s for the robot
+    public static final double MAX_SPEED  = 5.4; // maximum m/s for the robot
     public static final double PATHPLANNER_TRANS_KP = 1; // Translational P for the pathplanner PID (default 5?)
     public static final double LOOP_TIME  = 0.13; // in seconds, 20ms + 110ms spark max velocity lag
   }
@@ -68,26 +67,35 @@ public final class Constants {
   /* Constants for the box subsystem */
   public static class BoxConstants{
     // Motor IDs
-    public static final int kShooterMotorID = 30;
-    public static final int kTheOtherShooterMotorID = 31;
+    public static final int kTopShooterMotorID = 30;
+    public static final int kBottomShooterMotorID = 31;
     public static final int kIntakeMotorID  = 32;
+    // Sensor digital input channel
+    public static final int kNoteSensorChannel = 0;
     // Nominal Voltage
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
+    // Shooter PID constants
+    public static final double kTopShooterP     = 0.0;
+    public static final double kBottomShooterP  = 0.0;
+    public static final double kTopShooterFF    = 0.0;
+    public static final double kBottomShooterFF = 0.0;
     // Shooter motor speeds
     public static final double kSpeakerShootSpeed = 1.00;
     public static final double kAmpShootSpeed = 0.15;
     public static final double kHorizontalShootSpeed = 0.6;
     public static final double kDefaultShootSpeed = 1.00;
     public static final double kYeetSpeedShooter = .5;
-    public static final double kYeetSpeedIntake = 1;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;
     public static final double kRegurgitateSpeed = -0.75;
+    public static final double kYeetSpeedIntake = 1;
     // Shooter delay
     public static final double kShooterDelay = 1.25;
     public static final double kShooteDelayAmp = .1;
+    // Regurgitate time
+    public static final double kRegurgitateTime = 0.25;
   }
 
   public static class LimelightConstants {

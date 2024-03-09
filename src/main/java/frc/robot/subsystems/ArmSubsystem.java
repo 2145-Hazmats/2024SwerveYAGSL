@@ -46,7 +46,6 @@ public class ArmSubsystem extends SubsystemBase {
   private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
   // Arm state
-  // We make this static because we want to use it without an object of arm subsystem. We can use this in other subsystems even though its private, because we return it in a public get method
   private static ArmState currentPosition = ArmState.IDLE;
 
   /* SysID variables and routine */
@@ -70,7 +69,6 @@ public class ArmSubsystem extends SubsystemBase {
     /* Motor Configuration */
 
     // Restore factory defaults of the Spark Max.
-    // It's important to have all Spark Maxs behave the expected way, especially if we switch to a different Spark Max in the middle of a competition.
     elbowMotorLeader.restoreFactoryDefaults();
     elbowMotorFollower.restoreFactoryDefaults();
     wristMotor.restoreFactoryDefaults();
@@ -114,7 +112,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     /* PIDControllers */
 
-    // Change PIDController FeedbackDevice from the integrated encoder to the alternate encoder
+    // Set PIDController FeedbackDevice
     elbowPIDController.setFeedbackDevice(elbowEncoder);
     wristPIDController.setFeedbackDevice(wristEncoder);
 
@@ -165,8 +163,7 @@ public class ArmSubsystem extends SubsystemBase {
         double wristAngle = 0;
         // Updates currentPosition static var
         currentPosition = position;
-        // it's like a fancy switching thingy where it like checks if your in like a position and then it goes to that position there and does whatever you tell it to and then when you finish the thingy you tell it to, the "break;" makes it got to the end of the big list and then continues on with its life. 
-        // - Carson 2024
+        // switch case based on ArmState
         switch(position) {
           case IDLE:
             elbowAngle = ArmConstants.kIdleAngleSP[0];
