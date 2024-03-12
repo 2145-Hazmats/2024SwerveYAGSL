@@ -156,8 +156,8 @@ public class RobotContainer {
     // MIGHT NOT WORK - Winds up shoot motors, then starts intake/feed motor, then onFalse it intakes to counter act the regurgitate
     m_operatorController.rightTrigger().whileTrue(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true))
       .onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
-      .andThen(m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed))
-      .withTimeout(BoxConstants.kRegurgitateTime)
+      //.andThen(m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed))
+      //.withTimeout(BoxConstants.kRegurgitateTime)
       );
 
     // Intakes note into robot and keeps it there
@@ -180,12 +180,19 @@ public class RobotContainer {
               )
     );
 
+    /*
     // MIGHT NOT WORK. REWORDED VERSION OF THE ONE ABOVE - Arm set point for playing amp
     m_operatorController.x().whileTrue(
       Commands.parallel(
         m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true),
         m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed)
       ).withTimeout(BoxConstants.kRegurgitateTime)
+      .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
+    );
+    */
+
+    m_operatorController.x().whileTrue(
+      m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
       .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
     );
 
@@ -226,10 +233,17 @@ public class RobotContainer {
 
     // Floor intake MIGHT WORK WITH LESS/SIMPLER CODE. IF SO, INTAKE FROM SOURCE CAN ALSO BE UPDATED
     m_operatorController.povDown().whileTrue(
-      Commands.parallel(
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
-        m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-      )//.until(m_box::noteSensorTriggered)
+      Commands.sequence(
+        Commands.parallel(
+          m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
+          m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
+        ),//.until(m_box::noteSensorTriggered)
+        Commands.parallel(
+          m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false),
+          m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed)
+              .withTimeout(BoxConstants.kRegurgitateTime)
+        )
+      )
     );
 
     // Intake from the source

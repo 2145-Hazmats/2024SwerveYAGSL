@@ -3,14 +3,15 @@
   "robotLength": 0.78,
   "holonomicMode": true,
   "pathFolders": [
-    "Center Auton Lines",
+    "AmpHearthLines",
+    "CenterStageWines",
     "Riley's OP Lines"
   ],
   "autoFolders": [
     "Riley's OP Autos"
   ],
   "defaultMaxVel": 5.4,
-  "defaultMaxAccel": 2.5,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 360.0,
   "defaultMaxAngAccel": 360.0,
   "maxModuleSpeed": 5.4

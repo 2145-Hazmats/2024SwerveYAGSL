@@ -305,7 +305,7 @@ public class ArmSubsystem extends SubsystemBase {
   public static ArmState getArmState() {
     return currentPosition;
   }
-
+  
 
   @Override
   public void periodic() {

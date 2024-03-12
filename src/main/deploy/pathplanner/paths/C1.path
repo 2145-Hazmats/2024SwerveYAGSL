@@ -3,37 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 1.0
+        "x": 0.739521334895937,
+        "y": 6.604415947569157
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0106635651867797,
-        "y": 1.1937355453658274
+        "x": 1.2053956160804742,
+        "y": 8.34308243488948
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 2.0
+        "x": 7.946691929419894,
+        "y": 7.451230758317373
       },
       "prevControl": {
-        "x": 2.5119090589058373,
-        "y": 1.5020565128849561
+        "x": 4.946691929419894,
+        "y": 7.451230758317373
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.7,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 5.4,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0
   },
@@ -43,7 +49,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "folder": "AmpHearthLines",
+  "previewStartingState": {
+    "rotation": 60.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }
