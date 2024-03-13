@@ -64,6 +64,14 @@ public final class Constants {
     public static final double[] kClimbingAngleSP         = {-95.2, 32};
     // The degree of error our Arm has for the shouldWeShoot method
     public static final double kAngleEpsilon = 0.5;
+
+    //feed forward numersds for the elbow
+    public static final double kElbowS = 0;
+    public static final double kElbowG = 0;
+    public static final double kElbowV = 0;
+    public static final double kElbowA = 0;
+    public static final double MaxVelocity = 0;
+    public static final double MaxAccelleration = 0;
   }
 
   /* Constants for the box subsystem */
