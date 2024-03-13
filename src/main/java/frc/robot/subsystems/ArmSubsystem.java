@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Measure;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
 
@@ -47,6 +49,8 @@ public class ArmSubsystem extends SubsystemBase {
   private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
   // Arm state
   private static ArmState currentPosition = ArmState.IDLE;
+  // new arm feed forward
+  private ArmFeedforward m_armFeedforward = new ArmFeedforward(ArmConstants.kElbowS, ArmConstants.kElbowG, ArmConstants.kElbowV, ArmConstants.kElbowA);
 
   /* SysID variables and routine */
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
@@ -122,6 +126,8 @@ public class ArmSubsystem extends SubsystemBase {
     elbowPIDController.setD(ArmConstants.kElbowD);
     elbowPIDController.setFF(ArmConstants.kElbowFF);
     elbowPIDController.setOutputRange(ArmConstants.kElbowMinSpeed, ArmConstants.kElbowMaxSpeed);
+    elbowPIDController.setSmartMotionMaxVelocity(Constants.ArmConstants.MaxVelocity, 0);
+    elbowPIDController.setSmartMotionMaxAccel(Constants.ArmConstants.MaxAccelleration, 0);
 
     // Setup the wrist PIDController
     wristPIDController.setP(ArmConstants.kWristP);
@@ -204,7 +210,8 @@ public class ArmSubsystem extends SubsystemBase {
           default:
             break;
         }
-        elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
+        elbowSetPoint = elbowAngle;
+        elbowPIDController.setReference(elbowAngle, ControlType.kSmartMotion);
         wristPIDController.setReference(wristAngle, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
         SmartDashboard.putNumber("Wrist Set Point", wristAngle);
@@ -213,7 +220,8 @@ public class ArmSubsystem extends SubsystemBase {
       () -> {
         if (!stayAtSetpoint) { 
           currentPosition = ArmConstants.ArmState.IDLE;
-          elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
+          elbowSetPoint = ArmConstants.kIdleAngleSP[0];
+          elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kSmartMotion);
           wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
         }
       }
@@ -353,6 +361,15 @@ public class ArmSubsystem extends SubsystemBase {
       wristSetPoint = SmartDashboard.getNumber("Wrist Set Point", 0);
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
     }
+    */
+
+    // Dynamic feed forward
+    /*
+    elbowPIDController.setReference(elbowSetPoint,
+        ControlType.kSmartMotion,
+        0,
+        m_armFeedforward.calculate(elbowSetPoint*(Math.PI/180), elbowEncoder.getVelocity()*(Math.PI/180))
+    );
     */
   
     // Update SmartDashboard with elbow and wrist information

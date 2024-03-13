@@ -71,7 +71,7 @@ public class RobotContainer {
 
     // THIS SHOULD BE UNCOMMENTED OUT SO THE SHOOTER/FEEDER STOPS.
     // IT IS ONLY COMMENTED OUT BECAUSE WE ARE TESTING/TUNING VELOCITY PID
-    //m_box.setDefaultCommand(m_box.stopCommand());
+    m_box.setDefaultCommand(m_box.stopCommand());
   }
 
 
