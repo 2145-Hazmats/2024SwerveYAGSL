@@ -146,19 +146,10 @@ public class RobotContainer {
     );
     */
 
-    // Winds up shoot motors then starts intake/feed motor WORKS WORKS WORKS BUT DOESN"T INTAKE TO COUNTER REGURGITATE
-    /*
+    // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
-      m_box.setShooterIntakeMotorCommand(ArmSubsystem::getArmState)
+      m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true)
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
-    */
-    
-    // MIGHT NOT WORK - Winds up shoot motors, then starts intake/feed motor, then onFalse it intakes to counter act the regurgitate
-    m_operatorController.rightTrigger().whileTrue(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true))
-      .onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
-      //.andThen(m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed))
-      //.withTimeout(BoxConstants.kRegurgitateTime)
-      );
 
     // Intakes note into robot and keeps it there
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
@@ -191,10 +182,13 @@ public class RobotContainer {
     );
     */
 
+    // THIS WORKS BUT MIGHT NOT WORK WITH THE SHOOT COMMAND
     m_operatorController.x().whileTrue(
-      m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
-      .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
-    );
+      Commands.sequence(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
+        .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Arm set point for shooting speaker from the podium
     m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, true)
@@ -218,7 +212,7 @@ public class RobotContainer {
         () -> m_operatorController.getLeftY() * 0.3)
     );
 
-    // Floor intake WORKS WORKS WORKS
+    // Floor intake WORKS
     /*
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
@@ -231,13 +225,13 @@ public class RobotContainer {
     );
     */
 
-    // Floor intake MIGHT WORK WITH LESS/SIMPLER CODE. IF SO, INTAKE FROM SOURCE CAN ALSO BE UPDATED
+    // Floor intake with regurgitate MIGHT NOT WORK
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ),//.until(m_box::noteSensorTriggered)
+        ),//.until(m_box::noteSensorTriggered).andThen()
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false),
           m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed)
@@ -247,6 +241,7 @@ public class RobotContainer {
     );
 
     // Intake from the source
+    // We have to add regurgitate like in the floor intake command
     m_operatorController.povUp().whileTrue(
       Commands.sequence(
         Commands.parallel(

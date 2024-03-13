@@ -62,6 +62,8 @@ public final class Constants {
     public static final double[] kAmpAngleSP              = {-112, 44.8};// -110,42
     public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
     public static final double[] kClimbingAngleSP         = {-95.2, 32};
+    // The degree of error our Arm has for the shouldWeShoot method
+    public static final double kAngleEpsilon = 0.5;
   }
 
   /* Constants for the box subsystem */
