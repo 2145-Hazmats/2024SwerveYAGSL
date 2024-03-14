@@ -45,12 +45,16 @@ public class ArmSubsystem extends SubsystemBase {
   private SparkPIDController elbowPIDController = elbowMotorLeader.getPIDController();
   private SparkPIDController wristPIDController = wristMotor.getPIDController();
   // Variables used during SmartDashboard changes
-  private double elbowP, elbowI, elbowD, elbowFF, elbowSetPoint = 0;
-  private double wristP, wristI, wristD, wristFF, wristSetPoint = 0;
+  private double elbowP, elbowI, elbowD, elbowSetPoint = 0;
+  private double wristP, wristI, wristD, wristSetPoint = 0;
   // Arm state
   private static ArmState currentPosition = ArmState.IDLE;
-  // new arm feed forward
-  private ArmFeedforward m_armFeedforward = new ArmFeedforward(ArmConstants.kElbowS, ArmConstants.kElbowG, ArmConstants.kElbowV, ArmConstants.kElbowA);
+  // Arm feed forward
+  private ArmFeedforward m_armFeedforward = new ArmFeedforward(
+      ArmConstants.kElbowS,
+      ArmConstants.kElbowG,
+      ArmConstants.kElbowV,
+      ArmConstants.kElbowA);
 
   /* SysID variables and routine */
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
@@ -104,12 +108,12 @@ public class ArmSubsystem extends SubsystemBase {
     /* Encoder Configuration */
 
     // Setup encoder conversion factors
-    elbowEncoder.setPositionConversionFactor(360);
+    elbowEncoder.setPositionConversionFactor(ArmConstants.kElbowEncoderFactor);
     wristEncoder.setPositionConversionFactor(1);
 
-    // Set encoders position to 0
-    elbowEncoder.setPosition(0);
-    wristEncoder.setPosition(0);
+    // Set encoders position to our offset
+    elbowEncoder.setPosition(ArmConstants.kElbowAngleOffset);
+    wristEncoder.setPosition(ArmConstants.kWristAngleOffset);
 
     // Invert the elbow encoder
     elbowEncoder.setInverted(true);
@@ -124,33 +128,25 @@ public class ArmSubsystem extends SubsystemBase {
     elbowPIDController.setP(ArmConstants.kElbowP);
     elbowPIDController.setI(ArmConstants.kElbowI);
     elbowPIDController.setD(ArmConstants.kElbowD);
-    elbowPIDController.setFF(ArmConstants.kElbowFF);
     elbowPIDController.setOutputRange(ArmConstants.kElbowMinSpeed, ArmConstants.kElbowMaxSpeed);
-    elbowPIDController.setSmartMotionMaxVelocity(Constants.ArmConstants.MaxVelocity, 0);
-    elbowPIDController.setSmartMotionMaxAccel(Constants.ArmConstants.MaxAccelleration, 0);
 
     // Setup the wrist PIDController
     wristPIDController.setP(ArmConstants.kWristP);
     wristPIDController.setI(ArmConstants.kWristI);
     wristPIDController.setD(ArmConstants.kWristD);
-    wristPIDController.setFF(ArmConstants.kWristFF);
     wristPIDController.setOutputRange(ArmConstants.kWristMinSpeed, ArmConstants.kWristMaxSpeed);
 
-    /*
     // Put Elbow PIDs on SmartDashboard  
     SmartDashboard.putNumber("Elbow P", ArmConstants.kElbowP);
     SmartDashboard.putNumber("Elbow I", ArmConstants.kElbowI);
     SmartDashboard.putNumber("Elbow D", ArmConstants.kElbowD);
-    SmartDashboard.putNumber("Elbow FF", ArmConstants.kElbowFF);
     SmartDashboard.putNumber("Elbow Set Point", 0); 
     
     // Put Wrist PIDs on SmartDashboard
     SmartDashboard.putNumber("Wrist P", ArmConstants.kWristP);
     SmartDashboard.putNumber("Wrist I", ArmConstants.kWristI);
     SmartDashboard.putNumber("Wrist D", ArmConstants.kWristD);
-    SmartDashboard.putNumber("Wrist FF", ArmConstants.kWristFF);
     SmartDashboard.putNumber("Wrist Set Point", 0);
-    */
   } 
 
 
@@ -195,23 +191,23 @@ public class ArmSubsystem extends SubsystemBase {
             elbowAngle = ArmConstants.kTrapAngleSP[0];
             wristAngle = ArmConstants.kTrapAngleSP[1];
             break;
-          case CLIMBING_POSITION:
-            elbowAngle = ArmConstants.kClimbingAngleSP[0];
-            wristAngle = ArmConstants.kClimbingAngleSP[1];
+          case CLIMB_1:
+            elbowAngle = ArmConstants.kClimb1AngleSP[0];
+            wristAngle = ArmConstants.kClimb1AngleSP[1];
+            break;
+          case CLIMB_2:
+            elbowAngle = ArmConstants.kClimb2AngleSP[0];
+            wristAngle = ArmConstants.kClimb2AngleSP[1];
             break;
           case SHOOT_HORIZONTAL:
             elbowAngle = ArmConstants.kHorizontalAngleSP[0];
             wristAngle = ArmConstants.kHorizontalAngleSP[1];
             break;
-          case SHOOT_PODIUM:
-            elbowAngle = ArmConstants.kSpeakerPodiumAngleSP[0];
-            wristAngle = ArmConstants.kSpeakerPodiumAngleSP[1];
-            break;
           default:
             break;
         }
         elbowSetPoint = elbowAngle;
-        elbowPIDController.setReference(elbowAngle, ControlType.kSmartMotion);
+        elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
         wristPIDController.setReference(wristAngle, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
         SmartDashboard.putNumber("Wrist Set Point", wristAngle);
@@ -221,7 +217,7 @@ public class ArmSubsystem extends SubsystemBase {
         if (!stayAtSetpoint) { 
           currentPosition = ArmConstants.ArmState.IDLE;
           elbowSetPoint = ArmConstants.kIdleAngleSP[0];
-          elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kSmartMotion);
+          elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
           wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
         }
       }
@@ -244,17 +240,6 @@ public class ArmSubsystem extends SubsystemBase {
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
-
-  /*
-  public double getWristPosition() {
-    return wristEncoder.getPosition();
-  }
-
-
-  public double getWristVelocity() {
-    return wristEncoder.getVelocity();
-  }
-  */
 
   /**
    * Sets the elbow motor speed and wrist motor speed in manual mode by giving their PIDControllers
@@ -318,7 +303,6 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // If the elbow PID or setpoint values are different from SmartDashboard, use the new values
-    /*
     if (elbowP != SmartDashboard.getNumber("Elbow P", 0)) {
       elbowP = SmartDashboard.getNumber("Elbow P", 0);
       elbowPIDController.setP(elbowP);
@@ -330,10 +314,6 @@ public class ArmSubsystem extends SubsystemBase {
     if (elbowD != SmartDashboard.getNumber("Elbow D", 0)) {
       elbowD = SmartDashboard.getNumber("Elbow D", 0);
       elbowPIDController.setD(elbowD);
-    }
-    if (elbowFF != SmartDashboard.getNumber("Elbow FF", 0)) {
-      elbowFF = SmartDashboard.getNumber("Elbow FF", 0);
-      elbowPIDController.setFF(elbowFF);
     }
     if (elbowSetPoint != SmartDashboard.getNumber("Elbow Set Point", 0)) {
       elbowSetPoint = SmartDashboard.getNumber("Elbow Set Point", 0);
@@ -353,17 +333,17 @@ public class ArmSubsystem extends SubsystemBase {
       wristD = SmartDashboard.getNumber("Wrist D", 0);
       wristPIDController.setD(wristD);
     }
-    if (wristFF != SmartDashboard.getNumber("Wrist FF", 0)) {
-      wristFF = SmartDashboard.getNumber("Wrist FF", 0);
-      wristPIDController.setFF(wristFF);
-    }
     if (wristSetPoint != SmartDashboard.getNumber("Wrist Set Point", 0)) {
       wristSetPoint = SmartDashboard.getNumber("Wrist Set Point", 0);
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
     }
-    */
 
     // Dynamic feed forward
+    // If this doesn't work, we will copy WPILib's and make sure it uses our elbow encoder value
+    // or just use feed forward to counter gravity with kS and kG?
+    // or maybe we have to do elbowPIDController.setFF(number)?
+    // I DON'T THINK WE SHOULD USE SMART MOTION, IT MESSES UP THE ARM.
+    // LET'S MODIFY m_armFeedforward SO IT IS JUST FOR GRAVITY
     /*
     elbowPIDController.setReference(elbowSetPoint,
         ControlType.kSmartMotion,

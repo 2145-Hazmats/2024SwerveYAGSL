@@ -30,7 +30,7 @@ public final class Constants {
   /* Constants for the arm subsystem */
   public static class ArmConstants{
     // All of our PID Postions for the arm
-    public static enum ArmState {IDLE, FLOOR, SOURCE, SHOOT_SUB, SHOOT_PODIUM, SHOOT_HORIZONTAL, CLIMBING_POSITION, AMP, TRAP, MANUAL}; 
+    public static enum ArmState {IDLE, FLOOR, SOURCE, AMP, SHOOT_SUB, SHOOT_PODIUM, SHOOT_HORIZONTAL, CLIMB_1, CLIMB_2, TRAP, MANUAL};
     // Motor IDs
     public static final int kElbowMotorLeaderID   = 20;
     public static final int kElbowMotorFollowerID = 21;
@@ -38,40 +38,47 @@ public final class Constants {
     // NominalVoltage
     public static final double kElbowMotorNominalVoltage = 12;
     public static final double kWristMotorNominalVoltage = 12;
-    // Elbow PID + PID max speed
-    public static final double kElbowP        = 0.05; //0.1
-    public static final double kElbowI        = 0.000001; //0.0001
-    public static final double kElbowD        = 0.1; //1
-    public static final double kElbowFF       = 0;
-    public static final double kElbowMinSpeed = -0.4; //-0.4
+    // Encoder Conversion Factor
+    // TODO: THIS IS NOT CORRECT?
+    public static final double kElbowEncoderFactor = 180;
+    // Elbow and wrist PID + PID max speed
+    // TODO: UPDATE THESE WITH SYSID VALUES
+    public static final double kElbowP        = 0.05;
+    public static final double kElbowI        = 0.000001;
+    public static final double kElbowD        = 0.1;
+    public static final double kElbowMinSpeed = -0.4;
     public static final double kElbowMaxSpeed = 0.4;
     public static final double kWristP        = 0.3;
     public static final double kWristI        = 0.00005;
     public static final double kWristD        = 0.0002;
-    public static final double kWristFF       = 0;
-    public static final double kWristMinSpeed = -0.45; //-0.55
-    public static final double kWristMaxSpeed = 0.45; //0.55
-    // Setpoints for the arm subsystem
-    // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
-    public static final double[] kFloorAngleSP            = {0, 41.5 }; // 0 , 37
-    public static final double[] kSourceAngleSP           = {0,9.1};
-    public static final double[] kIdleAngleSP             = {-0.25, 0};
-    public static final double[] kSpeakerSubwooferAngleSP = {0, 41.5};
-    public static final double[] kSpeakerPodiumAngleSP    = {-34.1, 49};
-    public static final double[] kTrapAngleSP             = {0, 0};
-    public static final double[] kAmpAngleSP              = {-112, 44.8};// -110,42
-    public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
-    public static final double[] kClimbingAngleSP         = {-95.2, 32};
-    // The degree of error our Arm has for the shouldWeShoot method
-    public static final double kAngleEpsilon = 0.5;
-
-    //feed forward numersds for the elbow
+    public static final double kWristMinSpeed = -0.45;
+    public static final double kWristMaxSpeed = 0.45;
+    // Elbow FF constants
+    // TODO: GET THESE FROM SYSID
     public static final double kElbowS = 0;
     public static final double kElbowG = 0;
     public static final double kElbowV = 0;
     public static final double kElbowA = 0;
-    public static final double MaxVelocity = 0;
-    public static final double MaxAccelleration = 0;
+    // TODO: MIGHT HAVE TO REMOVE THIS
+    public static final double MaxVelocity = 5600;     // In RPM
+    public static final double MaxAcceleration = 1000; // In RPM/s
+    // Elbow and Wrist offsets. The angle should be 0 degrees when parallel
+    // TODO: SET THESE AFTER CONVERSION FACTOR
+    public static final double kElbowAngleOffset = 0.0; // Around 11 degrees
+    public static final double kWristAngleOffset = 0.0;
+    // Setpoints for the arm subsystem
+    // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
+    // TODO: ALL THESE SETPOINTS NEED TO BE UPDATED AFTER WRIST AND ELBOW OFFSET
+    public static final double[] kIdleAngleSP             = {-0.25, 0};
+    public static final double[] kFloorAngleSP            = {0, 41.5 };
+    public static final double[] kSourceAngleSP           = {0,9.1};
+    public static final double[] kAmpAngleSP              = {-112, 44.8};
+    public static final double[] kSpeakerSubwooferAngleSP = {0, 41.5};
+    public static final double[] kSpeakerPodiumAngleSP    = {-34.1, 49};
+    public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
+    public static final double[] kClimb1AngleSP           = {-95.2, 32};
+    public static final double[] kClimb2AngleSP           = {0, 0}; // NEEDS TO BE SET
+    public static final double[] kTrapAngleSP             = {0, 0}; // NEEDS TO BE SET
   }
 
   /* Constants for the box subsystem */
@@ -86,28 +93,34 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter PID constants
+    // TODO: GET THESE FROM SYSID
     public static final double kTopShooterP     = 0.0;
     public static final double kBottomShooterP  = 0.0;
-    public static final double kTopShooterFF    = 0.0;
-    public static final double kBottomShooterFF = 0.0;
+    // Shooter FF constants
+    // TODO: GET THESE FROM SYSID
+    public static final double kTopS    = 0.0;
+    public static final double kBottomS = 0.0;
+    public static final double kTopV    = 0.0;
+    public static final double kBottomV = 0.0;
     // Shooter motor speeds
-    public static final double kSpeakerShootSpeed = 1.00;
-    public static final double kAmpShootSpeed = 0.15;
+    public static final double kSpeakerShootSpeed    = 1.00;
+    public static final double kAmpShootSpeed        = 0.15;
     public static final double kHorizontalShootSpeed = 0.6;
-    public static final double kDefaultShootSpeed = 1.00;
-    public static final double kYeetSpeedShooter = .5;
+    public static final double kDefaultShootSpeed    = 1.00;
+    public static final double kYeetSpeedShooter     = 0.5;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;
-    public static final double kRegurgitateSpeed = -0.75;
-    public static final double kYeetSpeedIntake = 1;
+    public static final double kRegurgitateSpeed = -0.25;
+    public static final double kYeetSpeedIntake  = 1;
     // Shooter delay
-    public static final double kShooterDelay = 1.25;
-    public static final double kShooteDelayAmp = .1;
+    public static final double kShooterDelay     = 1.25;
+    public static final double kShooteDelayAmp   = 0.1;
     // Regurgitate time
-    public static final double kRegurgitateTime = 0.25;
+    public static final double kRegurgitateTime  = 0.25;
   }
 
+  /*
   public static class LimelightConstants {
     // Wrist offsets
     public static final double wristAngleOffset = 0.0;  // in degrees
@@ -116,7 +129,7 @@ public final class Constants {
     // Speaker height and offset
     public static final double speakerHeight = 0.00;     // height to the middle of the speaker opening
     public static final double speakerOffsetX = 0.22;    // distance to center of speaker opening
-    
   }
+  */
 
 }

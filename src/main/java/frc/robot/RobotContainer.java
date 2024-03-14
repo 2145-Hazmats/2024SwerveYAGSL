@@ -70,7 +70,7 @@ public class RobotContainer {
     ));
 
     // THIS SHOULD BE UNCOMMENTED OUT SO THE SHOOTER/FEEDER STOPS.
-    // IT IS ONLY COMMENTED OUT BECAUSE WE ARE TESTING/TUNING VELOCITY PID
+    // IF IT IS COMMENTED OUT, IT IS BECAUSE WE ARE TESTING/TUNING VELOCITY PID
     m_box.setDefaultCommand(m_box.stopCommand());
   }
 
@@ -131,21 +131,6 @@ public class RobotContainer {
 
     /* Operator Controls */
 
-    // THIS CODE DOES NOT WORK? I HAVE WORKING CODE ANYWAY. DELETE THIS IF NOT NEEDED
-    /*
-    m_operatorController.rightTrigger().whileTrue(
-      Commands.waitSeconds(4)
-      
-     //.andThen(m_arm.setArmPIDCommand(ArmSubsystem.getArmState(), true))
-     .andThen(m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)) 
-      //.alongWith(m_box.setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
-      //.withTimeout(.25)
-      //.andThen( m_box.setShooterMotorCommand(ArmSubsystem::getArmState))
-      //.withTimeout(m_box.getChargeTime(ArmSubsystem::getArmState))
-      //.andThen(m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed)))
-    );
-    */
-
     // Winds up shoot motors then starts intake/feed motor
     m_operatorController.rightTrigger().whileTrue(
       m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true)
@@ -163,48 +148,44 @@ public class RobotContainer {
     // Idle mode arm set point
     m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
-    // MIGHT NOT WORK - Arm set point for shooting speaker from subwoofer + winds up shooter motors and regurgiates note
-    m_operatorController.a().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true)
-    .alongWith(m_box.setIntakeMotorCommandThenStop(BoxConstants.kRegurgitateSpeed)
-              .withTimeout(BoxConstants.kRegurgitateTime)
-              .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
-              )
-    );
-
-    /*
-    // MIGHT NOT WORK. REWORDED VERSION OF THE ONE ABOVE - Arm set point for playing amp
-    m_operatorController.x().whileTrue(
+    // Arm set point for shooting speaker from subwoofer
+    m_operatorController.a().whileTrue(
       Commands.parallel(
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true),
-        m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed)
-      ).withTimeout(BoxConstants.kRegurgitateTime)
-      .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
-    );
-    */
-
-    // THIS WORKS BUT MIGHT NOT WORK WITH THE SHOOT COMMAND
-    m_operatorController.x().whileTrue(
-      Commands.sequence(
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true)
-        .andThen(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false))
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
-    // Arm set point for shooting speaker from the podium
-    m_operatorController.y().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, true)
-    .alongWith(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)));
+    // Arm set point for playing amp
+    m_operatorController.x().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.AMP, true),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Arm set point for shooting trap
-    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true)
-    .alongWith(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)));
+    m_operatorController.b().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Arm set point for shooting horizontal across the field
-    m_operatorController.povLeft().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, true)
-    .alongWith(m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)));
+    m_operatorController.povLeft().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+    
     //m_operatorController.povLeft().whileTrue(m_box.YeetCommand());
 
     // Arm set point for climbing
-    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMBING_POSITION, false));
+    m_operatorController.povRight().whileTrue(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, true)
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_2, true));
 
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
@@ -212,20 +193,7 @@ public class RobotContainer {
         () -> m_operatorController.getLeftY() * 0.3)
     );
 
-    // Floor intake WORKS
-    /*
-    m_operatorController.povDown().whileTrue(
-      Commands.sequence(
-        Commands.parallel(
-          m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
-          m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ),//.until(m_box::noteSensorTriggered),
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
-      )
-    );
-    */
-
-    // Floor intake with regurgitate MIGHT NOT WORK
+    // Floor intake with regurgitate?
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(
@@ -257,7 +225,7 @@ public class RobotContainer {
 
 
 
-    /* COMMANDS WE NEVER USE BUT COULD BE USEFUL? */
+    /* KEY BINDS WE NEVER USE BUT COULD BE USEFUL? */
 
     /*
     // Alternate drive mode
