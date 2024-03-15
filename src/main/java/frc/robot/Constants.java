@@ -39,7 +39,6 @@ public final class Constants {
     public static final double kElbowMotorNominalVoltage = 12;
     public static final double kWristMotorNominalVoltage = 12;
     // Encoder Conversion Factor
-    // TODO: THIS IS NOT CORRECT?
     public static final double kElbowEncoderFactor = 180;
     // Elbow and wrist PID + PID max speed
     // TODO: UPDATE THESE WITH SYSID VALUES
@@ -90,20 +89,24 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter PID constants
-    public static final double kTopShooterP     = 0.001;
-    public static final double kBottomShooterP  = 0.001;
+    //public static final double kTopShooterP     = 0.001;
+    //public static final double kBottomShooterP  = 0.001;
     // Shooter FF constants
-    // TODO: GET THESE FROM SYSID
-    public static final double kTopS    = -2.3018;
-    public static final double kTopV    = 0.10603;
-    public static final double kBottomS = 0.0;
-    public static final double kBottomV = 0.0;
+    //public static final double kTopS    = -2.3018;
+    //public static final double kTopV    = 0.10603;
+    //public static final double kBottomS = 0.0;
+    //public static final double kBottomV = 0.0;
     // Shooter motor speeds
-    public static final double kSpeakerShootSpeed    = 2000;
-    public static final double kAmpShootSpeed        = 0.15;
-    public static final double kHorizontalShootSpeed = 0.6;
-    public static final double kDefaultShootSpeed    = 2000;
-    public static final double kYeetSpeedShooter     = 0.5;
+    public static final double kTopDefaultSpeed    = 0.9;
+    public static final double kBottomDefaultSpeed = 0.9;
+    public static final double kTopSpeakerSpeed    = 0.9;
+    public static final double kBottomSpeakerSpeed = 0.9;
+    public static final double kTopAmpSpeed    = 0.15;
+    public static final double kBottomAmpSpeed = 0.15;
+    public static final double kTopHorizontalSpeed    = 0.6;
+    public static final double kBottomHorizontalSpeed = 0.6;
+    public static final double kTopYeetSpeed    = 0.5;
+    public static final double kBottomYeetSpeed = 0.5;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;
