@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.OperatorConstants;
@@ -63,20 +64,23 @@ public class RobotContainer {
 
     // This causes a command scheduler loop overrun. Not sure why
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
-      () -> m_driverController.getLeftY(),
-      () -> m_driverController.getLeftX(),
+      () -> -m_driverController.getLeftY(),
+      () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
       Constants.OperatorConstants.kFastModeSpeed
     ));
 
-    // THIS SHOULD BE UNCOMMENTED OUT SO THE SHOOTER/FEEDER STOPS.
-    // IF IT IS COMMENTED OUT, IT IS BECAUSE WE ARE TESTING/TUNING VELOCITY PID
     m_box.setDefaultCommand(m_box.stopCommand());
   }
 
 
   private void configureBindings() {
     /* Driver Controls */
+
+    //m_driverController.povUp().whileTrue(m_box.topSysIdQuasistatic(Direction.kForward).withTimeout(5));
+    //m_driverController.povDown().whileTrue(m_box.topSysIdQuasistatic(Direction.kReverse).withTimeout(5));
+    //m_driverController.povRight().whileTrue(m_box.topSysIdDynamic(Direction.kForward).withTimeout(5));
+    //m_driverController.povLeft().whileTrue(m_box.topSysIdDynamic(Direction.kReverse).withTimeout(5));
     
     // Rotate towards the driver
     m_driverController.a().whileTrue(m_swerve.driveCommandPoint(() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),

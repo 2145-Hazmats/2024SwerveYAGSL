@@ -59,12 +59,9 @@ public final class Constants {
     public static final double kElbowG = 0;
     public static final double kElbowV = 0;
     public static final double kElbowA = 0;
-    // TODO: MIGHT HAVE TO REMOVE THIS
-    public static final double MaxVelocity = 5600;     // In RPM
-    public static final double MaxAcceleration = 1000; // In RPM/s
     // Elbow and Wrist offsets. The angle should be 0 degrees when parallel
     // TODO: SET THESE AFTER CONVERSION FACTOR
-    public static final double kElbowAngleOffset = 0.0; // Around 11 degrees
+    public static final double kElbowAngleOffset = 0.0;
     public static final double kWristAngleOffset = 0.0;
     // Setpoints for the arm subsystem
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
@@ -93,20 +90,19 @@ public final class Constants {
     public static final double kIntakeMotorNominalVoltage  = 12;
     public static final double kShooterMotorNominalVoltage = 12;
     // Shooter PID constants
-    // TODO: GET THESE FROM SYSID
-    public static final double kTopShooterP     = 0.0;
-    public static final double kBottomShooterP  = 0.0;
+    public static final double kTopShooterP     = 0.001;
+    public static final double kBottomShooterP  = 0.001;
     // Shooter FF constants
     // TODO: GET THESE FROM SYSID
-    public static final double kTopS    = 0.0;
+    public static final double kTopS    = -2.3018;
+    public static final double kTopV    = 0.10603;
     public static final double kBottomS = 0.0;
-    public static final double kTopV    = 0.0;
     public static final double kBottomV = 0.0;
     // Shooter motor speeds
-    public static final double kSpeakerShootSpeed    = 1.00;
+    public static final double kSpeakerShootSpeed    = 2000;
     public static final double kAmpShootSpeed        = 0.15;
     public static final double kHorizontalShootSpeed = 0.6;
-    public static final double kDefaultShootSpeed    = 1.00;
+    public static final double kDefaultShootSpeed    = 2000;
     public static final double kYeetSpeedShooter     = 0.5;
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;

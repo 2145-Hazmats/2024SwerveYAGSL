@@ -59,7 +59,7 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle
 
     if (alliance.isPresent()) {
-      if (alliance.get() == DriverStation.Alliance.Blue) { allianceInverse = -1; }
+      if (alliance.get() == DriverStation.Alliance.Red) { allianceInverse = -1; }
     }
   }
 

@@ -57,14 +57,15 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.kElbowA);
 
   /* SysID variables and routine */
+  /*
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
   private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(Units.Volts.of(0));
   // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation
   private final MutableMeasure<Angle> m_angle = MutableMeasure.mutable(Units.Rotations.of(0));
   // Mutable holder for unit-safe linear velocitry values, persisted to avoid reallocation
-  private final MutableMeasure<Velocity<Angle>> m_velocity = MutableMeasure.mutable(Units.RotationsPerSecond.of(0));
-
-  /*private SysIdRoutine armSysIdRoutine = new SysIdRoutine(
+  private final MutableMeasure<Velocity<Angle>> m_velocity = MutableMeasure.mutable(Units.RPM.of(0));
+  // Routine for the arm
+  private SysIdRoutine armSysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(),
     new SysIdRoutine.Mechanism(
         this::motorVoltageControl,
@@ -283,9 +284,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void logMotor(SysIdRoutineLog log) {
     log.motor("elbow-motor")
-      .voltage(m_appliedVoltage.mut_replace(elbowMotorLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
+      .voltage(m_appliedVoltage.mut_replace(elbowMotorLeader.getAppliedOutput() * elbowMotorLeader.getBusVoltage(), Units.Volts))
       .angularPosition(m_angle.mut_replace(elbowEncoder.getPosition(), Units.Rotations))
-      .angularVelocity(m_velocity.mut_replace(elbowEncoder.getVelocity(), Units.RotationsPerSecond));
+      .angularVelocity(m_velocity.mut_replace(elbowEncoder.getVelocity(), Units.RPM));
   }
   */
 

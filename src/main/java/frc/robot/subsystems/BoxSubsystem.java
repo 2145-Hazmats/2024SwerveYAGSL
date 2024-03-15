@@ -19,11 +19,20 @@ import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 
 public class BoxSubsystem extends SubsystemBase {
@@ -37,22 +46,33 @@ public class BoxSubsystem extends SubsystemBase {
   private SparkPIDController topPIDController = topShooterMotor.getPIDController();
   private SparkPIDController bottomPIDController = bottomShooterMotor.getPIDController();
   // SimpleMotorFeedforward for the 2 shooter motors
-  // TODO: USE THESE VALUES IN SimpleMotorFeedforward
   private SimpleMotorFeedforward topFeedForward = new SimpleMotorFeedforward(
       BoxConstants.kTopS,
       BoxConstants.kTopV);
-  private SimpleMotorFeedforward bottMotorFeedforward = new SimpleMotorFeedforward(
+  private SimpleMotorFeedforward bottomMotorFeedforward = new SimpleMotorFeedforward(
       BoxConstants.kBottomS,
       BoxConstants.kBottomV);
 
-  // Variables used during SmartDashboard changes
-  private double topP, topFF, topSetPoint = 0;
-  private double bottomP, bottomFF, bottomSetPoint = 0;
   // shooterMotor variables
-  private double shooterMotorSpeed = 0.0;
+  private double shooterMotorRPM = 0.0;
   private double shooterChargeTime = Constants.BoxConstants.kShooterDelay;
   // Sensor 
   private static DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
+
+  /* SysID variables and routines */
+  /*
+  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
+  private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(Units.Volts.of(0));
+  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation
+  private final MutableMeasure<Angle> m_angle = MutableMeasure.mutable(Units.Rotations.of(0));
+  // Mutable holder for unit-safe linear velocitry values, persisted to avoid reallocation
+  private final MutableMeasure<Velocity<Angle>> m_velocity = MutableMeasure.mutable(Units.RPM.of(0));
+  // Routine for the top shooter motor
+  private SysIdRoutine topShooterSysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(),
+    new SysIdRoutine.Mechanism(this::topMotorVoltageControl, this::logTopMotor, this)
+  );
+  */
 
   /** Creates a new Box. */
   public BoxSubsystem() {
@@ -76,7 +96,7 @@ public class BoxSubsystem extends SubsystemBase {
 
     // Reduce the frequency of the motor position sent to the roboRIO
     intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
-    topShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+    //topShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
     bottomShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 
     // Set the idle mode of the motors
@@ -87,9 +107,6 @@ public class BoxSubsystem extends SubsystemBase {
     // Invert the shooter motor
     topShooterMotor.setInverted(true);
     bottomShooterMotor.setInverted(true);
-
-    // Have the second shooter motor follow the first
-    //bottomShooterMotor.follow(topShooterMotor);
 
     /* Encoder Configuration */
 
@@ -103,22 +120,9 @@ public class BoxSubsystem extends SubsystemBase {
 
     /* PIDControllers */
 
-    // Set PIDController FeedbackDevice
-    //topPIDController.setFeedbackDevice(topShooterEncoder);
-    //bottomPIDController.setFeedbackDevice(bottomShooterEncoder);
-
     // Setup the shooterMotor PIDControllers
-    // Constant RPM tuning on a flywheel that doesn't change RPM setpoints dynamic only needs a P.
-    // The I is not needed because of FF (and we avoid it because of integral windup), and the D does nothing.
-    // Feedforward only needs a kS and kV, so we will use WPILib's SimpleMotorFeedforward
-    topPIDController.setP(ArmConstants.kElbowP);
-    bottomPIDController.setP(ArmConstants.kWristP);
-
-    // Put shooterMotor PIDs on SmartDashboard  
-    SmartDashboard.putNumber("topShooter P", BoxConstants.kTopShooterP);
-    SmartDashboard.putNumber("topShooter Set Point", 0); 
-    SmartDashboard.putNumber("bottomShooter P", BoxConstants.kBottomShooterP);
-    SmartDashboard.putNumber("bottomShooter Set Point", 0);
+    topPIDController.setP(BoxConstants.kTopShooterP);
+    bottomPIDController.setP(BoxConstants.kBottomShooterP);
   }
   
 
@@ -211,23 +215,24 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> {
       switch(position.get()) {
         case SHOOT_SUB:
-          shooterMotorSpeed = BoxConstants.kSpeakerShootSpeed;
+          shooterMotorRPM = BoxConstants.kSpeakerShootSpeed;
           break;
         case AMP:
-          shooterMotorSpeed = BoxConstants.kAmpShootSpeed;
+          shooterMotorRPM = BoxConstants.kAmpShootSpeed;
           break;
         case IDLE:
-          shooterMotorSpeed = 0.0;
+          shooterMotorRPM = 0.0;
           break;
         case SHOOT_HORIZONTAL:
-          shooterMotorSpeed = BoxConstants.kHorizontalShootSpeed;
+          shooterMotorRPM = BoxConstants.kHorizontalShootSpeed;
           break;
         default:
-          shooterMotorSpeed = BoxConstants.kDefaultShootSpeed;
+          shooterMotorRPM = BoxConstants.kDefaultShootSpeed;
           break;
       }
-      topShooterMotor.set(shooterMotorSpeed);
-      bottomShooterMotor.set(shooterMotorSpeed);
+      //topPIDController.setReference(shooterMotorRPM, ControlType.kVelocity, 0, topFeedForward.calculate(shooterMotorRPM));
+      topPIDController.setReference(shooterMotorRPM, ControlType.kVelocity);
+      bottomPIDController.setReference(shooterMotorRPM, ControlType.kVelocity);
 
       if (feeder) {
         intakeMotor.set(BoxConstants.kFeedSpeed);
@@ -237,13 +242,11 @@ public class BoxSubsystem extends SubsystemBase {
   }
 
 
-  // This might be broken? it might always returns the intialized shooterChargeTime value, we have to check
-  // THIS METHOD IS ONLY USED FOR SHOOTING THE SUBWOOFER IN AUTON. SO THIS METHOD SEEMS USELESS.
-  // USE A CONSTANT SPEED INSTEAD OF THIS METHOD?
+  // IS THIS NEEDED?
   public double getChargeTime(Supplier<ArmState> position) {
     switch(position.get()) {
         default:
-          shooterMotorSpeed = BoxConstants.kShooterDelay;
+          shooterChargeTime = BoxConstants.kShooterDelay;
           break;
       }
     return shooterChargeTime;
@@ -255,9 +258,7 @@ public class BoxSubsystem extends SubsystemBase {
    */
   public Command stopCommand() {
     return runOnce(() -> {
-      topPIDController.setReference(0.0, ControlType.kVoltage);
       topShooterMotor.stopMotor();
-      bottomPIDController.setReference(0.0, ControlType.kVoltage);
       bottomShooterMotor.stopMotor();
       intakeMotor.stopMotor();
     });
@@ -268,35 +269,33 @@ public class BoxSubsystem extends SubsystemBase {
     return noteSensor.get();
   }
 
+  /*
+  public Command topSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return topShooterSysIdRoutine.quasistatic(direction);
+  }
+
+  
+  public Command topSysIdDynamic(SysIdRoutine.Direction direction) {
+    return topShooterSysIdRoutine.dynamic(direction);
+  }
+
+
+  public void topMotorVoltageControl(Measure<Voltage> volts) {
+    topShooterMotor.setVoltage(volts.in(Units.Volts));
+  }
+
+
+  public void logTopMotor(SysIdRoutineLog log) {
+    log.motor("top-shooter-motor")
+      .voltage(m_appliedVoltage.mut_replace(topShooterMotor.getAppliedOutput() * topShooterMotor.getBusVoltage(), Units.Volts))
+      .angularPosition(m_angle.mut_replace(topShooterEncoder.getPosition(), Units.Rotations))
+      .angularVelocity(m_velocity.mut_replace(topShooterEncoder.getVelocity(), Units.RPM));
+  }
+  */
+
 
   @Override
   public void periodic() {
-    // If the wrist PID or setpoint values are different from SmartDashboard, use the new values
-    if (topP != SmartDashboard.getNumber("topShooter P", 0)) {
-      topP = SmartDashboard.getNumber("topShooter P", 0);
-      topPIDController.setP(topP);
-    }
-    if (topFF != SmartDashboard.getNumber("topShooter FF", 0)) {
-      topFF = SmartDashboard.getNumber("topShooter FF", 0);
-      topPIDController.setI(topFF);
-    }
-    if (topSetPoint != SmartDashboard.getNumber("topShooter Set Point", 0)) {
-      topSetPoint = SmartDashboard.getNumber("topShooter Set Point", 0);
-      topPIDController.setReference(topSetPoint, ControlType.kVelocity);
-    }
-    if (bottomP != SmartDashboard.getNumber("bottomShooter P", 0)) {
-      bottomP = SmartDashboard.getNumber("bottomShooter P", 0);
-      bottomPIDController.setD(bottomP);
-    }
-    if (bottomFF != SmartDashboard.getNumber("bottomShooter FF", 0)) {
-      bottomFF = SmartDashboard.getNumber("bottomShooter FF", 0);
-      bottomPIDController.setFF(bottomFF);
-    }
-    if (bottomSetPoint != SmartDashboard.getNumber("bottomShooter Set Point", 0)) {
-      bottomSetPoint = SmartDashboard.getNumber("bottomShooter Set Point", 0);
-      bottomPIDController.setReference(bottomSetPoint, ControlType.kVelocity);
-    }
-
     SmartDashboard.putNumber("topShooterMotor Velocity", topShooterEncoder.getVelocity());
     SmartDashboard.putNumber("bottomShooterMotor Velocity", bottomShooterEncoder.getVelocity());
   }
