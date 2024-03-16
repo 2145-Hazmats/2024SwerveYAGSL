@@ -46,7 +46,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Setup PathPlanner and autons
-    m_swerve.setupPathPlanner();
+    m_swerve.setupPathPlannerRobot();
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
@@ -67,7 +67,8 @@ public class RobotContainer {
       () -> -m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
-      Constants.OperatorConstants.kFastModeSpeed
+      Constants.OperatorConstants.kFastModeSpeed,
+      false
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
@@ -114,7 +115,8 @@ public class RobotContainer {
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        OperatorConstants.kMidModeSpeed
+        OperatorConstants.kMidModeSpeed, 
+        false
       )
     );
   
@@ -124,7 +126,31 @@ public class RobotContainer {
         () ->  -m_driverController.getLeftY(),
         () ->  -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        OperatorConstants.kSlowModeSpeed
+        OperatorConstants.kSlowModeSpeed,
+        false
+      )
+    );
+
+    
+    // Medium speed robot centric
+    m_driverController.rightTrigger().and(m_driverController.rightBumper().whileTrue(
+      m_swerve.driveCommandAngularVelocity(
+        () -> -m_driverController.getLeftY(),
+        () -> -m_driverController.getLeftX(),
+        () -> -m_driverController.getRightX(),
+        OperatorConstants.kMidModeSpeed, 
+        true
+      )
+    );
+  
+    // Slow speed robot centric
+    m_driverController.leftTrigger().and(m_driverController.leftBumper()).whileTrue(
+      m_swerve.driveCommandAngularVelocity(
+        () ->  -m_driverController.getLeftY(),
+        () ->  -m_driverController.getLeftX(),
+        () -> -m_driverController.getRightX(),
+        OperatorConstants.kSlowModeSpeed,
+        true
       )
     );
 
@@ -140,13 +166,20 @@ public class RobotContainer {
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
 
     // Regurgitate Shooter
-    m_operatorController.leftTrigger().whileTrue(m_box.setShooterMotorCommand(BoxConstants.kRegurgitateSpeed));
+    //m_operatorController.leftTrigger().whileTrue(m_box.setShooterMotorCommand(BoxConstants.kRegurgitateSpeed));
+
+    // Regurgitate.
+    m_operatorController.rightBumper().whileTrue(m_box.YeetCommand(BoxConstants.kRegurgitateSpeed, BoxConstants.kRegurgitateSpeed));
 
     // Regurgitate Intake
-    m_operatorController.rightBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed));
+    //m_operatorController.rightBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed));
 
-    // Idle mode arm set point
-    m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+     // Arm set point for climbing
+    m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, false));
+
+    m_operatorController.button(10).onTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_2, true));
+    
+  
 
     // Arm set point for shooting speaker from subwoofer
     m_operatorController.a().whileTrue(
@@ -190,15 +223,15 @@ public class RobotContainer {
     
     //m_operatorController.povLeft().whileTrue(m_box.YeetCommand());
 
-    // Arm set point for climbing
-    m_operatorController.povRight().whileTrue(
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, true)
-    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_2, true));
+   
+    // Idle mode arm set point
+    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+    
 
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
-        m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.35, 
-        () -> m_operatorController.getLeftY() * 0.35)
+        m_arm.manualArmCommand(() -> m_operatorController.getRightY() * Constants.ArmConstants.kManualSpeed, 
+        () -> m_operatorController.getLeftY() * Constants.ArmConstants.kManualSpeed)
     );
 
     // Floor intake with regurgitate?
@@ -207,7 +240,7 @@ public class RobotContainer {
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ),//.until(m_box::noteSensorTriggered).andThen()
+        ),//.until(!m_box::noteSensorTriggered).andThen()
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false),
           m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed)
