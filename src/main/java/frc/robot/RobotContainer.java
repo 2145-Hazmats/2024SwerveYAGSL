@@ -63,6 +63,7 @@ public class RobotContainer {
     configureBindings();
 
     // This causes a command scheduler loop overrun. Not sure why
+    /*
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
       () -> -m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
@@ -70,6 +71,7 @@ public class RobotContainer {
       Constants.OperatorConstants.kFastModeSpeed,
       false
     ));
+    */
 
     m_box.setDefaultCommand(m_box.stopCommand());
   }
