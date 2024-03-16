@@ -133,15 +133,18 @@ public class BoxSubsystem extends SubsystemBase {
   }
 
 
-  public void Yeet() {
-    intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
-    topShooterMotor.set(Constants.BoxConstants.kTopYeetRPM);
-    bottomShooterMotor.set(Constants.BoxConstants.kBottomYeetRPM);
+  public void Yeet(double shooterSpeed, double intakeSpeed) {
+  //  intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
+  //  topShooterMotor.set(Constants.BoxConstants.kTopYeetRPM);
+  //  bottomShooterMotor.set(Constants.BoxConstants.kBottomYeetRPM);
+    intakeMotor.set(intakeSpeed);
+    topShooterMotor.set(shooterSpeed);
+    bottomShooterMotor.set(shooterSpeed);
   }
 
   
-  public Command YeetCommand() {
-    return Commands.startEnd(() -> Yeet(), () -> Yeet(), this);
+  public Command YeetCommand(double shooterSpeedCommand, double intakeSpeedCommand) {
+    return Commands.startEnd(() -> Yeet(shooterSpeedCommand, intakeSpeedCommand), () -> Yeet(0, 0), this);
   }
 
 

@@ -69,9 +69,11 @@ public final class Constants {
     public static final double[] kSpeakerSubwooferAngleSP = {0, 41.5};
     public static final double[] kSpeakerPodiumAngleSP    = {-34.1, 49};
     public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
-    public static final double[] kClimb1AngleSP           = {-95.2, 32};
-    public static final double[] kClimb2AngleSP           = {0, 0}; // NEEDS TO BE SET
+    public static final double[] kClimb1AngleSP           = {-100, 45};
+    public static final double[] kClimb2AngleSP           = {-37.4, 83.7}; // NEEDS TO BE SET
     public static final double[] kTrapAngleSP             = {0, 0}; // NEEDS TO BE SET
+
+    public static final double kManualSpeed = 0.35;
   }
 
   /* Constants for the box subsystem */

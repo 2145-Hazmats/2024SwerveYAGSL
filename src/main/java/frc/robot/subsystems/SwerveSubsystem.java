@@ -195,7 +195,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param nerfChooser      A speed multiplier.
    * @return Drive command.
    */
-  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, double nerfChooser) {
+  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, double nerfChooser, boolean robotcentric) {
     swerveDrive.setHeadingCorrection(false);
 
     return run(() -> {
@@ -206,7 +206,7 @@ public class SwerveSubsystem extends SubsystemBase {
               MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser)
               .times(allianceInverse),
           Math.pow(MathUtil.applyDeadband(angularRotationX.getAsDouble(), OperatorConstants.RIGHT_X_DEADBAND), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
-          true, 
+          robotcentric, 
           false);
     });
   }
