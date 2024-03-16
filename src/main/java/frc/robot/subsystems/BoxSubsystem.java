@@ -6,20 +6,23 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
-import frc.robot.Constants;
-import frc.robot.Constants.BoxConstants;
-import frc.robot.Constants.ArmConstants.ArmState;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants.ArmState;
+import frc.robot.Constants.BoxConstants;
 
 
 public class BoxSubsystem extends SubsystemBase {
@@ -29,9 +32,22 @@ public class BoxSubsystem extends SubsystemBase {
   private final CANSparkMax bottomShooterMotor = new CANSparkMax(BoxConstants.kBottomShooterMotorID, MotorType.kBrushless);
   private final RelativeEncoder bottomShooterEncoder = bottomShooterMotor.getEncoder();
   private final CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
-  // shooterMotor variables
-  private double topShooterSpeed = 0.0; 
-  private double bottomShooterSpeed = 0.0;
+  // PID controllers
+  private SparkPIDController topShooterPIDController = topShooterMotor.getPIDController();
+  private SparkPIDController bottomShooterPIDController = bottomShooterMotor.getPIDController();
+  private SimpleMotorFeedforward topShooterFF = new SimpleMotorFeedforward(
+      BoxConstants.kTopShooterS,
+      BoxConstants.kTopShooterV
+  );
+  private SimpleMotorFeedforward bottomShooterFF = new SimpleMotorFeedforward(
+      BoxConstants.kBottomShooterS,
+      BoxConstants.kBottomShooterV
+  );
+  // Variables used during SmartDashboard changes
+  private double topShooterP    = 0;
+  private double bottomShooterP = 0;
+  // shooterMotor variable
+  private double shooterSpeed = 0; 
   // Sensor 
   private static DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
 
@@ -46,7 +62,7 @@ public class BoxSubsystem extends SubsystemBase {
     intakeMotor.restoreFactoryDefaults();
 
     // Set motor current limit
-    topShooterMotor.setSmartCurrentLimit(20);
+    topShooterMotor.setSmartCurrentLimit(40);
     bottomShooterMotor.setSmartCurrentLimit(40);
     intakeMotor.setSmartCurrentLimit(20);
 
@@ -56,9 +72,9 @@ public class BoxSubsystem extends SubsystemBase {
     bottomShooterMotor.enableVoltageCompensation(BoxConstants.kShooterMotorNominalVoltage);
 
     // Reduce the frequency of the motor position sent to the roboRIO
-    intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
-    topShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
-    bottomShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+    intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65535);
+    topShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65535);
+    bottomShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65535);
 
     // Set the idle mode of the motors
     topShooterMotor.setIdleMode(IdleMode.kCoast);
@@ -78,6 +94,28 @@ public class BoxSubsystem extends SubsystemBase {
     // Set encoders position to 0
     topShooterEncoder.setPosition(0);
     bottomShooterEncoder.setPosition(0);
+
+     /* PIDControllers */
+
+    // Set PIDController FeedbackDevice
+    topShooterPIDController.setFeedbackDevice(topShooterEncoder);
+    bottomShooterPIDController.setFeedbackDevice(bottomShooterEncoder);
+
+    // Setup the Top shooter PIDController
+    topShooterPIDController.setP(BoxConstants.kTopShooterP);
+    //topShooterPIDController.setFF(BoxConstants.kTopShooterFF);
+
+    // Setup the Bottom Shooter PIDController
+    bottomShooterPIDController.setP(BoxConstants.kBottomShooterP);
+    //bottomShooterPIDController.setFF(BoxConstants.kBottomShooterFF);
+
+    // Put Top Shooter PIDs on SmartDashboard
+    SmartDashboard.putNumber("TopShooter P", BoxConstants.kTopShooterP);
+    SmartDashboard.putNumber("TopShooter Set Point", 0); 
+    
+    // Put Bottom Shooter PIDs on SmartDashboard
+    SmartDashboard.putNumber("BottomShooter P", BoxConstants.kBottomShooterP);
+    SmartDashboard.putNumber("BottomShooter Set Point", 0);
   }
   
 
@@ -97,8 +135,8 @@ public class BoxSubsystem extends SubsystemBase {
 
   public void Yeet() {
     intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
-    topShooterMotor.set(Constants.BoxConstants.kTopYeetSpeed);
-    bottomShooterMotor.set(Constants.BoxConstants.kBottomYeetSpeed);
+    topShooterMotor.set(Constants.BoxConstants.kTopYeetRPM);
+    bottomShooterMotor.set(Constants.BoxConstants.kBottomYeetRPM);
   }
 
   
@@ -110,7 +148,7 @@ public class BoxSubsystem extends SubsystemBase {
   public Command ShootNoteSubwoofer() {
     return setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
     .withTimeout(.25) 
-    .andThen(setShooterMotorCommand(Constants.BoxConstants.kTopSpeakerSpeed))
+    .andThen(setShooterMotorCommand(Constants.BoxConstants.kTopSpeakerRPM))
     .withTimeout(BoxConstants.kShooterDelay)
     .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
     .withTimeout(2.0)
@@ -164,28 +202,34 @@ public class BoxSubsystem extends SubsystemBase {
     return run(() -> {
       switch(position.get()) {
         case SHOOT_SUB:
-          topShooterSpeed = BoxConstants.kTopSpeakerSpeed;
-          bottomShooterSpeed = BoxConstants.kBottomSpeakerSpeed;
+          shooterSpeed = BoxConstants.kTopSpeakerRPM;
           break;
         case AMP:
-          topShooterSpeed = BoxConstants.kTopAmpSpeed;
-          bottomShooterSpeed = BoxConstants.kBottomAmpSpeed;
+          shooterSpeed = BoxConstants.kTopAmpRPM;
           break;
         case IDLE:
-          topShooterSpeed = 0.0;
-          bottomShooterSpeed = 0.0;
+          shooterSpeed = 0.0;
           break;
         case SHOOT_HORIZONTAL:
-          topShooterSpeed = BoxConstants.kTopHorizontalSpeed;
-          bottomShooterSpeed = BoxConstants.kBottomHorizontalSpeed;
+          shooterSpeed = BoxConstants.kTopHorizontalRPM;
           break;
         default:
-          topShooterSpeed = BoxConstants.kTopDefaultSpeed;
-          bottomShooterSpeed = BoxConstants.kBottomDefaultSpeed;
+          shooterSpeed = BoxConstants.kTopDefaultRPM;
           break;
       }
-      topShooterMotor.set(topShooterSpeed);
-      bottomShooterMotor.set(bottomShooterSpeed);
+
+      topShooterPIDController.setReference(
+          shooterSpeed,
+          ControlType.kVelocity,
+          0,
+          topShooterFF.calculate(shooterSpeed)
+      );
+      bottomShooterPIDController.setReference(
+          shooterSpeed,
+          ControlType.kVelocity,
+          0,
+          bottomShooterFF.calculate(shooterSpeed)
+      );
 
       if (feeder) {
         intakeMotor.set(BoxConstants.kFeedSpeed);
@@ -200,6 +244,7 @@ public class BoxSubsystem extends SubsystemBase {
    */
   public Command stopCommand() {
     return runOnce(() -> {
+      shooterSpeed = 0;
       topShooterMotor.stopMotor();
       bottomShooterMotor.stopMotor();
       intakeMotor.stopMotor();
@@ -214,8 +259,25 @@ public class BoxSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (topShooterP != SmartDashboard.getNumber("TopShooter P", 0)) {
+      topShooterP = SmartDashboard.getNumber("TopShooter P", 0);
+      topShooterPIDController.setP(topShooterP);
+    }
+    if (bottomShooterP != SmartDashboard.getNumber("BottomShooter P", 0)) {
+      bottomShooterP = SmartDashboard.getNumber("BottomShooter P", 0);
+      bottomShooterPIDController.setP(bottomShooterP);
+    }
+
     SmartDashboard.putNumber("topShooterMotor Velocity", topShooterEncoder.getVelocity());
     SmartDashboard.putNumber("bottomShooterMotor Velocity", bottomShooterEncoder.getVelocity());
+    // motor.AppliedOutput() * motor.BusVoltage() gives us our real volts for sparkmax.
+    SmartDashboard.putNumber("TopShooterMotorVoltage", topShooterMotor.getAppliedOutput() * topShooterMotor.getBusVoltage());
+    SmartDashboard.putNumber("BottomShooterMotorVoltage", bottomShooterMotor.getAppliedOutput() * bottomShooterMotor.getBusVoltage());
+    // Volts applied from FF
+    SmartDashboard.putNumber("TopShooter kS Volts", BoxConstants.kTopShooterS * Math.signum(shooterSpeed));
+    SmartDashboard.putNumber("TopShooter kV Volts", BoxConstants.kTopShooterV * shooterSpeed);
+    SmartDashboard.putNumber("BottomShooter kS Volts", BoxConstants.kBottomShooterS * Math.signum(shooterSpeed));
+    SmartDashboard.putNumber("BottomShooter kV Volts", BoxConstants.kBottomShooterV * shooterSpeed);
   }
 
 }

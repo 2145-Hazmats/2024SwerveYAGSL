@@ -106,9 +106,9 @@ public class ArmSubsystem extends SubsystemBase {
     elbowEncoder.setPositionConversionFactor(ArmConstants.kElbowEncoderFactor);
     wristEncoder.setPositionConversionFactor(1);
 
-    // Set encoders position to our offset
+    // Set encoders position. For the elbow this is our offset
     elbowEncoder.setPosition(ArmConstants.kElbowAngleOffset);
-    wristEncoder.setPosition(ArmConstants.kWristAngleOffset);
+    wristEncoder.setPosition(0);
 
     // Invert the elbow encoder
     elbowEncoder.setInverted(true);
@@ -312,19 +312,14 @@ public class ArmSubsystem extends SubsystemBase {
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
     }
 
-    // Dynamic feed forward
-    // If this doesn't work, we will copy WPILib's and make sure it uses our elbow encoder value
-    // or just use feed forward to counter gravity with kS and kG?
-    // or maybe we have to do elbowPIDController.setFF(number)?
-    // I DON'T THINK WE SHOULD USE SMART MOTION, IT MESSES UP THE ARM.
-    // LET'S MODIFY m_armFeedforward SO IT IS JUST FOR GRAVITY
-    /*
+    
     elbowPIDController.setReference(elbowSetPoint,
-        ControlType.kSmartMotion,
+        ControlType.kPosition,
         0,
-        m_armFeedforward.calculate(elbowSetPoint*(Math.PI/180), elbowEncoder.getVelocity()*(Math.PI/180))
+        ArmConstants.kElbowG * Math.cos(Math.toRadians(elbowEncoder.getPosition()))
+        + ArmConstants.kElbowS * Math.signum(elbowEncoder.getVelocity())
     );
-    */
+    
   
     // Update SmartDashboard with elbow and wrist information
     SmartDashboard.putNumber("Elbow Angular Velocity", elbowEncoder.getVelocity());
@@ -332,6 +327,8 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Angular Velocity", wristEncoder.getVelocity());
     SmartDashboard.putNumber("Wrist Angle", wristEncoder.getPosition());
     SmartDashboard.putString("NameofEnum", getArmState().toString());
+    // motor.AppliedOutput() * motor.BusVoltage() gives us our real volts for sparkmax.
+    SmartDashboard.putNumber("ElbowMotorVoltage", elbowMotorLeader.getAppliedOutput() * elbowMotorLeader.getBusVoltage());
   }
 
 }

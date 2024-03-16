@@ -50,7 +50,7 @@ public class RobotContainer {
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
-    NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerSpeed));
+    NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
     NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
