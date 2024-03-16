@@ -54,8 +54,8 @@ public final class Constants {
     public static final double kWristMinSpeed = -0.45;
     public static final double kWristMaxSpeed = 0.45;
     // Elbow FF gravity constant
-    public static final double kElbowS = 0;
-    //public static final double kElbowG = 0;
+    //public static final double kElbowS = 0;
+    public static final double kElbowG = 0;
     // Elbow offset. The angle should be 0 degrees when parallel
     // TODO: SET THESE AFTER ENCODER FACTOR
     public static final double kElbowAngleOffset = 0.0;
@@ -108,12 +108,12 @@ public final class Constants {
     // Top shooter motor PIFF constants 
     public static final double kTopShooterP = 0.0;
     public static final double kTopShooterS = 0.0;
-    public static final double kTopShooterV = 0.38; // V * sec/meters. Should be: V * minute/rotations
+    public static final double kTopShooterV = kShooterMotorNominalVoltage/5676;
     //public static final double kTopShooterFF = 0.0;
     // Bottom shooter motor PIFF constants
     public static final double kBottomShooterP = 0.0;
     public static final double kBottomShooterS = 0.0;
-    public static final double kBottomShooterV = 0.38;
+    public static final double kBottomShooterV = kShooterMotorNominalVoltage/5676;
     //public static final double kBottomShooterFF = 0.0;
   }
 
