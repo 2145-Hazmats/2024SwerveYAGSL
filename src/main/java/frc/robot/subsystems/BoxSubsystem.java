@@ -50,7 +50,7 @@ public class BoxSubsystem extends SubsystemBase {
   private double shooterSpeed = 0; 
   // Sensor 
   private static DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
-
+  public boolean laser;
   /** Creates a new Box. */
   public BoxSubsystem() {
     /* Motor Configuration */
@@ -271,6 +271,9 @@ public class BoxSubsystem extends SubsystemBase {
       bottomShooterPIDController.setP(bottomShooterP);
     }
 
+    //This updates when the laser is broken
+    laser = noteSensor.get();
+
     SmartDashboard.putNumber("topShooterMotor Velocity", topShooterEncoder.getVelocity());
     SmartDashboard.putNumber("bottomShooterMotor Velocity", bottomShooterEncoder.getVelocity());
     // motor.AppliedOutput() * motor.BusVoltage() gives us our real volts for sparkmax.
@@ -281,6 +284,9 @@ public class BoxSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("TopShooter kV Volts", BoxConstants.kTopShooterV * shooterSpeed);
     SmartDashboard.putNumber("BottomShooter kS Volts", BoxConstants.kBottomShooterS * Math.signum(shooterSpeed));
     SmartDashboard.putNumber("BottomShooter kV Volts", BoxConstants.kBottomShooterV * shooterSpeed);
+
+    SmartDashboard.putData("IR Sensor", noteSensor);
+    SmartDashboard.putBoolean("IR Sensor Value", !laser);
   }
 
 }

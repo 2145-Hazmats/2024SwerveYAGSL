@@ -83,7 +83,7 @@ public final class Constants {
     public static final int kBottomShooterMotorID = 31;
     public static final int kIntakeMotorID  = 32;
     // Sensor digital input channel
-    public static final int kNoteSensorChannel = 0;
+    public static final int kNoteSensorChannel = 9;
     // Nominal Voltage
     public static final double kIntakeMotorNominalVoltage  = 10.5;
     public static final double kShooterMotorNominalVoltage = 10.5;
