@@ -77,11 +77,6 @@ public class RobotContainer {
   private void configureBindings() {
     /* Driver Controls */
 
-    //m_driverController.povUp().whileTrue(m_box.topSysIdQuasistatic(Direction.kForward).withTimeout(5));
-    //m_driverController.povDown().whileTrue(m_box.topSysIdQuasistatic(Direction.kReverse).withTimeout(5));
-    //m_driverController.povRight().whileTrue(m_box.topSysIdDynamic(Direction.kForward).withTimeout(5));
-    //m_driverController.povLeft().whileTrue(m_box.topSysIdDynamic(Direction.kReverse).withTimeout(5));
-    
     // Rotate towards the driver
     m_driverController.a().whileTrue(m_swerve.driveCommandPoint(() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
       () -> 0,
@@ -135,12 +130,13 @@ public class RobotContainer {
 
     /* Operator Controls */
 
-    // Winds up shoot motors then starts intake/feed motor
+    // Sets the speed of the shooter motors and starts intake/feed motor
+    // When the button is released, the arm goes to idle position and the m_box default command is ran
     m_operatorController.rightTrigger().whileTrue(
       m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true)
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
-    // Intakes note into robot and keeps it there
+    // Intakes note into robot
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
 
     // Regurgitate Shooter
@@ -176,6 +172,14 @@ public class RobotContainer {
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
+    // Arm set point for shooting podium
+    m_operatorController.y().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_PODIUM, true),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+
     // Arm set point for shooting horizontal across the field
     m_operatorController.povLeft().whileTrue(
       Commands.parallel(
@@ -193,8 +197,8 @@ public class RobotContainer {
 
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
-        m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.3, 
-        () -> m_operatorController.getLeftY() * 0.3)
+        m_arm.manualArmCommand(() -> m_operatorController.getRightY() * 0.35, 
+        () -> m_operatorController.getLeftY() * 0.35)
     );
 
     // Floor intake with regurgitate?

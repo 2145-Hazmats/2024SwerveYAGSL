@@ -17,8 +17,8 @@ public final class Constants {
     public static final int kDriverControllerPort   = 0;
     public static final int kOperatorControllerPort = 1;
     /* Deadbands */
-    public static final double LEFT_X_DEADBAND  = 0.02; //0.04
-    public static final double LEFT_Y_DEADBAND  = 0.02; //0.04
+    public static final double LEFT_X_DEADBAND  = 0.02;
+    public static final double LEFT_Y_DEADBAND  = 0.02;
     public static final double RIGHT_X_DEADBAND = 0.02;
     public static final double RIGHT_Y_DEADBAND = 0.02;
     /* Speed Modes */
@@ -36,8 +36,8 @@ public final class Constants {
     public static final int kElbowMotorFollowerID = 21;
     public static final int kWristMotorID         = 22;
     // NominalVoltage
-    public static final double kElbowMotorNominalVoltage = 12;
-    public static final double kWristMotorNominalVoltage = 12;
+    public static final double kElbowMotorNominalVoltage = 10.5;
+    public static final double kWristMotorNominalVoltage = 10.5;
     // Encoder Conversion Factor
     public static final double kElbowEncoderFactor = 180;
     // Elbow and wrist PID + PID max speed
@@ -52,14 +52,10 @@ public final class Constants {
     public static final double kWristD        = 0.0002;
     public static final double kWristMinSpeed = -0.45;
     public static final double kWristMaxSpeed = 0.45;
-    // Elbow FF constants
-    // TODO: GET THESE FROM SYSID
-    public static final double kElbowS = 0;
+    // Elbow FF gravity constant
     public static final double kElbowG = 0;
-    public static final double kElbowV = 0;
-    public static final double kElbowA = 0;
     // Elbow and Wrist offsets. The angle should be 0 degrees when parallel
-    // TODO: SET THESE AFTER CONVERSION FACTOR
+    // TODO: SET THESE
     public static final double kElbowAngleOffset = 0.0;
     public static final double kWristAngleOffset = 0.0;
     // Setpoints for the arm subsystem
@@ -68,7 +64,7 @@ public final class Constants {
     public static final double[] kIdleAngleSP             = {-0.25, 0};
     public static final double[] kFloorAngleSP            = {0, 41.5 };
     public static final double[] kSourceAngleSP           = {0,9.1};
-    public static final double[] kAmpAngleSP              = {-112, 44.8};
+    public static final double[] kAmpAngleSP              = {-112, 44.2};
     public static final double[] kSpeakerSubwooferAngleSP = {0, 41.5};
     public static final double[] kSpeakerPodiumAngleSP    = {-34.1, 49};
     public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
@@ -86,23 +82,15 @@ public final class Constants {
     // Sensor digital input channel
     public static final int kNoteSensorChannel = 0;
     // Nominal Voltage
-    public static final double kIntakeMotorNominalVoltage  = 12;
-    public static final double kShooterMotorNominalVoltage = 12;
-    // Shooter PID constants
-    //public static final double kTopShooterP     = 0.001;
-    //public static final double kBottomShooterP  = 0.001;
-    // Shooter FF constants
-    //public static final double kTopS    = -2.3018;
-    //public static final double kTopV    = 0.10603;
-    //public static final double kBottomS = 0.0;
-    //public static final double kBottomV = 0.0;
+    public static final double kIntakeMotorNominalVoltage  = 10.5;
+    public static final double kShooterMotorNominalVoltage = 10.5;
     // Shooter motor speeds
     public static final double kTopDefaultSpeed    = 0.9;
     public static final double kBottomDefaultSpeed = 0.9;
     public static final double kTopSpeakerSpeed    = 0.9;
-    public static final double kBottomSpeakerSpeed = 0.9;
-    public static final double kTopAmpSpeed    = 0.15;
-    public static final double kBottomAmpSpeed = 0.15;
+    public static final double kBottomSpeakerSpeed = 1;
+    public static final double kTopAmpSpeed    = 0.25;
+    public static final double kBottomAmpSpeed = 0.40;
     public static final double kTopHorizontalSpeed    = 0.6;
     public static final double kBottomHorizontalSpeed = 0.6;
     public static final double kTopYeetSpeed    = 0.5;
@@ -114,7 +102,6 @@ public final class Constants {
     public static final double kYeetSpeedIntake  = 1;
     // Shooter delay
     public static final double kShooterDelay     = 1.25;
-    public static final double kShooteDelayAmp   = 0.1;
     // Regurgitate time
     public static final double kRegurgitateTime  = 0.25;
   }

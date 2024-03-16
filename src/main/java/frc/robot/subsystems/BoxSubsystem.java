@@ -8,31 +8,18 @@ import java.util.function.Supplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.SparkPIDController;
 
 import frc.robot.Constants;
 import frc.robot.Constants.BoxConstants;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmState;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.units.Angle;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.MutableMeasure;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.Velocity;
-import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 
 public class BoxSubsystem extends SubsystemBase {
@@ -42,41 +29,11 @@ public class BoxSubsystem extends SubsystemBase {
   private final CANSparkMax bottomShooterMotor = new CANSparkMax(BoxConstants.kBottomShooterMotorID, MotorType.kBrushless);
   private final RelativeEncoder bottomShooterEncoder = bottomShooterMotor.getEncoder();
   private final CANSparkMax intakeMotor = new CANSparkMax(BoxConstants.kIntakeMotorID, MotorType.kBrushless);
-  // Get the PIDController object for the 2 shooter motors
-  // Commented out because we are no longer doing a RPM PID
-  /*
-  private SparkPIDController topPIDController = topShooterMotor.getPIDController();
-  private SparkPIDController bottomPIDController = bottomShooterMotor.getPIDController();
-  // SimpleMotorFeedforward for the 2 shooter motors
-  private SimpleMotorFeedforward topFeedForward = new SimpleMotorFeedforward(
-      BoxConstants.kTopS,
-      BoxConstants.kTopV);
-  private SimpleMotorFeedforward bottomMotorFeedforward = new SimpleMotorFeedforward(
-      BoxConstants.kBottomS,
-      BoxConstants.kBottomV);
-  */
-
   // shooterMotor variables
   private double topShooterSpeed = 0.0; 
   private double bottomShooterSpeed = 0.0;
-  private double shooterChargeTime = Constants.BoxConstants.kShooterDelay;
   // Sensor 
   private static DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
-
-  /* SysID variables and routines */
-  /*
-  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation
-  private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(Units.Volts.of(0));
-  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation
-  private final MutableMeasure<Angle> m_angle = MutableMeasure.mutable(Units.Rotations.of(0));
-  // Mutable holder for unit-safe linear velocitry values, persisted to avoid reallocation
-  private final MutableMeasure<Velocity<Angle>> m_velocity = MutableMeasure.mutable(Units.RPM.of(0));
-  // Routine for the top shooter motor
-  private SysIdRoutine topShooterSysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(),
-    new SysIdRoutine.Mechanism(this::topMotorVoltageControl, this::logTopMotor, this)
-  );
-  */
 
   /** Creates a new Box. */
   public BoxSubsystem() {
@@ -90,7 +47,7 @@ public class BoxSubsystem extends SubsystemBase {
 
     // Set motor current limit
     topShooterMotor.setSmartCurrentLimit(20);
-    bottomShooterMotor.setSmartCurrentLimit(20);
+    bottomShooterMotor.setSmartCurrentLimit(40);
     intakeMotor.setSmartCurrentLimit(20);
 
     // Enable voltage compensation
@@ -100,7 +57,7 @@ public class BoxSubsystem extends SubsystemBase {
 
     // Reduce the frequency of the motor position sent to the roboRIO
     intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
-    //topShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+    topShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
     bottomShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 
     // Set the idle mode of the motors
@@ -121,12 +78,6 @@ public class BoxSubsystem extends SubsystemBase {
     // Set encoders position to 0
     topShooterEncoder.setPosition(0);
     bottomShooterEncoder.setPosition(0);
-
-    /* PIDControllers */
-
-    // Setup the shooterMotor PIDControllers
-    //topPIDController.setP(BoxConstants.kTopShooterP);
-    //bottomPIDController.setP(BoxConstants.kBottomShooterP);
   }
   
 
@@ -139,11 +90,6 @@ public class BoxSubsystem extends SubsystemBase {
   }
 
 
-  public Command setIntakeMotorCommandAuto(double speed){
-    return runOnce(() -> intakeMotor.set(speed));
-  }
-
-
   public Command setIntakeMotorCommandThenStop(double speed) {
     return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
   }
@@ -152,7 +98,7 @@ public class BoxSubsystem extends SubsystemBase {
   public void Yeet() {
     intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
     topShooterMotor.set(Constants.BoxConstants.kTopYeetSpeed);
-    bottomShooterMotor.set(Constants.BoxConstants.kTopYeetSpeed);
+    bottomShooterMotor.set(Constants.BoxConstants.kBottomYeetSpeed);
   }
 
   
@@ -165,7 +111,7 @@ public class BoxSubsystem extends SubsystemBase {
     return setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
     .withTimeout(.25) 
     .andThen(setShooterMotorCommand(Constants.BoxConstants.kTopSpeakerSpeed))
-    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
+    .withTimeout(BoxConstants.kShooterDelay)
     .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
     .withTimeout(2.0)
     .andThen(setShooterMotorCommand(0));
@@ -173,10 +119,8 @@ public class BoxSubsystem extends SubsystemBase {
 
 
   public Command ShootNoteSubwooferNoRegurgitate() {
-    return //setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
-    //.withTimeout(.25) 
-    setShooterMotorCommand(0.34)
-    .withTimeout(getChargeTime(ArmSubsystem::getArmState))
+    return setShooterMotorCommand(0.34)
+    .withTimeout(BoxConstants.kShooterDelay)
     .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
     .withTimeout(2.0)
     .andThen(setShooterMotorCommand(0));
@@ -188,7 +132,6 @@ public class BoxSubsystem extends SubsystemBase {
    *
    * @param speed     Speed of the motor.
    */
-  // DOES THIS HAVE TO BE RUN? WHY NOT runOnce()
   public Command setShooterMotorCommand(double speed) {
     return run(() -> {
       topShooterMotor.set(speed);
@@ -196,7 +139,8 @@ public class BoxSubsystem extends SubsystemBase {
     });
   }
 
-
+  // DELETE THIS
+  /*
   public Command setShooterMotorCommandThenStop(double speed) {
     return Commands.startEnd(() -> {
       topShooterMotor.set(speed);
@@ -206,6 +150,7 @@ public class BoxSubsystem extends SubsystemBase {
       bottomShooterMotor.set(0);
     }, this);
   }
+  */
 
 
   /**
@@ -239,9 +184,6 @@ public class BoxSubsystem extends SubsystemBase {
           bottomShooterSpeed = BoxConstants.kBottomDefaultSpeed;
           break;
       }
-      //topPIDController.setReference(shooterMotorRPM, ControlType.kVelocity, 0, topFeedForward.calculate(shooterMotorRPM));
-      //topPIDController.setReference(shooterMotorRPM, ControlType.kVelocity);
-      //bottomPIDController.setReference(shooterMotorRPM, ControlType.kVelocity);
       topShooterMotor.set(topShooterSpeed);
       bottomShooterMotor.set(bottomShooterSpeed);
 
@@ -250,17 +192,6 @@ public class BoxSubsystem extends SubsystemBase {
       }
 
     });
-  }
-
-
-  // IS THIS NEEDED?
-  public double getChargeTime(Supplier<ArmState> position) {
-    switch(position.get()) {
-        default:
-          shooterChargeTime = BoxConstants.kShooterDelay;
-          break;
-      }
-    return shooterChargeTime;
   }
 
 
@@ -279,25 +210,6 @@ public class BoxSubsystem extends SubsystemBase {
   public static boolean noteSensorTriggered() {
     return noteSensor.get();
   }
-
-  // SysID Commands for the top shooter motor
-  /*
-  public Command topSysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return topShooterSysIdRoutine.quasistatic(direction);
-  }
-  public Command topSysIdDynamic(SysIdRoutine.Direction direction) {
-    return topShooterSysIdRoutine.dynamic(direction);
-  }
-  public void topMotorVoltageControl(Measure<Voltage> volts) {
-    topShooterMotor.setVoltage(volts.in(Units.Volts));
-  }
-  public void logTopMotor(SysIdRoutineLog log) {
-    log.motor("top-shooter-motor")
-      .voltage(m_appliedVoltage.mut_replace(topShooterMotor.getAppliedOutput() * topShooterMotor.getBusVoltage(), Units.Volts))
-      .angularPosition(m_angle.mut_replace(topShooterEncoder.getPosition(), Units.Rotations))
-      .angularVelocity(m_velocity.mut_replace(topShooterEncoder.getVelocity(), Units.RPM));
-  }
-  */
 
 
   @Override

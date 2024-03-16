@@ -49,12 +49,6 @@ public class ArmSubsystem extends SubsystemBase {
   private double wristP, wristI, wristD, wristSetPoint = 0;
   // Arm state
   private static ArmState currentPosition = ArmState.IDLE;
-  // Arm feed forward
-  private ArmFeedforward m_armFeedforward = new ArmFeedforward(
-      ArmConstants.kElbowS,
-      ArmConstants.kElbowG,
-      ArmConstants.kElbowV,
-      ArmConstants.kElbowA);
 
   /* SysID variables and routine */
   /*
@@ -225,19 +219,6 @@ public class ArmSubsystem extends SubsystemBase {
     );
   }
 
-  public Command SetWristAngle(double angle) {
-    return startEnd(
-      () -> {
-        currentPosition = ArmConstants.ArmState.MANUAL;
-        wristPIDController.setReference(angle, ControlType.kPosition);
-      },
-      () -> {
-        currentPosition = ArmConstants.ArmState.IDLE;
-        wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
-      }
-    );
-  }
-
   public void resetWristEncoder() {
     wristEncoder.setPosition(0);
   };
@@ -255,14 +236,6 @@ public class ArmSubsystem extends SubsystemBase {
         wristPIDController.setReference(wristSpeed.getAsDouble(), ControlType.kDutyCycle);
         elbowPIDController.setReference(elbowSpeed.getAsDouble(), ControlType.kDutyCycle);
     }));
-  }
-
-
-  public Command TurnPIDOff(){
-    return runOnce(() -> {
-      wristPIDController.setReference(0, ControlType.kDutyCycle);
-      elbowPIDController.setReference(0, ControlType.kDutyCycle);
-    });
   }
 
 
