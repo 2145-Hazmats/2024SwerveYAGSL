@@ -63,15 +63,13 @@ public class RobotContainer {
     configureBindings();
 
     // This causes a command scheduler loop overrun. Not sure why
-    /*
     m_swerve.setDefaultCommand(m_swerve.driveCommandAngularVelocity(
       () -> -m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
-      Constants.OperatorConstants.kFastModeSpeed,
+      OperatorConstants.kFastModeSpeed,
       false
     ));
-    */
 
     m_box.setDefaultCommand(m_box.stopCommand());
   }
@@ -134,7 +132,6 @@ public class RobotContainer {
     );
 
     //Robot Centric DRIVING
-
     m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -155,7 +152,7 @@ public class RobotContainer {
         true
       )
     );
-  
+      
     // Slow speed robot centric
     m_driverController.leftTrigger().and(m_driverController.leftBumper()).whileTrue(
       m_swerve.driveCommandAngularVelocity(
@@ -171,19 +168,24 @@ public class RobotContainer {
 
     // Sets the speed of the shooter motors and starts intake/feed motor
     // When the button is released, the arm goes to idle position and the m_box default command is ran
-    m_operatorController.rightTrigger().whileTrue(
+    m_operatorController.leftTrigger().whileTrue(
       m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true)
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Intakes note into robot
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
 
-    // Regurgitate Shooter
-    //m_operatorController.leftTrigger().whileTrue(m_box.setShooterMotorCommand(BoxConstants.kRegurgitateSpeed));
-
     // Regurgitate.
     m_operatorController.rightBumper().whileTrue(m_box.YeetCommand(BoxConstants.kRegurgitateSpeed, BoxConstants.kRegurgitateSpeed));
 
+    // Smartshoot button, only shoots the note when Velocity is correct and the button is held down.
+    m_operatorController.rightTrigger().whileTrue(
+      Commands.sequence(
+        Commands.waitUntil(m_box::isVelocityReached),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, true)
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+  
     // Regurgitate Intake
     //m_operatorController.rightBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed));
 

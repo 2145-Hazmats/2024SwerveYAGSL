@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,6 +34,7 @@ public class BoxSubsystem extends SubsystemBase {
   // PID controllers
   private SparkPIDController topShooterPIDController = topShooterMotor.getPIDController();
   private SparkPIDController bottomShooterPIDController = bottomShooterMotor.getPIDController();
+  /*
   private SimpleMotorFeedforward topShooterFF = new SimpleMotorFeedforward(
       BoxConstants.kTopShooterS,
       BoxConstants.kTopShooterV
@@ -43,14 +43,16 @@ public class BoxSubsystem extends SubsystemBase {
       BoxConstants.kBottomShooterS,
       BoxConstants.kBottomShooterV
   );
+  */
   // Variables used during SmartDashboard changes
-  private double topShooterP    = 0;
-  private double bottomShooterP = 0;
+  private double topShooterP     = 0;
+  private double bottomShooterP  = 0;
+  private double shooterFF = 0;
   // shooterMotor variable
   private double shooterSpeed = 0; 
   // Sensor 
-  private static DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
-  public boolean laser;
+  private DigitalInput noteSensor = new DigitalInput(BoxConstants.kNoteSensorChannel);
+
   /** Creates a new Box. */
   public BoxSubsystem() {
     /* Motor Configuration */
@@ -103,70 +105,39 @@ public class BoxSubsystem extends SubsystemBase {
 
     // Setup the Top shooter PIDController
     topShooterPIDController.setP(BoxConstants.kTopShooterP);
-    //topShooterPIDController.setFF(BoxConstants.kTopShooterFF);
+    topShooterPIDController.setFF(BoxConstants.kShooterFF);
+    // This is what FF does on a sparkmax:
+      // f = setpoint * constants->kF;
+      // output = p + pid->iState + d + f;
 
     // Setup the Bottom Shooter PIDController
     bottomShooterPIDController.setP(BoxConstants.kBottomShooterP);
-    //bottomShooterPIDController.setFF(BoxConstants.kBottomShooterFF);
+    bottomShooterPIDController.setFF(BoxConstants.kShooterFF);
 
-    // Put Top Shooter PIDs on SmartDashboard
+    // Put Shooter PIDs on SmartDashboard
     SmartDashboard.putNumber("TopShooter P", BoxConstants.kTopShooterP);
-    SmartDashboard.putNumber("TopShooter Set Point", 0); 
-    
-    // Put Bottom Shooter PIDs on SmartDashboard
     SmartDashboard.putNumber("BottomShooter P", BoxConstants.kBottomShooterP);
-    SmartDashboard.putNumber("BottomShooter Set Point", 0);
+    SmartDashboard.putNumber("Shooter FF", BoxConstants.kShooterFF);
   }
   
-
   /**
    * Sets the speed of the intake motor. Takes a double for speed.
    *
-   * @param speed     Speed of the motor.   */
+   * @param speed     Speed of the motor.
+   */
   public Command setIntakeMotorCommand(double speed) {
     return run(() -> intakeMotor.set(speed));
   }
 
-
+  /**
+   * Sets the speed of the intake motor. Takes a double for speed.
+   * When the command ends, the intake motor stops.
+   *
+   * @param speed     Speed of the motor.
+   */
   public Command setIntakeMotorCommandThenStop(double speed) {
     return Commands.startEnd(() -> intakeMotor.set(speed), () -> intakeMotor.set(0), this);
   }
-
-
-  public void Yeet(double shooterSpeed, double intakeSpeed) {
-  //  intakeMotor.set(Constants.BoxConstants.kYeetSpeedIntake);
-  //  topShooterMotor.set(Constants.BoxConstants.kTopYeetRPM);
-  //  bottomShooterMotor.set(Constants.BoxConstants.kBottomYeetRPM);
-    intakeMotor.set(intakeSpeed);
-    topShooterMotor.set(shooterSpeed);
-    bottomShooterMotor.set(shooterSpeed);
-  }
-
-  
-  public Command YeetCommand(double shooterSpeedCommand, double intakeSpeedCommand) {
-    return Commands.startEnd(() -> Yeet(shooterSpeedCommand, intakeSpeedCommand), () -> Yeet(0, 0), this);
-  }
-
-
-  public Command ShootNoteSubwoofer() {
-    return setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
-    .withTimeout(.25) 
-    .andThen(setShooterMotorCommand(Constants.BoxConstants.kTopSpeakerRPM))
-    .withTimeout(BoxConstants.kShooterDelay)
-    .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
-    .withTimeout(2.0)
-    .andThen(setShooterMotorCommand(0));
-  }
-
-
-  public Command ShootNoteSubwooferNoRegurgitate() {
-    return setShooterMotorCommand(0.34)
-    .withTimeout(BoxConstants.kShooterDelay)
-    .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
-    .withTimeout(2.0)
-    .andThen(setShooterMotorCommand(0));
-  }
-
 
   /**
    * Sets the speed of the shooter motor.
@@ -179,20 +150,24 @@ public class BoxSubsystem extends SubsystemBase {
       bottomShooterMotor.set(speed);
     });
   }
-
-  // DELETE THIS
-  /*
-  public Command setShooterMotorCommandThenStop(double speed) {
+  
+  /**
+   * Sets the speed of the shooter and intake motor. Takes a double for speed.
+   *
+   * @param shooterSpeed    Speed of the shooter motor.
+   * @param intakeSpeed     Speed of the intake motor.
+   */
+  public Command YeetCommand(double shooterSpeed, double intakeSpeed) {
     return Commands.startEnd(() -> {
-      topShooterMotor.set(speed);
-      bottomShooterMotor.set(speed);
+      intakeMotor.set(intakeSpeed);
+      topShooterMotor.set(shooterSpeed);
+      bottomShooterMotor.set(shooterSpeed);
     }, () -> {
+      intakeMotor.set(0);
       topShooterMotor.set(0);
       bottomShooterMotor.set(0);
     }, this);
   }
-  */
-
 
   /**
    * Sets the speed of the shooter motor depending on a supplied ArmState.
@@ -221,18 +196,8 @@ public class BoxSubsystem extends SubsystemBase {
           break;
       }
 
-      topShooterPIDController.setReference(
-          shooterSpeed,
-          ControlType.kVelocity,
-          0,
-          topShooterFF.calculate(shooterSpeed)
-      );
-      bottomShooterPIDController.setReference(
-          shooterSpeed,
-          ControlType.kVelocity,
-          0,
-          bottomShooterFF.calculate(shooterSpeed)
-      );
+      topShooterPIDController.setReference(shooterSpeed, ControlType.kVelocity);
+      bottomShooterPIDController.setReference(shooterSpeed, ControlType.kVelocity);
 
       if (feeder) {
         intakeMotor.set(BoxConstants.kFeedSpeed);
@@ -241,6 +206,24 @@ public class BoxSubsystem extends SubsystemBase {
     });
   }
 
+
+  // These two commands are ran in auton
+  public Command ShootNoteSubwoofer() {
+    return setIntakeMotorCommandThenStop(Constants.BoxConstants.kRegurgitateSpeed)
+    .withTimeout(.25) 
+    .andThen(setShooterMotorCommand(Constants.BoxConstants.kTopSpeakerRPM))
+    .withTimeout(BoxConstants.kShooterDelay)
+    .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
+    .withTimeout(2.0)
+    .andThen(setShooterMotorCommand(0));
+  }
+  public Command ShootNoteSubwooferNoRegurgitate() {
+    return setShooterMotorCommand(0.34)
+    .withTimeout(BoxConstants.kShooterDelay)
+    .andThen(setIntakeMotorCommandThenStop(BoxConstants.kFeedSpeed))
+    .withTimeout(2.0)
+    .andThen(setShooterMotorCommand(0));
+  }
 
   /**
    * Stops the intake and shooter motor.
@@ -254,9 +237,19 @@ public class BoxSubsystem extends SubsystemBase {
     });
   }
 
+  /**
+   * Returns true if the velocity has approximately reached it's setpoint.
+   */
+  public boolean isVelocityReached() {
+    return (Math.abs(topShooterEncoder.getVelocity() - shooterSpeed) <= BoxConstants.kRPMErrorRange &&
+            Math.abs(bottomShooterEncoder.getVelocity() - shooterSpeed) <= BoxConstants.kRPMErrorRange);
+  }
 
-  public static boolean noteSensorTriggered() {
-    return noteSensor.get();
+  /**
+   * Returns true if the note sensor has been triggered.
+   */
+  public boolean noteSensorTriggered() {
+    return !noteSensor.get();
   }
 
 
@@ -270,9 +263,11 @@ public class BoxSubsystem extends SubsystemBase {
       bottomShooterP = SmartDashboard.getNumber("BottomShooter P", 0);
       bottomShooterPIDController.setP(bottomShooterP);
     }
-
-    //This updates when the laser is broken
-    laser = noteSensor.get();
+    if (shooterFF != SmartDashboard.getNumber("Shooter FF", 0)) {
+      shooterFF = SmartDashboard.getNumber("Shooter FF", 0);
+      topShooterPIDController.setFF(shooterFF);
+      bottomShooterPIDController.setFF(shooterFF);
+    }
 
     SmartDashboard.putNumber("topShooterMotor Velocity", topShooterEncoder.getVelocity());
     SmartDashboard.putNumber("bottomShooterMotor Velocity", bottomShooterEncoder.getVelocity());
@@ -280,13 +275,14 @@ public class BoxSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("TopShooterMotorVoltage", topShooterMotor.getAppliedOutput() * topShooterMotor.getBusVoltage());
     SmartDashboard.putNumber("BottomShooterMotorVoltage", bottomShooterMotor.getAppliedOutput() * bottomShooterMotor.getBusVoltage());
     // Volts applied from FF
-    SmartDashboard.putNumber("TopShooter kS Volts", BoxConstants.kTopShooterS * Math.signum(shooterSpeed));
-    SmartDashboard.putNumber("TopShooter kV Volts", BoxConstants.kTopShooterV * shooterSpeed);
-    SmartDashboard.putNumber("BottomShooter kS Volts", BoxConstants.kBottomShooterS * Math.signum(shooterSpeed));
-    SmartDashboard.putNumber("BottomShooter kV Volts", BoxConstants.kBottomShooterV * shooterSpeed);
+    SmartDashboard.putNumber("Shooter FF Volts", BoxConstants.kShooterFF * shooterSpeed);
+    //SmartDashboard.putNumber("TopShooter kS Volts", BoxConstants.kTopShooterS * Math.signum(shooterSpeed));
+    //SmartDashboard.putNumber("TopShooter kV Volts", BoxConstants.kTopShooterV * shooterSpeed);
+    //SmartDashboard.putNumber("BottomShooter kS Volts", BoxConstants.kBottomShooterS * Math.signum(shooterSpeed));
+    //SmartDashboard.putNumber("BottomShooter kV Volts", BoxConstants.kBottomShooterV * shooterSpeed);
 
     SmartDashboard.putData("IR Sensor", noteSensor);
-    SmartDashboard.putBoolean("IR Sensor Value", !laser);
+    SmartDashboard.putBoolean("IR Sensor Value", noteSensorTriggered());
   }
 
 }

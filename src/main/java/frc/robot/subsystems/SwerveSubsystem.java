@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -40,6 +41,7 @@ import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
+
   private Optional<Alliance> alliance = DriverStation.getAlliance();
   private double allianceInverse = 1;
 
@@ -193,20 +195,26 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param translationY     Translation in the Y direction.
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
    * @param nerfChooser      A speed multiplier.
+   * @param isRobotCentric   True if the robot should be robot centric. False if the robot should be field centric.
    * @return Drive command.
    */
-  public Command driveCommandAngularVelocity(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, double nerfChooser, boolean robotcentric) {
-    swerveDrive.setHeadingCorrection(false);
+  public Command driveCommandAngularVelocity(DoubleSupplier translationX,
+                                             DoubleSupplier translationY,
+                                             DoubleSupplier angularRotationX,
+                                             double nerfChooser,
+                                             boolean isRobotCentric
+                                             ) {
+    //swerveDrive.setHeadingCorrection(false);
 
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
               MathUtil.applyDeadband(translationX.getAsDouble(), OperatorConstants.LEFT_X_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser,
-              MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser)
-              .times(allianceInverse),
+              MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser
+          ).times(allianceInverse),
           Math.pow(MathUtil.applyDeadband(angularRotationX.getAsDouble(), OperatorConstants.RIGHT_X_DEADBAND), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
-          robotcentric, 
+          isRobotCentric, 
           false);
     });
   }

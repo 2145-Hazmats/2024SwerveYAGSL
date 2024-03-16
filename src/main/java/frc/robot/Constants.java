@@ -87,6 +87,10 @@ public final class Constants {
     // Nominal Voltage
     public static final double kIntakeMotorNominalVoltage  = 10.5;
     public static final double kShooterMotorNominalVoltage = 10.5;
+    // Shooter motor PFF constants
+    public static final double kTopShooterP = 0.0;
+    public static final double kBottomShooterP = 0.0;
+    public static final double kShooterFF = (kShooterMotorNominalVoltage/5676); // same as kV
     // Shooter motor speeds
     public static final double kTopDefaultRPM    = 2000;
     public static final double kBottomDefaultRPM = 2000;
@@ -98,6 +102,8 @@ public final class Constants {
     public static final double kBottomHorizontalRPM = 0.6;
     public static final double kTopYeetRPM    = 0.5;
     public static final double kBottomYeetRPM = 0.5;
+    // RPM error range
+    public static final double kRPMErrorRange = 100; // We are using Math.abs so its +/- kRPMErrorRange
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
     public static final double kFeedSpeed        = 1;
@@ -107,16 +113,6 @@ public final class Constants {
     public static final double kShooterDelay     = 1.25;
     // Regurgitate time
     public static final double kRegurgitateTime  = 0.25;
-    // Top shooter motor PIFF constants 
-    public static final double kTopShooterP = 0.0;
-    public static final double kTopShooterS = 0.0;
-    public static final double kTopShooterV = kShooterMotorNominalVoltage/5676;
-    //public static final double kTopShooterFF = 0.0;
-    // Bottom shooter motor PIFF constants
-    public static final double kBottomShooterP = 0.0;
-    public static final double kBottomShooterS = 0.0;
-    public static final double kBottomShooterV = kShooterMotorNominalVoltage/5676;
-    //public static final double kBottomShooterFF = 0.0;
   }
 
   /*
