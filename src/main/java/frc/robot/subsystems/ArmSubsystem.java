@@ -106,7 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
     elbowEncoder.setPositionConversionFactor(ArmConstants.kElbowEncoderFactor);
     wristEncoder.setPositionConversionFactor(1);
 
-    // Set encoders position. For the elbow this is our offset
+    // Set encoders position. For the elbow, this is our offset
     elbowEncoder.setPosition(ArmConstants.kElbowAngleOffset);
     wristEncoder.setPosition(0);
 
@@ -317,7 +317,7 @@ public class ArmSubsystem extends SubsystemBase {
         ControlType.kPosition,
         0,
         ArmConstants.kElbowG * Math.cos(Math.toRadians(elbowEncoder.getPosition()))
-        + ArmConstants.kElbowS * Math.signum(elbowEncoder.getVelocity())
+        //+ ArmConstants.kElbowS * Math.signum(elbowEncoder.getVelocity())
     );
     
   
