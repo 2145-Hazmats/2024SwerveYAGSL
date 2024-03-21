@@ -37,6 +37,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "FireNote"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CS SaSo-C3"
@@ -45,13 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNoteSubwoofer"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MS-END"
+            "name": "FireNote"
           }
         }
       ]

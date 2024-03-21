@@ -45,7 +45,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNoteSubwoofer"
+            "name": "FireNote"
           }
         },
         {
@@ -63,7 +63,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNoteSubwoofer"
+            "name": "FireNote"
           }
         }
       ]

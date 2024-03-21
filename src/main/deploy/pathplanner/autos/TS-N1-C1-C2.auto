@@ -37,12 +37,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "N1-TS"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ShootNoteSubwoofer"

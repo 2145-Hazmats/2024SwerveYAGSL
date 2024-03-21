@@ -43,8 +43,8 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
-
-  private double climbingSlowMode = 0;
+  
+private double climbingSlowMode = 0;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -53,7 +53,7 @@ public class RobotContainer {
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
-    NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM));
+        NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
     NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
@@ -134,10 +134,10 @@ public class RobotContainer {
         false
       )
     );
-  
+
 
     //Robot Centric DRIVING
-    /*
+/*
     m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -147,11 +147,11 @@ public class RobotContainer {
         true
       )
     );
-    */
+*/
     
     // Medium speed robot centric
     //m_driverController.rightTrigger().and(m_driverController.rightBumper()).whileTrue(
-    m_driverController.rightBumper().whileTrue(
+m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
@@ -163,7 +163,7 @@ public class RobotContainer {
       
     // Slow speed robot centric
     //m_driverController.leftTrigger().and(m_driverController.leftBumper()).whileTrue(
-    m_driverController.leftBumper().whileTrue(
+m_driverController.leftBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () ->  -m_driverController.getLeftY(),
         () ->  -m_driverController.getLeftX(),
@@ -195,10 +195,7 @@ public class RobotContainer {
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
   
-    // Regurgitate Intake
-    //m_operatorController.rightBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed));
-
-     // Arm set point for climbing
+    // Arm set point for climbing
     m_operatorController.button(9).whileTrue(Commands.startEnd(
         () -> {
           m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, false);
@@ -210,7 +207,7 @@ public class RobotContainer {
 
     m_operatorController.button(10).onTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_2, true));
     
-    // Arm set point for shooting speaker from subwoofer
+      // Arm set point for shooting speaker from subwoofer
     m_operatorController.a().whileTrue(
       Commands.parallel(
         m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true),
@@ -226,6 +223,9 @@ public class RobotContainer {
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
+    // Idle mode arm set point
+    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+
     // Arm set point for shooting podium
     m_operatorController.y().whileTrue(
       Commands.parallel(
@@ -233,9 +233,6 @@ public class RobotContainer {
         m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
-
-    // Idle mode arm set point
-    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
     // Arm set point for shooting horizontal across the field
     m_operatorController.povLeft().whileTrue(
@@ -252,7 +249,7 @@ public class RobotContainer {
         m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
-    
+
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
         m_arm.manualArmCommand(() -> m_operatorController.getRightY() * Constants.ArmConstants.kManualSpeed, 
