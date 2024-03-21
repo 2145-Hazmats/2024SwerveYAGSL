@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.BoxConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ArmConstants.ArmState;
 //import frc.robot.commands.IdleArmCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BoxSubsystem;
@@ -42,6 +43,8 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+
+  private double climbingSlowMode = 0;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,6 +58,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
     NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
     NamedCommands.registerCommand("ArmToIdle", m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
+    NamedCommands.registerCommand("FireNote", m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false).withTimeout(1));
     // Allows us to pick our auton in smartdash board
     m_autonChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Picker", m_autonChooser);
@@ -67,7 +71,7 @@ public class RobotContainer {
       () -> -m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
-      OperatorConstants.kFastModeSpeed,
+      OperatorConstants.kFastModeSpeed * climbingSlowMode,
       false
     ));
 
@@ -130,8 +134,10 @@ public class RobotContainer {
         false
       )
     );
+  
 
     //Robot Centric DRIVING
+    /*
     m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
@@ -141,9 +147,11 @@ public class RobotContainer {
         true
       )
     );
+    */
     
     // Medium speed robot centric
-    m_driverController.rightTrigger().and(m_driverController.rightBumper()).whileTrue(
+    //m_driverController.rightTrigger().and(m_driverController.rightBumper()).whileTrue(
+    m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
@@ -154,7 +162,8 @@ public class RobotContainer {
     );
       
     // Slow speed robot centric
-    m_driverController.leftTrigger().and(m_driverController.leftBumper()).whileTrue(
+    //m_driverController.leftTrigger().and(m_driverController.leftBumper()).whileTrue(
+    m_driverController.leftBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () ->  -m_driverController.getLeftY(),
         () ->  -m_driverController.getLeftX(),
@@ -175,7 +184,7 @@ public class RobotContainer {
     // Intakes note into robot
     m_operatorController.leftBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed));
 
-    // Regurgitate.
+    // Regurgitate everything
     m_operatorController.rightBumper().whileTrue(m_box.YeetCommand(BoxConstants.kRegurgitateSpeed, BoxConstants.kRegurgitateSpeed));
 
     // Smartshoot button, only shoots the note when Velocity is correct and the button is held down.
@@ -190,12 +199,17 @@ public class RobotContainer {
     //m_operatorController.rightBumper().whileTrue(m_box.setIntakeMotorCommand(BoxConstants.kRegurgitateSpeed));
 
      // Arm set point for climbing
-    m_operatorController.button(9).whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, false));
+    m_operatorController.button(9).whileTrue(Commands.startEnd(
+        () -> {
+          m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, false);
+          climbingSlowMode = 0.4;
+        },
+        () -> climbingSlowMode = 1,
+        m_arm)
+      );
 
     m_operatorController.button(10).onTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_2, true));
     
-  
-
     // Arm set point for shooting speaker from subwoofer
     m_operatorController.a().whileTrue(
       Commands.parallel(
@@ -212,14 +226,6 @@ public class RobotContainer {
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
-    // Arm set point for shooting trap
-    m_operatorController.b().whileTrue(
-      Commands.parallel(
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true),
-        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
-      )
-    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
-
     // Arm set point for shooting podium
     m_operatorController.y().whileTrue(
       Commands.parallel(
@@ -228,28 +234,32 @@ public class RobotContainer {
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
 
+    // Idle mode arm set point
+    m_operatorController.b().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+
     // Arm set point for shooting horizontal across the field
     m_operatorController.povLeft().whileTrue(
+      Commands.parallel(
+        m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_HORIZONTAL, true),
+        m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
+      )
+    ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
+
+    // Arm set point for shooting trap
+    m_operatorController.povRight().whileTrue(
       Commands.parallel(
         m_arm.setArmPIDCommand(ArmConstants.ArmState.TRAP, true),
         m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false)
       )
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
     
-    //m_operatorController.povLeft().whileTrue(m_box.YeetCommand());
-
-   
-    // Idle mode arm set point
-    m_operatorController.povRight().whileTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
-    
-
     // Manual control toggle for arm
     m_operatorController.start().toggleOnTrue(
         m_arm.manualArmCommand(() -> m_operatorController.getRightY() * Constants.ArmConstants.kManualSpeed, 
         () -> m_operatorController.getLeftY() * Constants.ArmConstants.kManualSpeed)
     );
 
-    // Floor intake with regurgitate?
+    // Smart floor intake with regurgitate?
     m_operatorController.povDown().whileTrue(
       Commands.sequence(
         Commands.parallel(
