@@ -8,6 +8,8 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -36,7 +38,7 @@ public class RobotContainer {
   private final ArmSubsystem m_arm = new ArmSubsystem();
   //private final LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
   // Auton chooser
-  private SendableChooser<Command> m_autonChooser;
+  private SendableChooser<Command> m_autonChooser = new SendableChooser<>();
 
   // Create the driver and operator controllers
   private final CommandXboxController m_driverController =
@@ -51,17 +53,22 @@ public class RobotContainer {
     // Setup PathPlanner and autons
     m_swerve.setupPathPlannerRobot();
     // PathPlanner named commands
-    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
+    NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(0.25));
+    NamedCommands.registerCommand("ArmToSubwoofer", m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true).withTimeout(0.25));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
+      NamedCommands.registerCommand("FRESH Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).until(m_box::noteSensorTriggered));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM).withTimeout(1));
-    NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
+    NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.75));
     NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
-    NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
-    NamedCommands.registerCommand("ArmToIdle", m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5) );
+    NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(3.75));
+    NamedCommands.registerCommand("ArmToIdle", m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, true).withTimeout(1.5));
     NamedCommands.registerCommand("FireNote", m_box.setShooterFeederCommand(ArmSubsystem::getArmState, false).withTimeout(1));
     // Allows us to pick our auton in smartdash board
-    m_autonChooser = AutoBuilder.buildAutoChooser();
+    m_autonChooser.addOption("TS-N1-C1", AutoBuilder.buildAuto("TS-N1-C1"));
+    m_autonChooser.addOption("Drive Straight", AutoBuilder.buildAuto("Drive Straight"));
     SmartDashboard.putData("Auton Picker", m_autonChooser);
+    //m_autonChooser = AutoBuilder.buildAutoChooser();
+    //SmartDashboard.putData("Auton Picker", m_autonChooser);
 
     // Configure the trigger bindings
     configureBindings();
@@ -152,7 +159,7 @@ public class RobotContainer {
     
     // Medium speed robot centric
     //m_driverController.rightTrigger().and(m_driverController.rightBumper()).whileTrue(
-m_driverController.rightBumper().whileTrue(
+    m_driverController.rightBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () -> -m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),

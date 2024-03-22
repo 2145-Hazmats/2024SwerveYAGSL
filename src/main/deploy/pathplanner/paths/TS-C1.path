@@ -3,51 +3,62 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7987428243044774,
-        "y": 6.558068465637644
+        "x": 0.7046435911053639,
+        "y": 6.343547232549011
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1500679206779225,
-        "y": 7.319272841113443
+        "x": 1.055968687478809,
+        "y": 7.10475160802481
       },
       "isLocked": false,
       "linkedName": "Top Sub"
     },
     {
       "anchor": {
-        "x": 8.317099886696207,
-        "y": 7.436381206571257
+        "x": 8.60609139400097,
+        "y": 7.183134366268733
       },
       "prevControl": {
-        "x": 7.922422174263859,
-        "y": 7.209441521922656
+        "x": 8.211413681568622,
+        "y": 6.956194681620132
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "C1"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 12.832860368721498,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Suck Piece",
-      "waypointRelativePos": 0.8,
+      "name": "Intake",
+      "waypointRelativePos": 0.75,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Intake"
+                "name": "FRESH Intake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Floor",
+      "waypointRelativePos": 0.5,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ArmToFloor"
               }
             }
           ]
@@ -63,8 +74,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 7.431407971172397,
-    "rotateFast": false
+    "rotation": -16.95028633784203,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Riley's OP Lines",

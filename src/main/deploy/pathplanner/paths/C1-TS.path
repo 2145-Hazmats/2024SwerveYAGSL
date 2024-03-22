@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.317099886696207,
-        "y": 7.436381206571257
+        "x": 8.60609139400097,
+        "y": 7.183134366268733
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.567212233074746,
-        "y": 7.337711778463169
+        "x": 7.856203740379509,
+        "y": 7.084464938160645
       },
       "isLocked": false,
       "linkedName": "C1"
     },
     {
       "anchor": {
-        "x": 0.5879477664804101,
-        "y": 6.511225119454518
+        "x": 0.3314937538965987,
+        "y": 6.03569861685178
       },
       "prevControl": {
-        "x": 1.34441743637699,
-        "y": 6.574244326327416
+        "x": 1.087963423793178,
+        "y": 6.098717823724678
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,18 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "SpinUpShooter",
-      "waypointRelativePos": 0.4,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": []
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.7,
     "maxAcceleration": 5.0,
@@ -50,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 60.0,
+    "rotation": 85.60129464500446,
     "rotateFast": false
   },
   "reversed": false,

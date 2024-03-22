@@ -18,7 +18,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ArmToFloor"
+                  "name": "ArmToSubwoofer"
                 }
               },
               {
@@ -43,9 +43,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "FireNote"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
           }
         },
         {
@@ -61,9 +74,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "FireNote"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
           }
         }
       ]
