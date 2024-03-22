@@ -182,6 +182,10 @@ public class ArmSubsystem extends SubsystemBase {
             elbowAngle = ArmConstants.kSpeakerSubwooferAngleSP[0];
             wristAngle = ArmConstants.kSpeakerSubwooferAngleSP[1];
             break;
+          case SHOOT_PODIUM:
+            elbowAngle = ArmConstants.kSpeakerPodiumAngleSP[0];
+            wristAngle = ArmConstants.kSpeakerPodiumAngleSP[1];
+            break;
           case TRAP:
             elbowAngle = ArmConstants.kTrapAngleSP[0];
             wristAngle = ArmConstants.kTrapAngleSP[1];
@@ -201,7 +205,6 @@ public class ArmSubsystem extends SubsystemBase {
           default:
             break;
         }
-        elbowSetPoint = elbowAngle;
         elbowPIDController.setReference(elbowAngle, ControlType.kPosition);
         wristPIDController.setReference(wristAngle, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Set Point", elbowAngle);
@@ -211,7 +214,6 @@ public class ArmSubsystem extends SubsystemBase {
       () -> {
         if (!stayAtSetpoint) { 
           currentPosition = ArmConstants.ArmState.IDLE;
-          elbowSetPoint = ArmConstants.kIdleAngleSP[0];
           elbowPIDController.setReference(ArmConstants.kIdleAngleSP[0], ControlType.kPosition);
           wristPIDController.setReference(ArmConstants.kIdleAngleSP[1], ControlType.kPosition);
         }
@@ -312,14 +314,14 @@ public class ArmSubsystem extends SubsystemBase {
       wristPIDController.setReference(wristSetPoint, ControlType.kPosition);
     }
 
-    
+    /* 
     elbowPIDController.setReference(elbowSetPoint,
         ControlType.kPosition,
         0,
         ArmConstants.kElbowG * Math.cos(Math.toRadians(elbowEncoder.getPosition()))
         //+ ArmConstants.kElbowS * Math.signum(elbowEncoder.getVelocity())
     );
-    
+    */
   
     // Update SmartDashboard with elbow and wrist information
     SmartDashboard.putNumber("Elbow Angular Velocity", elbowEncoder.getVelocity());

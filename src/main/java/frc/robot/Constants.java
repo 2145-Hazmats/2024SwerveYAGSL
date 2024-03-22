@@ -48,9 +48,9 @@ public final class Constants {
     public static final double kElbowD        = 0.1;
     public static final double kElbowMinSpeed = -0.4;
     public static final double kElbowMaxSpeed = 0.4;
-    public static final double kWristP        = 0.3;
-    public static final double kWristI        = 0.00005;
-    public static final double kWristD        = 0.0002;
+    public static final double kWristP        = 0.1; //0.3
+    public static final double kWristI        = 0.0; //0.00005
+    public static final double kWristD        = 0.0; //0.0002
     public static final double kWristMinSpeed = -0.45;
     public static final double kWristMaxSpeed = 0.45;
     // Elbow FF gravity constant
@@ -63,13 +63,13 @@ public final class Constants {
     // First value is Elbow Angle, Second is Wrist Angle. SP = SetPoint
     // TODO: ALL THESE SETPOINTS NEED TO BE UPDATED AFTER ELBOW OFFSET
     public static final double[] kIdleAngleSP             = {-0.25, 0};
-    public static final double[] kFloorAngleSP            = {0, 41.5 };
-    public static final double[] kSourceAngleSP           = {0,9.1};
-    public static final double[] kAmpAngleSP              = {-112, 44.2};
-    public static final double[] kSpeakerSubwooferAngleSP = {0, 41.5};
+    public static final double[] kFloorAngleSP            = {0, 35};
+    public static final double[] kSourceAngleSP           = {0, 9.1};
+    public static final double[] kAmpAngleSP              = {-115.44, 37.93}; //-113.7, 31.64
+    public static final double[] kSpeakerSubwooferAngleSP = {-9, 38}; //31.64
     public static final double[] kSpeakerPodiumAngleSP    = {-34.1, 49};
     public static final double[] kHorizontalAngleSP       = {-37.8, 40.5};
-    public static final double[] kClimb1AngleSP           = {-100, 45};
+    public static final double[] kClimb1AngleSP           = {-98, 34};
     public static final double[] kClimb2AngleSP           = {-37.4, 83.7}; // NEEDS TO BE SET
     public static final double[] kTrapAngleSP             = {0, 0}; // NEEDS TO BE SET
 
@@ -83,30 +83,34 @@ public final class Constants {
     public static final int kBottomShooterMotorID = 31;
     public static final int kIntakeMotorID  = 32;
     // Sensor digital input channel
-    public static final int kNoteSensorChannel = 9;
+    public static final int kNoteSensorChannel = 0;
+    //Max RPM of shooter motors.
+    //public static final int kMaxRPM = 4960;
     // Nominal Voltage
     public static final double kIntakeMotorNominalVoltage  = 10.5;
     public static final double kShooterMotorNominalVoltage = 10.5;
     // Shooter motor PFF constants
     public static final double kTopShooterP = 0.0;
     public static final double kBottomShooterP = 0.0;
-    public static final double kShooterFF = (kShooterMotorNominalVoltage/5676); // same as kV
+    public static final double kTopShooterFF = 0.00021; //(1/kMaxRPM); // same as kV but in percentage instead of volts?
+    public static final double kBottomShooterFF = 0.000219; //(1/kMaxRPM); // same as kV but in percentage instead of volts?
     // Shooter motor speeds
-    public static final double kTopDefaultRPM    = 2000;
-    public static final double kBottomDefaultRPM = 2000;
-    public static final double kTopSpeakerRPM    = 2000;
-    public static final double kBottomSpeakerRPM = 2000;
-    public static final double kTopAmpRPM    = 0.25;
-    public static final double kBottomAmpRPM = 0.40;
-    public static final double kTopHorizontalRPM    = 0.6;
-    public static final double kBottomHorizontalRPM = 0.6;
-    public static final double kTopYeetRPM    = 0.5;
-    public static final double kBottomYeetRPM = 0.5;
+    public static final double kTopDefaultRPM    = 3000;
+    public static final double kBottomDefaultRPM = 3000;
+    public static final double kTopSpeakerRPM    = 3000;
+    public static final double kBottomSpeakerRPM = 3000;
+    public static final double kTopAmpRPM    = 800;
+    public static final double kBottomAmpRPM = 800;
+    public static final double kTopHorizontalRPM    = 4000;
+    public static final double kBottomHorizontalRPM = 4000;
+    //public static final double kTopYeetRPM    = 2500;
+    //public static final double kBottomYeetRPM = 2500;
     // RPM error range
-    public static final double kRPMErrorRange = 100; // We are using Math.abs so its +/- kRPMErrorRange
+    public static final double kRPMErrorRange = 200; // We are using Math.abs so its +/- kRPMErrorRange
     // Intake motor speeds
     public static final double kIntakeSpeed      = 1;
-    public static final double kFeedSpeed        = 1;
+    public static final double kSourceIntakeSpeed = 0.8;
+    public static final double kFeedSpeed        = 0.8;
     public static final double kRegurgitateSpeed = -0.25;
     public static final double kYeetSpeedIntake  = 1;
     // Shooter delay

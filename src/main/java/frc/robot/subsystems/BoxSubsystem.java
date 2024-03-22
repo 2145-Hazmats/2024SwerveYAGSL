@@ -47,7 +47,8 @@ public class BoxSubsystem extends SubsystemBase {
   // Variables used during SmartDashboard changes
   private double topShooterP     = 0;
   private double bottomShooterP  = 0;
-  private double shooterFF = 0;
+  private double topShooterFF = 0;
+  private double bottomShooterFF = 0;
   // shooterMotor variable
   private double shooterSpeed = 0; 
   // Sensor 
@@ -105,19 +106,20 @@ public class BoxSubsystem extends SubsystemBase {
 
     // Setup the Top shooter PIDController
     topShooterPIDController.setP(BoxConstants.kTopShooterP);
-    topShooterPIDController.setFF(BoxConstants.kShooterFF);
+    topShooterPIDController.setFF(BoxConstants.kTopShooterFF);
     // This is what FF does on a sparkmax:
       // f = setpoint * constants->kF;
       // output = p + pid->iState + d + f;
 
     // Setup the Bottom Shooter PIDController
     bottomShooterPIDController.setP(BoxConstants.kBottomShooterP);
-    bottomShooterPIDController.setFF(BoxConstants.kShooterFF);
+    bottomShooterPIDController.setFF(BoxConstants.kBottomShooterFF);
 
     // Put Shooter PIDs on SmartDashboard
     SmartDashboard.putNumber("TopShooter P", BoxConstants.kTopShooterP);
     SmartDashboard.putNumber("BottomShooter P", BoxConstants.kBottomShooterP);
-    SmartDashboard.putNumber("Shooter FF", BoxConstants.kShooterFF);
+    SmartDashboard.putNumber("Top Shooter FF", BoxConstants.kTopShooterFF);
+    SmartDashboard.putNumber("Bottom Shooter FF", BoxConstants.kBottomShooterFF);
   }
   
   /**
@@ -263,26 +265,27 @@ public class BoxSubsystem extends SubsystemBase {
       bottomShooterP = SmartDashboard.getNumber("BottomShooter P", 0);
       bottomShooterPIDController.setP(bottomShooterP);
     }
-    if (shooterFF != SmartDashboard.getNumber("Shooter FF", 0)) {
-      shooterFF = SmartDashboard.getNumber("Shooter FF", 0);
-      topShooterPIDController.setFF(shooterFF);
-      bottomShooterPIDController.setFF(shooterFF);
+    if (topShooterFF != SmartDashboard.getNumber("Top Shooter FF", 0)) {
+      topShooterFF = SmartDashboard.getNumber("Top Shooter FF", 0);
+      topShooterPIDController.setFF(topShooterFF);
+    }
+    if (bottomShooterFF != SmartDashboard.getNumber("Bottom Shooter FF", 0)) {
+      bottomShooterFF = SmartDashboard.getNumber("Bottom Shooter FF", 0);
+      bottomShooterPIDController.setFF(bottomShooterFF);
     }
 
     SmartDashboard.putNumber("topShooterMotor Velocity", topShooterEncoder.getVelocity());
     SmartDashboard.putNumber("bottomShooterMotor Velocity", bottomShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("shooter Velocity setpoint", shooterSpeed);
     // motor.AppliedOutput() * motor.BusVoltage() gives us our real volts for sparkmax.
     SmartDashboard.putNumber("TopShooterMotorVoltage", topShooterMotor.getAppliedOutput() * topShooterMotor.getBusVoltage());
     SmartDashboard.putNumber("BottomShooterMotorVoltage", bottomShooterMotor.getAppliedOutput() * bottomShooterMotor.getBusVoltage());
     // Volts applied from FF
-    SmartDashboard.putNumber("Shooter FF Volts", BoxConstants.kShooterFF * shooterSpeed);
-    //SmartDashboard.putNumber("TopShooter kS Volts", BoxConstants.kTopShooterS * Math.signum(shooterSpeed));
-    //SmartDashboard.putNumber("TopShooter kV Volts", BoxConstants.kTopShooterV * shooterSpeed);
-    //SmartDashboard.putNumber("BottomShooter kS Volts", BoxConstants.kBottomShooterS * Math.signum(shooterSpeed));
-    //SmartDashboard.putNumber("BottomShooter kV Volts", BoxConstants.kBottomShooterV * shooterSpeed);
+    //SmartDashboard.putNumber("Shooter FF Volts", BoxConstants.kShooterFF * shooterSpeed);
 
-    SmartDashboard.putData("IR Sensor", noteSensor);
     SmartDashboard.putBoolean("IR Sensor Value", noteSensorTriggered());
+
+    SmartDashboard.putBoolean("Is Velocity Reached", isVelocityReached());
   }
 
 }

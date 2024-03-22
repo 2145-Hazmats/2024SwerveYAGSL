@@ -195,14 +195,14 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param translationY     Translation in the Y direction.
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
    * @param nerfChooser      A speed multiplier.
-   * @param isRobotCentric   True if the robot should be robot centric. False if the robot should be field centric.
+   * @param isFieldCentric   True if the robot should be field centric. False if the robot should be robot centric.
    * @return Drive command.
    */
   public Command driveCommandAngularVelocity(DoubleSupplier translationX,
                                              DoubleSupplier translationY,
                                              DoubleSupplier angularRotationX,
                                              double nerfChooser,
-                                             boolean isRobotCentric
+                                             boolean isFieldCentric
                                              ) {
     //swerveDrive.setHeadingCorrection(false);
 
@@ -214,7 +214,7 @@ public class SwerveSubsystem extends SubsystemBase {
               MathUtil.applyDeadband(translationY.getAsDouble(), OperatorConstants.LEFT_Y_DEADBAND) * swerveDrive.getMaximumVelocity() * nerfChooser
           ).times(allianceInverse),
           Math.pow(MathUtil.applyDeadband(angularRotationX.getAsDouble(), OperatorConstants.RIGHT_X_DEADBAND), 3) * swerveDrive.getMaximumAngularVelocity() * nerfChooser,
-          isRobotCentric, 
+          isFieldCentric, 
           false);
     });
   }

@@ -44,7 +44,7 @@ public class RobotContainer {
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
   
-private double climbingSlowMode = 0;
+  //private double climbingSlowMode = 1.0;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -53,7 +53,7 @@ private double climbingSlowMode = 0;
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(1.5));
     NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
-        NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM));
+    NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM).withTimeout(1));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.5));
     NamedCommands.registerCommand("ShootNoteSubwoofer", m_box.ShootNoteSubwoofer().withTimeout(2.25));
     NamedCommands.registerCommand("ShootNoteSubwooferNoRegurgitate", m_box.ShootNoteSubwooferNoRegurgitate().withTimeout(2.5));
@@ -71,8 +71,8 @@ private double climbingSlowMode = 0;
       () -> -m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
-      OperatorConstants.kFastModeSpeed * climbingSlowMode,
-      false
+      OperatorConstants.kFastModeSpeed,// * climbingSlowMode,
+      true
     ));
 
     m_box.setDefaultCommand(m_box.stopCommand());
@@ -83,7 +83,7 @@ private double climbingSlowMode = 0;
     /* Driver Controls */
 
     // Rotate towards the driver
-    m_driverController.a().whileTrue(m_swerve.driveCommandPoint(() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
+  /*  m_driverController.a().whileTrue(m_swerve.driveCommandPoint(() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
       () -> 0,
       () -> -1
     ));
@@ -105,7 +105,8 @@ private double climbingSlowMode = 0;
       () -> 0,
       () -> 1
     ));
-    
+    */
+
     // Resets the gyro
     m_driverController.back().onTrue(
       m_swerve.runOnce(()->{
@@ -120,7 +121,7 @@ private double climbingSlowMode = 0;
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kMidModeSpeed, 
-        false
+        true
       )
     );
   
@@ -131,7 +132,7 @@ private double climbingSlowMode = 0;
         () ->  -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kSlowModeSpeed,
-        false
+        true
       )
     );
 
@@ -144,7 +145,7 @@ private double climbingSlowMode = 0;
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kMidModeSpeed, 
-        true
+        false
       )
     );
 */
@@ -157,19 +158,19 @@ m_driverController.rightBumper().whileTrue(
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kMidModeSpeed, 
-        true
+        false
       )
     );
       
     // Slow speed robot centric
     //m_driverController.leftTrigger().and(m_driverController.leftBumper()).whileTrue(
-m_driverController.leftBumper().whileTrue(
+    m_driverController.leftBumper().whileTrue(
       m_swerve.driveCommandAngularVelocity(
         () ->  -m_driverController.getLeftY(),
         () ->  -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
         OperatorConstants.kSlowModeSpeed,
-        true
+        false
       )
     );
 
@@ -196,14 +197,9 @@ m_driverController.leftBumper().whileTrue(
     ).onFalse(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false));
   
     // Arm set point for climbing
-    m_operatorController.button(9).whileTrue(Commands.startEnd(
-        () -> {
-          m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, false);
-          climbingSlowMode = 0.4;
-        },
-        () -> climbingSlowMode = 1,
-        m_arm)
-      );
+    m_operatorController.button(9).whileTrue(
+      m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_1, false)
+    );
 
     m_operatorController.button(10).onTrue(m_arm.setArmPIDCommand(ArmConstants.ArmState.CLIMB_2, true));
     
@@ -262,24 +258,17 @@ m_driverController.leftBumper().whileTrue(
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, false),
           m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ),//.until(!m_box::noteSensorTriggered).andThen()
-        Commands.parallel(
-          m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false),
-          m_box.setIntakeMotorCommand(-BoxConstants.kRegurgitateSpeed)
-              .withTimeout(BoxConstants.kRegurgitateTime)
-        )
+        ).until(m_box::noteSensorTriggered)
       )
     );
 
     // Intake from the source
-    // We have to add regurgitate like in the floor intake command
     m_operatorController.povUp().whileTrue(
       Commands.sequence(
         Commands.parallel(
           m_arm.setArmPIDCommand(ArmConstants.ArmState.SOURCE, false),
-          m_box.setIntakeMotorCommand(BoxConstants.kIntakeSpeed)
-        ),//.until(m_box::noteSensorTriggered),
-        m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false)
+          m_box.setIntakeMotorCommand(BoxConstants.kSourceIntakeSpeed)
+        ).until(m_box::noteSensorTriggered).andThen(m_arm.setArmPIDCommand(ArmConstants.ArmState.IDLE, false))
       )
     );
 
