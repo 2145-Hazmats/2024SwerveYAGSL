@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.296235760958306,
-        "y": 5.584689630917723
+        "x": 15.77690276635903,
+        "y": 6.604911811820771
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.29623576095831,
-        "y": 5.584689630917723
+        "x": 14.861374338133293,
+        "y": 7.380473222484906
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.813006710178897,
-        "y": 5.584689630917723
+        "x": 7.8163771712158825,
+        "y": 7.400207108106525
       },
       "prevControl": {
-        "x": 2.7819133250727917,
-        "y": 5.464977731586327
+        "x": 8.78333756667514,
+        "y": 7.538344307457847
       },
       "nextControl": {
-        "x": 2.8463228552901727,
-        "y": 5.712959325454395
+        "x": 6.849416775756629,
+        "y": 7.262069908755202
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.296235760958306,
-        "y": 5.584689630917723
+        "x": 15.77690276635903,
+        "y": 6.604911811820771
       },
       "prevControl": {
-        "x": 1.5036763541671636,
-        "y": 5.584689630917723
+        "x": 14.969910709052188,
+        "y": 7.6863484496199765
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,33 +46,16 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8,
-      "rotationDegrees": 11.31350314261836,
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": 180.0,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.3,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "ARM DOwn",
-      "waypointRelativePos": 0,
+      "name": "Arm To floor",
+      "waypointRelativePos": 0.45,
       "command": {
         "type": "parallel",
         "data": {
@@ -81,6 +64,23 @@
               "type": "named",
               "data": {
                 "name": "ArmToFloor"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.8,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
               }
             }
           ]
@@ -96,13 +96,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 120.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Riley's OP Lines",
+  "folder": " RED FIX stuff",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 120.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

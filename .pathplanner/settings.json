@@ -3,9 +3,11 @@
   "robotLength": 0.78,
   "holonomicMode": true,
   "pathFolders": [
+    " RED FIX stuff",
     "Riley's OP Lines"
   ],
   "autoFolders": [
+    "RED AUTS",
     "Riley's OP Autos"
   ],
   "defaultMaxVel": 5.0,
