@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.296235760958306,
+      "y": 5.584689630917723
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwooferNoRegurgitate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS-N2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwooferNoRegurgitate"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Riley's OP Autos",
+  "choreoAuto": false
+}

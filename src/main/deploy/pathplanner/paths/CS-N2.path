@@ -1,0 +1,103 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.296235760958306,
+        "y": 5.584689630917723
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.29623576095831,
+        "y": 5.584689630917723
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.612785157073426,
+        "y": 5.584689630917723
+      },
+      "prevControl": {
+        "x": 2.581693791435041,
+        "y": 5.464977207077809
+      },
+      "nextControl": {
+        "x": 2.6460991383521244,
+        "y": 5.712959887458236
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.296235760958306,
+        "y": 5.584689630917723
+      },
+      "prevControl": {
+        "x": 1.5036763541671636,
+        "y": 5.584689630917723
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.3,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FRESH Intake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "ARM DOwn",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ArmToFloor"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Riley's OP Lines",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
