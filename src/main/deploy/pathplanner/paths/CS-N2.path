@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 2.612785157073426,
-        "y": 5.584689630917723
+        "y": 5.5
       },
       "prevControl": {
-        "x": 2.581693791435041,
-        "y": 5.464977207077809
+        "x": 2.5816917719673205,
+        "y": 5.380288100668603
       },
       "nextControl": {
-        "x": 2.6460991383521244,
-        "y": 5.712959887458236
+        "x": 2.6461013021847015,
+        "y": 5.628269694536671
       },
       "isLocked": false,
       "linkedName": null
@@ -44,7 +44,13 @@
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": 11.31350314261836,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
@@ -57,7 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "FRESH Intake"
+                "name": "Intake"
               }
             }
           ]

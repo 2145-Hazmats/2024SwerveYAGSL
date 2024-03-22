@@ -1,0 +1,128 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3026404017574436,
+        "y": 5.537924365823613
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.261288368726397,
+        "y": 5.742560715894966
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.984564584509598,
+        "y": 4.193450694597999
+      },
+      "prevControl": {
+        "x": 4.718157128617763,
+        "y": 4.8052011488681385
+      },
+      "nextControl": {
+        "x": 5.196349339993613,
+        "y": 3.707130144968037
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.023582970238676,
+        "y": 4.193450694597999
+      },
+      "prevControl": {
+        "x": 7.86329091906569,
+        "y": 3.926297275976355
+      },
+      "nextControl": {
+        "x": 8.171587112400806,
+        "y": 4.440124264868216
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.984564584509598,
+        "y": 4.193450694597999
+      },
+      "prevControl": {
+        "x": 5.201637326347389,
+        "y": 3.690236611246756
+      },
+      "nextControl": {
+        "x": 4.730531042123901,
+        "y": 4.782346633764842
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.3026404017574436,
+        "y": 5.537924365823613
+      },
+      "prevControl": {
+        "x": 2.1428850549966922,
+        "y": 5.764864050472212
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Arm to floor",
+      "waypointRelativePos": 1.2,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ArmToFloor"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "intake",
+      "waypointRelativePos": 1.6,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Riley's OP Lines",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

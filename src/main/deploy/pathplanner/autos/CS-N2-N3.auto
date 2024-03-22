@@ -12,9 +12,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ShootNoteSubwooferNoRegurgitate"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              }
+            ]
           }
         },
         {
@@ -24,9 +37,47 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ShootNoteSubwooferNoRegurgitate"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS-N3"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
           }
         }
       ]

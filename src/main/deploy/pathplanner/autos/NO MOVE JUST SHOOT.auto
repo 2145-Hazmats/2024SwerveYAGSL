@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2745940876497153,
+      "y": 5.545221859674489
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ArmToSubwoofer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteSubwooferNoRegurgitate"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Riley's OP Autos",
+  "choreoAuto": false
+}

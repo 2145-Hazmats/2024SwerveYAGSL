@@ -55,7 +55,7 @@ public class RobotContainer {
     // PathPlanner named commands
     NamedCommands.registerCommand("ArmToFloor", m_arm.setArmPIDCommand(ArmConstants.ArmState.FLOOR, true).withTimeout(0.25));
     NamedCommands.registerCommand("ArmToSubwoofer", m_arm.setArmPIDCommand(ArmConstants.ArmState.SHOOT_SUB, true).withTimeout(0.25));
-    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(1.75));
+    NamedCommands.registerCommand("Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).withTimeout(0.25));
       NamedCommands.registerCommand("FRESH Intake", m_box.setIntakeMotorCommandThenStop(BoxConstants.kIntakeSpeed).until(m_box::noteSensorTriggered));
     NamedCommands.registerCommand("SpinUpShooter", m_box.setShooterMotorCommand(BoxConstants.kTopSpeakerRPM).withTimeout(1));
     NamedCommands.registerCommand("FeedNote", m_box.setIntakeMotorCommand(BoxConstants.kFeedSpeed).withTimeout(0.75));
@@ -66,6 +66,9 @@ public class RobotContainer {
     // Allows us to pick our auton in smartdash board
     m_autonChooser.addOption("TS-N1-C1", AutoBuilder.buildAuto("TS-N1-C1"));
     m_autonChooser.addOption("Drive Straight", AutoBuilder.buildAuto("Drive Straight"));
+    m_autonChooser.addOption("CS-N2", AutoBuilder.buildAuto("CS-N2"));
+    m_autonChooser.addOption("NO MOVE JUST SHOOT", AutoBuilder.buildAuto("NO MOVE JUST SHOOT"));
+
     SmartDashboard.putData("Auton Picker", m_autonChooser);
     //m_autonChooser = AutoBuilder.buildAutoChooser();
     //SmartDashboard.putData("Auton Picker", m_autonChooser);
