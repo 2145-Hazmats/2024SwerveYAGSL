@@ -1,0 +1,119 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.296235760958306,
+      "y": 5.584689630917723
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS-N2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RAM of CS-N3"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RAMMED of CS-N1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RAM N1-CS"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Riley's OP Autos",
+  "choreoAuto": false
+}

@@ -68,7 +68,10 @@ public class RobotContainer {
     m_autonChooser.addOption("Drive Straight", AutoBuilder.buildAuto("Drive Straight"));
     m_autonChooser.addOption("CS-N2", AutoBuilder.buildAuto("CS-N2"));
     m_autonChooser.addOption("NO MOVE JUST SHOOT", AutoBuilder.buildAuto("NO MOVE JUST SHOOT")); 
-    m_autonChooser.addOption("Gamble", AutoBuilder.buildAuto("Gamble"));
+    m_autonChooser.addOption("CS-N2-N3", AutoBuilder.buildAuto("CS-N2-N3"));
+    m_autonChooser.addOption("New CS-N2-N3-N1", AutoBuilder.buildAuto("New CS-N2-N3-N1"));
+    m_autonChooser.addOption("RED Gamble", AutoBuilder.buildAuto("RED Gamble"));
+    m_autonChooser.addOption("BLUE Gamble", AutoBuilder.buildAuto("BLUE Gamble"));
 
     SmartDashboard.putData("Auton Picker", m_autonChooser);
     //m_autonChooser = AutoBuilder.buildAutoChooser();

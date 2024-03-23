@@ -3,75 +3,52 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.296235760958306,
-        "y": 5.584689630917723
+        "x": 1.2745940876497153,
+        "y": 5.574822688106915
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.29623576095831,
-        "y": 5.584689630917723
+        "x": 1.20862210340683,
+        "y": 5.000527205048704
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.813006710178897,
-        "y": 5.584689630917723
+        "x": 2.3328624118018553,
+        "y": 3.946551915928368
       },
       "prevControl": {
-        "x": 2.7819133250727917,
-        "y": 5.464977731586327
+        "x": 1.760162087581,
+        "y": 3.903599391611804
       },
       "nextControl": {
-        "x": 2.8463228552901727,
-        "y": 5.712959325454395
+        "x": 2.8012958736331153,
+        "y": 3.9816844255657124
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.296235760958306,
-        "y": 5.584689630917723
+        "x": 1.15,
+        "y": 5.574822688106915
       },
       "prevControl": {
-        "x": 1.5036763541671636,
-        "y": 5.584689630917723
+        "x": 1.365088092855871,
+        "y": 4.731177964495728
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.8,
-      "rotationDegrees": 11.31350314261836,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.45,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "ARM DOwn",
+      "name": "Arm Down Again",
       "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
@@ -81,6 +58,23 @@
               "type": "named",
               "data": {
                 "name": "ArmToFloor"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.55,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FRESH Intake"
               }
             }
           ]

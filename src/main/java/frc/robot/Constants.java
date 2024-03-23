@@ -73,7 +73,7 @@ public final class Constants {
     public static final double[] kClimb2AngleSP           = {-40.7, 69}; // NEEDS TO BE SET
     public static final double[] kTrapAngleSP             = {0, 0}; // NEEDS TO BE SET
 
-    public static final double kManualSpeed = 0.35;
+    public static final double kManualSpeed = 0.5;
   }
 
   /* Constants for the box subsystem */

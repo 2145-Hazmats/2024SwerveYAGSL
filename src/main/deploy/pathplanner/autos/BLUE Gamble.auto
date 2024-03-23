@@ -1,0 +1,44 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.46265331633403783,
+      "y": 6.968344568932196
+    },
+    "rotation": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue GAMBLE"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToSubwoofer"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNoteSubwooferNoRegurgitate"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Other Autos",
+  "choreoAuto": false
+}

@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GAMBLE"
+            "pathName": "RED GAMBLE"
           }
         },
         {
@@ -39,6 +39,6 @@
       ]
     }
   },
-  "folder": "RED AUTS",
+  "folder": "Other Autos",
   "choreoAuto": false
 }

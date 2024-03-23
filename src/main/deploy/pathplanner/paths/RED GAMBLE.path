@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 16.08,
+        "y": 6.92
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 15.458382602919054,
+        "y": 7.364012426486392
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 15.753481093267464,
+        "y": 6.558068465637644
+      },
+      "prevControl": {
+        "x": 15.546275294240477,
+        "y": 6.992213949313226
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 110.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Riley's OP Lines",
+  "previewStartingState": {
+    "rotation": -179.53037298031035,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
